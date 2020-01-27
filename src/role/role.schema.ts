@@ -5,6 +5,12 @@ export const RoleSchema = new mongoose.Schema(
     name: String,
     slug: String,
     description: String,
+    permissions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Permission',
+      },
+    ],
   },
   { timestamps: true },
 );

@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  IsArray,
+  IsMongoId,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateRoleDto {
   @IsNotEmpty()
@@ -9,7 +16,14 @@ export class CreateRoleDto {
   @IsOptional()
   @IsString()
   @MaxLength(250)
-  description: String;
+  description?: String;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({
+    each: true,
+  })
+  permissions?: string;
 }
 
 export class UpdateRoleDto {
@@ -21,5 +35,12 @@ export class UpdateRoleDto {
   @IsOptional()
   @IsString()
   @MaxLength(250)
-  description: String;
+  description?: String;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({
+    each: true,
+  })
+  permissions?: string;
 }

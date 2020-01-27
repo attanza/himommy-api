@@ -60,10 +60,10 @@ export class PermissionService {
     await this.model.deleteMany({});
   }
 
-  private async getById(id: string): Promise<IPermission> {
+  async getById(id: string): Promise<IPermission> {
     const found = await this.model.findById(id);
     if (!found) {
-      throw new HttpException('Data not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Permission not found', HttpStatus.NOT_FOUND);
     }
     return found;
   }
