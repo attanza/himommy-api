@@ -1,11 +1,11 @@
+import { isUnique } from '@modules/helpers';
+import getApiCollection from '@modules/helpers/getApiCollection';
+import { IApiCollection } from '@modules/shared/interfaces/response-parser.interface';
+import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { isUnique } from '../helpers';
-import getApiCollection from '../helpers/getApiCollection';
 import { IPermission } from '../permission/permission.interface';
-import { IApiCollection } from '../shared/interfaces/response-parser.interface';
-import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
 import { CreateRoleDto, UpdateRoleDto } from './role.dto';
 import { IRole } from './role.interface';
 

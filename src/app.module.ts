@@ -1,11 +1,12 @@
+import { AuthModule } from '@modules/auth/auth.module';
+import { PermissionModule } from '@modules/permission/permission.module';
+import { SeederModule } from '@modules/seeder/seeder.module';
+import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PermissionModule } from './permission/permission.module';
-import { RoleModule } from './role/role.module';
-import { SeederModule } from './seeder/seeder.module';
-import { UserModule } from './user/user.module';
+import { RoleModule } from './modules/role/role.module';
 
 const DB_NAME = process.env.DB_NAME;
 const MONGO_DB_OPTIONS = {
@@ -19,6 +20,7 @@ const MONGO_DB_OPTIONS = {
     SeederModule,
     PermissionModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

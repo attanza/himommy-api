@@ -1,11 +1,11 @@
+import { IPermission } from '@modules/permission/permission.interface';
+import { IRole } from '@modules/role/role.interface';
+import { IUser } from '@modules/user/user.interface';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as Chance from 'chance';
 import { paramCase, snakeCase } from 'change-case';
 import { Model } from 'mongoose';
-import { IPermission } from 'src/permission/permission.interface';
-import { IRole } from 'src/role/role.interface';
-import { IUser } from 'src/user/user.interface';
 
 @Injectable()
 export class SeederService {

@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { Meta2 } from './interfaces/response-parser.interface';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -22,12 +23,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (NODE_ENV === 'development') {
       console.log(exception);
     }
-    const meta = {
+
+    let message =
+      status !== HttpStatus.INTERNAL_SERVER_ERROR
+        ? exception.message.message || exception.message || null
+        : 'Internal Server Error';
+
+    if (status === 401) message = 'Unauthorized';
+    const meta: Meta2 = {
       status,
-      message:
-        status !== HttpStatus.INTERNAL_SERVER_ERROR
-          ? exception.message.message || exception.message || null
-          : 'Internal Server Error',
+      message,
     };
 
     response.status(status).json({

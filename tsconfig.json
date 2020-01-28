@@ -8,7 +8,11 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "./src",
+    "paths": {
+      "@modules/*": ["modules/*"],
+      "@middlewares/*": ["middlewares/*"]
+    },
     "incremental": true
   },
   "exclude": ["node_modules", "dist"]

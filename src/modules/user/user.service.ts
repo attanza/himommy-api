@@ -1,19 +1,24 @@
+import { getApiCollection, isUnique } from '@modules/helpers';
+import checkIdExists from '@modules/helpers/checkIdExists';
+import { IApiCollection } from '@modules/shared/interfaces/response-parser.interface';
+import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { getApiCollection, isUnique } from '../helpers';
-import { IApiCollection } from '../shared/interfaces/response-parser.interface';
-import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
+import { IRole } from '../role/role.interface';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { IUser } from './user.interface';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private model: Model<IUser>) {}
+  constructor(
+    @InjectModel('User') private model: Model<IUser>,
+    @InjectModel('Role') private roleModel: Model<IRole>,
+  ) {}
 
   async all(query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['slug'];
-    const keyValueSearchable = [];
+    const regexSearchable = ['name.first', 'name.last', 'email', 'phone'];
+    const keyValueSearchable = ['role'];
     return await getApiCollection(
       'User',
       this.model,
@@ -28,24 +33,27 @@ export class UserService {
   }
 
   async store(createDto: CreateUserDto): Promise<IUser> {
-    const { email, phone } = createDto;
+    const { email, phone, role } = createDto;
     await isUnique(this.model, 'email', email);
     await isUnique(this.model, 'phone', phone);
 
-    const newData = new this.model(createDto);
-    await newData.save();
-    return newData;
+    if (role) await checkIdExists([role], this.roleModel);
+
+    const newData = await this.model.create(createDto);
+    return await this.getById(newData._id);
   }
 
   async update(id: string, updateDto: UpdateUserDto): Promise<IUser> {
     const data = await this.getById(id);
-    const { email, phone } = updateDto;
-    await isUnique(this.model, 'email', email);
-    await isUnique(this.model, 'phone', phone);
+    const { email, phone, role } = updateDto;
+    await isUnique(this.model, 'email', email, id);
+    await isUnique(this.model, 'phone', phone, id);
+
+    await checkIdExists([role], this.roleModel);
 
     Object.keys(updateDto).map(key => (data[key] = updateDto[key]));
     await data.save();
-    return data;
+    return await this.getById(id);
   }
 
   async destroy(id: string): Promise<string> {
@@ -59,7 +67,7 @@ export class UserService {
   }
 
   async getById(id: string): Promise<IUser> {
-    const found = await this.model.findById(id);
+    const found = await this.model.findById(id).populate('role');
     if (!found) {
       throw new HttpException('Permission not found', HttpStatus.NOT_FOUND);
     }

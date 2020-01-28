@@ -1,22 +1,30 @@
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
   Length,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
 
-export class CreateUserDto {
+class Name {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  firstName: String;
+  first: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(50)
-  lastName: String;
+  last: string;
+}
+
+export class CreateUserDto {
+  @IsNotEmpty()
+  @ValidateNested()
+  name: Name;
 
   @IsNotEmpty()
   @IsEmail()
@@ -31,18 +39,16 @@ export class CreateUserDto {
   @IsString()
   @Length(8, 128)
   password: string;
+
+  @IsOptional()
+  @IsMongoId()
+  role: string;
 }
 
 export class UpdateUserDto {
   @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  firstName: String;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  lastName: String;
+  @ValidateNested()
+  name: Name;
 
   @IsNotEmpty()
   @IsEmail()
@@ -57,4 +63,8 @@ export class UpdateUserDto {
   @IsString()
   @Length(8, 128)
   password: string;
+
+  @IsOptional()
+  @IsMongoId()
+  role: string;
 }

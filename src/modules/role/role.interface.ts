@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { IPermission } from 'src/permission/permission.interface';
+import { IPermission } from '../permission/permission.interface';
 
 export interface IRole extends Document {
   name: String;

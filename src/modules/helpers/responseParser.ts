@@ -1,7 +1,7 @@
 import {
   IApiItem,
   Meta2,
-} from 'src/shared/interfaces/response-parser.interface';
+} from '@modules/shared/interfaces/response-parser.interface';
 
 export const apiItem = (modelName: string, data: any): IApiItem => {
   const meta: Meta2 = {
