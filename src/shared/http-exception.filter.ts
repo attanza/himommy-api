@@ -24,8 +24,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
     const meta = {
       status,
-      path: request.url,
-      method: request.method,
       message:
         status !== HttpStatus.INTERNAL_SERVER_ERROR
           ? exception.message.message || exception.message || null

@@ -23,7 +23,7 @@ export class CreateRoleDto {
   @IsMongoId({
     each: true,
   })
-  permissions?: string;
+  permissions?: string[];
 }
 
 export class UpdateRoleDto {
@@ -42,5 +42,5 @@ export class UpdateRoleDto {
   @IsMongoId({
     each: true,
   })
-  permissions?: string;
+  permissions?: string[];
 }

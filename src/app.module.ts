@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { PermissionModule } from './permission/permission.module';
 import { RoleModule } from './role/role.module';
 import { SeederModule } from './seeder/seeder.module';
+import { UserModule } from './user/user.module';
 
 const DB_NAME = process.env.DB_NAME;
 const MONGO_DB_OPTIONS = {
@@ -17,6 +18,7 @@ const MONGO_DB_OPTIONS = {
     RoleModule,
     SeederModule,
     PermissionModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

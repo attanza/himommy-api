@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { isUnique } from '../helpers';
 import getApiCollection from '../helpers/getApiCollection';
-import { PermissionService } from '../permission/permission.service';
+import { IPermission } from '../permission/permission.interface';
 import { IApiCollection } from '../shared/interfaces/response-parser.interface';
 import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
 import { CreateRoleDto, UpdateRoleDto } from './role.dto';
@@ -13,7 +13,7 @@ import { IRole } from './role.interface';
 export class RoleService {
   constructor(
     @InjectModel('Role') private model: Model<IRole>,
-    private permissionService: PermissionService,
+    @InjectModel('Permission') private permissionModel: Model<IPermission>,
   ) {}
 
   async all(query: ResourcePaginationPipe): Promise<IApiCollection> {
@@ -35,25 +35,19 @@ export class RoleService {
   async store(createDto: CreateRoleDto): Promise<IRole> {
     const { name, permissions } = createDto;
     await isUnique(this.model, 'name', name);
-
     await this.checkPermissions(permissions);
-
-    const newData = new this.model(createDto);
-    await newData.save();
-    return newData;
+    const newData = await this.model.create(createDto);
+    return await this.getById(newData._id);
   }
 
   async update(id: string, updateDto: UpdateRoleDto): Promise<IRole> {
     const data = await this.getById(id);
     const { name, permissions } = updateDto;
-
     await isUnique(this.model, 'name', name, id);
-
     await this.checkPermissions(permissions);
-
     Object.keys(updateDto).map(key => (data[key] = updateDto[key]));
     await data.save();
-    return data;
+    return await this.getById(id);
   }
 
   async destroy(id: string): Promise<string> {
@@ -74,12 +68,17 @@ export class RoleService {
     return found;
   }
 
-  private async checkPermissions(permissions) {
-    if (permissions && permissions.length) {
-      for (let i = 0; i < permissions.length; i++) {
-        await this.permissionService.getById(permissions[i]);
+  private async checkPermissions(permissions): Promise<void> {
+    if (permissions && permissions.length > 0) {
+      const count = await this.permissionModel.countDocuments({
+        _id: { $in: permissions },
+      });
+      if (count !== permissions.length) {
+        throw new HttpException(
+          'One or more permission is not exists in database',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     }
-    return true;
   }
 }

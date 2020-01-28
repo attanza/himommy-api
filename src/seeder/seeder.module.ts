@@ -1,11 +1,19 @@
 import { Module } from '@nestjs/common';
-import { PermissionModule } from '../permission/permission.module';
-import { RoleModule } from '../role/role.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { PermissionSchema } from '../permission/permission.schema';
+import { RoleSchema } from '../role/role.schema';
+import { UserSchema } from '../user/user.schema';
 import { SeederController } from './seeder.controller';
 import { SeederService } from './seeder.service';
 
 @Module({
-  imports: [RoleModule, PermissionModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'Role', schema: RoleSchema },
+      { name: 'Permission', schema: PermissionSchema },
+      { name: 'User', schema: UserSchema },
+    ]),
+  ],
   controllers: [SeederController],
   providers: [SeederService],
 })
