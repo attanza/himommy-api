@@ -5,26 +5,18 @@ import {
   IsOptional,
   IsString,
   Length,
-  MaxLength,
-  ValidateNested,
 } from 'class-validator';
-
-class Name {
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(50)
-  first: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  last: string;
-}
 
 export class CreateUserDto {
   @IsNotEmpty()
-  @ValidateNested()
-  name: Name;
+  @IsString()
+  @Length(3, 50)
+  firstName: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(3, 50)
+  lastName: string;
 
   @IsNotEmpty()
   @IsEmail()
@@ -47,19 +39,25 @@ export class CreateUserDto {
 
 export class UpdateUserDto {
   @IsOptional()
-  @ValidateNested()
-  name: Name;
+  @IsString()
+  @Length(3, 50)
+  firstName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsString()
+  @Length(3, 50)
+  lastName: string;
+
+  @IsOptional()
   @IsEmail()
   email: String;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(8, 30)
   phone: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(8, 128)
   password: string;

@@ -3,18 +3,22 @@ import * as mongoose from 'mongoose';
 import { v4 as uuid } from 'uuid';
 export const UserSchema = new mongoose.Schema(
   {
-    name: {
-      first: String,
-      last: String,
-    },
+    firstName: String,
+    lastName: String,
     email: String,
     phone: String,
     password: String,
     refreshToken: String,
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    authProvider: String,
     role: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Role',
     },
+    avatar: String,
   },
   { timestamps: true },
 );

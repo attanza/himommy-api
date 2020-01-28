@@ -1,9 +1,9 @@
 import { Document } from 'mongoose';
 
 export interface IPermission extends Document {
-  name: String;
-  slug: String;
-  description: String;
+  name: string;
+  slug: string;
+  description: string;
   createdAt: Date;
   updatedAt: Date;
 }

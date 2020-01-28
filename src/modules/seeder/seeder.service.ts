@@ -34,11 +34,13 @@ export class SeederService {
         slug: paramCase(roles[i]),
       });
       await this.userModel.create({
-        name: { first: roles[i], last: '' },
+        firstName: roles[i],
         email: `${snakeCase(roles[i])}@himommy.org`,
         password: 'password',
         phone: this.faker.phone(),
         role: newRole._id,
+        isActive: true,
+        authProvider: 'local',
       });
     }
 
