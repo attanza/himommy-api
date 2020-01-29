@@ -82,7 +82,7 @@ export class AuthService {
     };
   }
 
-  private async generateToken(user: IUser) {
+  async generateToken(user: IUser) {
     const tokenPayload: JwtPayload = { uid: user._id };
     const token = await this.jwtService.sign(tokenPayload);
     const refreshTokenPayload: JwtPayload = { uid: user.refreshToken };

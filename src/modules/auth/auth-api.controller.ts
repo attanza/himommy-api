@@ -5,6 +5,7 @@ import {
   Controller,
   Get,
   Post,
+  Req,
   Res,
   UseGuards,
   UsePipes,
@@ -43,5 +44,18 @@ export class AuthApiController {
   @UseGuards(AuthGuard('jwt'))
   async me(@GetUser() user: IUser) {
     return apiItem('User', user);
+  }
+
+  @Get('facebook')
+  @UseGuards(AuthGuard('facebook-token'))
+  async getTokenAfterFacebookSignIn(@Req() req): Promise<LoginOutput> {
+    const data = await this.authService.generateToken(req.user);
+    return {
+      meta: {
+        status: 200,
+        message: 'Login succeed',
+      },
+      data,
+    };
   }
 }

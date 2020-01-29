@@ -32,6 +32,7 @@
     "@types/jimp": "^0.2.28",
     "@types/mongoose": "^5.5.43",
     "@types/mqtt": "^2.5.0",
+    "axios": "^0.19.2",
     "bcrypt": "^3.0.7",
     "change-case": "^4.1.1",
     "class-transformer": "^0.2.3",

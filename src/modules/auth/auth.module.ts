@@ -1,3 +1,4 @@
+import { RoleSchema } from '@modules/role/role.schema';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -10,7 +11,10 @@ import { FacebookStrategy } from './facebook.strategy';
 import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserSchema },
+      { name: 'Role', schema: RoleSchema },
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.APP_SECRET,
