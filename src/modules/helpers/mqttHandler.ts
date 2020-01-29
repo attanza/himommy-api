@@ -18,7 +18,6 @@ class MqttHandler {
     this.mqttClient = mqtt.connect(this.host, {
       username: this.username,
       password: this.password,
-      protocolId: 'MQTT',
     });
 
     // Mqtt error calback
@@ -33,7 +32,7 @@ class MqttHandler {
     });
 
     // mqtt subscriptions
-    this.mqttClient.subscribe('profile/avatar/5e2ffe14d0c84f261f21d854', {
+    this.mqttClient.subscribe('#', {
       qos: 0,
     });
 
@@ -50,9 +49,9 @@ class MqttHandler {
   }
 
   // Sends a mqtt message to topic: mytopic
-  sendMessage(topyc: string, message: string) {
+  sendMessage(topic: string, message: string) {
     try {
-      this.mqttClient.publish(topyc, message);
+      this.mqttClient.publish(topic, message);
     } catch (e) {
       console.log('e ', e);
     }

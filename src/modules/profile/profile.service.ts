@@ -27,6 +27,9 @@ export class ProfileService {
   async saveAvatar(avatar: any, user: IUser): Promise<void> {
     user.avatar = avatar.path.split('public')[1];
     Promise.all([user.save(), resizeImage([avatar.path], 400)]);
-    MqttHandler.sendMessage(`profile/avatar/${user._id}`, user.avatar);
+    MqttHandler.sendMessage(
+      `profile/avatar/${user._id}`,
+      `${process.env.APP_URL}${user.avatar}`,
+    );
   }
 }

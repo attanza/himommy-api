@@ -46,9 +46,10 @@ UserSchema.pre('save', async function(next: mongoose.HookNextFunction) {
 });
 
 UserSchema.methods.toJSON = function() {
-  var obj = this.toObject();
+  const obj = this.toObject();
   delete obj.password;
   delete obj.refreshToken;
-  obj.avatar = 'http://localhost:2500/' + obj.avatar;
+  if (obj.avatar || obj.avatar !== '')
+    obj.avatar = `${process.env.APP_URL}${obj.avatar}`;
   return obj;
 };

@@ -40,8 +40,11 @@ export class ProfileController {
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
   uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
-    if (!avatar) throw new BadRequestException('Avatar upload failed');
+    if (!avatar)
+      throw new BadRequestException(
+        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+      );
     this.profileService.saveAvatar(avatar, user);
-    return apiSucceed('Avatar Uploaded');
+    return apiSucceed('Avatar Uploaded, actual result will be sent via socket');
   }
 }
