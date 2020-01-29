@@ -38,3 +38,12 @@ export const apiDeleted = (modelName: string): IApiItem => {
 
   return { meta };
 };
+
+export const apiSucceed = (message: string): IApiItem => {
+  const meta: Meta2 = {
+    status: 200,
+    message,
+  };
+
+  return { meta };
+};

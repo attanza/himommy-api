@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { UserSchema } from '../user/user.schema';
+import { AuthApiController } from './auth-api.controller';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { FacebookStrategy } from './facebook.strategy';
@@ -18,7 +19,7 @@ import { JwtStrategy } from './jwt.strategy';
       },
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, AuthApiController],
   providers: [AuthService, JwtStrategy, FacebookStrategy],
   exports: [JwtStrategy, PassportModule],
 })
