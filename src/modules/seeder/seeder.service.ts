@@ -1,6 +1,7 @@
 import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IRole } from '@modules/role/role.interface';
+import { ITocologistService } from '@modules/tocologist-services/tocologist-services.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,6 +17,8 @@ export class SeederService {
     @InjectModel('Permission') private permissionModel: Model<IPermission>,
     @InjectModel('User') private userModel: Model<IUser>,
     @InjectModel('AppVersion') private appVersionModel: Model<IAppVersion>,
+    @InjectModel('TocologistService')
+    private tocologistServiceModel: Model<ITocologistService>,
   ) {}
 
   /**
@@ -99,5 +102,33 @@ export class SeederService {
 
     await this.appVersionModel.insertMany(appVersionData);
     Logger.log('Seeding App Version Finish');
+  }
+
+  /**
+   * Tocologist Service Seeder
+   */
+  async seedTocologistService() {
+    Logger.log('Seeding Tocologist Service ...');
+    await this.tocologistServiceModel.deleteMany({});
+
+    const mainServices = [
+      'Pertolongan Persalinan',
+      'Pemeriksaan kehamilan',
+      'Pemeriksaan Ibu Nifas',
+      'Pemeriksaan Bayi',
+      'Pemeriksaan Anak',
+      'Keluarga Berencana',
+      'Imunisasi',
+      'Pengambilan Pap Smear',
+      'Labolatorium Sederhana',
+      'Konseling',
+    ];
+
+    let tocologistServices = [];
+
+    mainServices.map(s => tocologistServices.push({ name: s }));
+
+    await this.tocologistServiceModel.insertMany(tocologistServices);
+    Logger.log('Seeding Tocologist Service Finish');
   }
 }

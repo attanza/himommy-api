@@ -13,6 +13,7 @@ export class SeederController {
       Promise.all([
         this.seederService.seedUserRolePermission(),
         this.seederService.seedAppVersion(),
+        this.seederService.seedTocologistService(),
       ]);
       res.status(200).send({ message: 'Seed Succeed' });
     } else {
