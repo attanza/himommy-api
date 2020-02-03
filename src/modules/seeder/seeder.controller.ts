@@ -10,7 +10,10 @@ export class SeederController {
     const NODE_ENV = process.env.NODE_ENV;
     const SEED = process.env.SEED;
     if (NODE_ENV === 'development' && SEED === '1') {
-      await this.seederService.seedUserRolePermission();
+      Promise.all([
+        this.seederService.seedUserRolePermission(),
+        this.seederService.seedAppVersion(),
+      ]);
       res.status(200).send({ message: 'Seed Succeed' });
     } else {
       res

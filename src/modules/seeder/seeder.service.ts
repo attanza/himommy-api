@@ -1,3 +1,4 @@
+import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IRole } from '@modules/role/role.interface';
 import { IUser } from '@modules/user/user.interface';
@@ -14,8 +15,12 @@ export class SeederService {
     @InjectModel('Role') private roleModel: Model<IRole>,
     @InjectModel('Permission') private permissionModel: Model<IPermission>,
     @InjectModel('User') private userModel: Model<IUser>,
+    @InjectModel('AppVersion') private appVersionModel: Model<IAppVersion>,
   ) {}
 
+  /**
+   * User Role Permission Seeder
+   */
   async seedUserRolePermission() {
     Logger.log('Seeding Role and Users ...');
     await this.roleModel.deleteMany({});
@@ -75,5 +80,24 @@ export class SeederService {
     });
     superAdmin.permissions = perIds;
     await superAdmin.save();
+  }
+
+  /**
+   * App Version Seeder
+   */
+  async seedAppVersion() {
+    Logger.log('Seeding App Version ...');
+    await this.appVersionModel.deleteMany({});
+
+    const appVersionData = [
+      { platform: 'android-mommy-app', version: '1.0.0' },
+      { platform: 'ios-mommy-app', version: '1.0.0' },
+      { platform: 'android-tocologist-app', version: '1.0.0' },
+      { platform: 'ios-tocologist-app', version: '1.0.0' },
+      { platform: 'dashboard', version: '1.0.0' },
+    ];
+
+    await this.appVersionModel.insertMany(appVersionData);
+    Logger.log('Seeding App Version Finish');
   }
 }

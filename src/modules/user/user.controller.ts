@@ -7,9 +7,11 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   apiCreated,
   apiDeleted,
@@ -26,28 +28,45 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('admin/users')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
+  modelName = 'User';
+  uniques = ['phone', 'email'];
+  relations = ['role'];
   constructor(private dbService: UserService) {}
 
   @Get()
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    return this.dbService.all(query);
+    const regexSearchable = ['name', 'phone', 'email'];
+    const keyValueSearchable = ['role'];
+    return this.dbService.getPaginated(
+      this.modelName,
+      query,
+      regexSearchable,
+      keyValueSearchable,
+    );
   }
 
   @Get(':id')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(id);
-    return apiItem('User', data);
+    const data = await this.dbService.show(this.modelName, id, this.relations);
+    return apiItem(this.modelName, data);
   }
 
   @Post()
   async store(
     @Body(new ValidationPipe()) createDto: CreateUserDto,
   ): Promise<IApiItem> {
-    const data = await this.dbService.store(createDto);
-    return apiCreated('User', data);
+    await this.dbService.checkRole(createDto.role);
+
+    const data = await this.dbService.store(
+      createDto,
+      this.uniques,
+      this.relations,
+    );
+    return apiCreated(this.modelName, data);
   }
 
   @Put(':id')
@@ -56,16 +75,24 @@ export class UserController {
     @Param() param: MongoIdPipe,
     @Body() updateDto: UpdateUserDto,
   ): Promise<IApiItem> {
+    await this.dbService.checkRole(updateDto.role);
+
     const { id } = param;
-    const data = await this.dbService.update(id, updateDto);
-    return apiUpdated('User', data);
+    const data = await this.dbService.update(
+      this.modelName,
+      id,
+      updateDto,
+      this.uniques,
+      this.relations,
+    );
+    return apiUpdated(this.modelName, data);
   }
 
   @Delete(':id')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    await this.dbService.destroy(id);
-    return apiDeleted('User');
+    await this.dbService.destroy(this.modelName, id);
+    return apiDeleted(this.modelName);
   }
 }

@@ -1,4 +1,16 @@
 import {
+  apiCreated,
+  apiDeleted,
+  apiItem,
+  apiUpdated,
+} from '@modules/helpers/responseParser';
+import {
+  IApiCollection,
+  IApiItem,
+} from '@modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+import {
   Body,
   Controller,
   Delete,
@@ -12,31 +24,18 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  apiCreated,
-  apiDeleted,
-  apiItem,
-  apiUpdated,
-} from '../helpers/responseParser';
-import {
-  IApiCollection,
-  IApiItem,
-} from '../shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
-import { CreatePermissionDto, UpdatePermissionDto } from './permission.dto';
-import { PermissionService } from './permission.service';
+import { CreateAppVersionDto, UpdateAppVersionDto } from './app-version.dto';
+import { AppVersionService } from './app-version.service';
 
-@Controller('admin/permissions')
+@Controller('admin/app-versions')
 @UseGuards(AuthGuard('jwt'))
-export class PermissionController {
-  modelName = 'Permission';
-  uniques = ['name'];
-  constructor(private dbService: PermissionService) {}
+export class AppVersionController {
+  modelName = 'AppVersion';
+  constructor(private dbService: AppVersionService) {}
 
   @Get()
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['slug'];
+    const regexSearchable = ['platform'];
     const keyValueSearchable = [];
     return this.dbService.getPaginated(
       this.modelName,
@@ -56,9 +55,9 @@ export class PermissionController {
 
   @Post()
   async store(
-    @Body(new ValidationPipe()) createDto: CreatePermissionDto,
+    @Body(new ValidationPipe()) createDto: CreateAppVersionDto,
   ): Promise<IApiItem> {
-    const data = await this.dbService.store(createDto, this.uniques);
+    const data = await this.dbService.store(createDto);
     return apiCreated(this.modelName, data);
   }
 
@@ -66,15 +65,10 @@ export class PermissionController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdatePermissionDto,
+    @Body() updateDto: UpdateAppVersionDto,
   ): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.update(
-      this.modelName,
-      id,
-      updateDto,
-      this.uniques,
-    );
+    const data = await this.dbService.update(this.modelName, id, updateDto);
     return apiUpdated(this.modelName, data);
   }
 

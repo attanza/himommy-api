@@ -1,3 +1,4 @@
+import { AppVersionSchema } from '@modules/app-version/app-version.schema';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PermissionSchema } from '../permission/permission.schema';
@@ -12,6 +13,7 @@ import { SeederService } from './seeder.service';
       { name: 'Role', schema: RoleSchema },
       { name: 'Permission', schema: PermissionSchema },
       { name: 'User', schema: UserSchema },
+      { name: 'AppVersion', schema: AppVersionSchema },
     ]),
   ],
   controllers: [SeederController],

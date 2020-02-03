@@ -27,11 +27,6 @@
     "@nestjs/passport": "^6.1.1",
     "@nestjs/platform-express": "^6.0.0",
     "@nestjs/serve-static": "^1.0.2",
-    "@types/bcrypt": "^3.0.0",
-    "@types/change-case": "^2.3.1",
-    "@types/jimp": "^0.2.28",
-    "@types/mongoose": "^5.5.43",
-    "@types/mqtt": "^2.5.0",
     "axios": "^0.19.2",
     "bcrypt": "^3.0.7",
     "change-case": "^4.1.1",
@@ -51,6 +46,11 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/change-case": "^2.3.1",
+    "@types/jimp": "^0.2.28",
+    "@types/mongoose": "^5.5.43",
+    "@types/mqtt": "^2.5.0",
     "@nestjs/testing": "^6.0.0",
     "@types/chance": "^1.0.8",
     "@types/express": "4.16.1",

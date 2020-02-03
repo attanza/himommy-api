@@ -19,6 +19,13 @@ export const UserSchema = new mongoose.Schema(
       ref: 'Role',
     },
     avatar: String,
+    mommyDetail: {
+      dob: Date,
+      height: Number,
+      occupation: String,
+      education: String,
+      hpht: Date,
+    },
   },
   { timestamps: true },
 );

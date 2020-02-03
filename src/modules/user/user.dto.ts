@@ -58,11 +58,6 @@ export class UpdateUserDto {
   phone: string;
 
   @IsOptional()
-  @IsString()
-  @Length(8, 128)
-  password: string;
-
-  @IsOptional()
   @IsMongoId()
-  role: string;
+  role?: string;
 }

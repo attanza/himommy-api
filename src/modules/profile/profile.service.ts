@@ -1,35 +1,37 @@
-import MqttHandler from '@modules/helpers/mqttHandler';
-import resizeImage from '@modules/helpers/resizeImage';
+import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
+import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
+import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { compare } from 'bcrypt';
-import { Model } from 'mongoose';
+import { UserService } from '@modules/user/user.service';
+import { Injectable } from '@nestjs/common';
 import { ChangePasswordDto } from './profile.dto';
 @Injectable()
 export class ProfileService {
-  constructor(@InjectModel('User') private userModel: Model<IUser>) {}
-
-  async changePassword(
-    user: IUser,
-    changePasswordDto: ChangePasswordDto,
-  ): Promise<string> {
-    const { oldPassword, password } = changePasswordDto;
-    const isMatched = await compare(oldPassword, user.password);
-    if (!isMatched) {
-      throw new BadRequestException('Old password incorrect');
-    }
-    user.password = password;
-    await user.save();
-    return 'Password successfully updated';
+  constructor(
+    private userService: UserService,
+    private mommyService: MommyDetailService,
+  ) {}
+  async changePassword(user: IUser, changePasswordDto: ChangePasswordDto) {
+    return this.userService.changePassword(user, changePasswordDto);
   }
 
-  async saveAvatar(avatar: any, user: IUser): Promise<void> {
-    user.avatar = avatar.path.split('public')[1];
-    Promise.all([user.save(), resizeImage([avatar.path], 400)]);
-    MqttHandler.sendMessage(
-      `profile/avatar/${user._id}`,
-      `${process.env.APP_URL}${user.avatar}`,
+  async saveAvatar(avatar: any, user: IUser) {
+    return await this.userService.saveAvatar(avatar, user);
+  }
+
+  async updateUser(id: string, updateDto: UpdateUserDto) {
+    const uniques = ['phone', 'email'];
+    const relations = ['role'];
+    return await this.userService.update(
+      'User',
+      id,
+      updateDto,
+      uniques,
+      relations,
     );
+  }
+
+  async updateDetail(updateDto: UpdateMommyDto) {
+    return await this.mommyService.createOrUpdateDetail(updateDto);
   }
 }

@@ -1,12 +1,12 @@
-import { UserSchema } from '@modules/user/user.schema';
+import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
+import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ApiProfileController } from './api-profile.controller';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
+  imports: [UserModule, MommyDetailModule],
   controllers: [ProfileController, ApiProfileController],
   providers: [ProfileService],
 })

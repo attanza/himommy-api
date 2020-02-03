@@ -12,6 +12,15 @@ export interface IUser extends Document {
   isActive: boolean;
   authProvider: string;
   avatar: string;
+  mommyDetail: MommyDetail;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface MommyDetail {
+  dob: Date;
+  height: number;
+  occupation: string;
+  education: string;
+  hpht: Date;
 }

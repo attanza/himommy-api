@@ -7,16 +7,17 @@ export default async (
   value: any,
   id?: string,
 ): Promise<boolean> => {
-  let options = {
-    [key]: value,
-  };
-
-  const found = await model.findOne(options);
-  if (id && found && found._id == id) {
-    return true;
-  }
-  if (found) {
-    throw new HttpException(`${key} already exists`, HttpStatus.BAD_REQUEST);
+  if (key && value) {
+    let options = {
+      [key]: value,
+    };
+    const found = await model.findOne(options);
+    if (id && found && found._id.toString() === id.toString()) {
+      return true;
+    }
+    if (found) {
+      throw new HttpException(`${key} already exists`, HttpStatus.BAD_REQUEST);
+    }
   }
 
   return true;

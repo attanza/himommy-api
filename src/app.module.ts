@@ -1,3 +1,4 @@
+import { AppVersionModule } from '@modules/app-version/app-version.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { ProfileModule } from '@modules/profile/profile.module';
@@ -24,6 +25,7 @@ const MONGO_DB_OPTIONS = {
     UserModule,
     AuthModule,
     ProfileModule,
+    AppVersionModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
