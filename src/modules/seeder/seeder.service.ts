@@ -2,6 +2,7 @@ import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IRole } from '@modules/role/role.interface';
 import { ITocologistService } from '@modules/tocologist-services/tocologist-services.interface';
+import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -19,6 +20,8 @@ export class SeederService {
     @InjectModel('AppVersion') private appVersionModel: Model<IAppVersion>,
     @InjectModel('TocologistService')
     private tocologistServiceModel: Model<ITocologistService>,
+    @InjectModel('Tocologist')
+    private tocologistModel: Model<ITocologist>,
   ) {}
 
   /**
@@ -130,5 +133,48 @@ export class SeederService {
 
     await this.tocologistServiceModel.insertMany(tocologistServices);
     Logger.log('Seeding Tocologist Service Finish');
+  }
+
+  /**
+   * Tocologist Seeder
+   */
+
+  async seedTocologist() {
+    Logger.log('Seeding Tocologist ...');
+    await this.tocologistModel.deleteMany({});
+
+    let tocologistData = [];
+    for (let i = 0; i < 25; i++) {
+      tocologistData.push({
+        name: this.faker.company(),
+        email: this.faker.email(),
+        phone: this.faker.phone(),
+        address: {
+          street: this.faker.street(),
+          country: this.faker.country(),
+          city: this.faker.city(),
+          district: this.faker.state(),
+          village: this.faker.state(),
+          postCode: this.faker.postcode(),
+        },
+        image: 'https://picsum.photos/400/200',
+        isActive: true,
+        operationTime: {
+          open: '08:00',
+          close: '20:00',
+        },
+        location: {
+          type: 'Point',
+          coordinates: [
+            this.faker.longitude({ min: 107.4, max: 107.7, fixed: 7 }),
+            this.faker.latitude({ min: -6.9, max: -6.8, fixed: 7 }),
+          ],
+        },
+
+        holiday: ['0'],
+      });
+    }
+    await this.tocologistModel.insertMany(tocologistData);
+    Logger.log('Seeding Tocologist  Finish');
   }
 }

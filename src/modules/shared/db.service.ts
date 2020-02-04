@@ -59,9 +59,11 @@ export class DbService {
    */
   async getById(id: string, relations?: string[]): Promise<any> {
     if (relations && relations.length > 0) {
-      return await this.Model.findById(id).populate(relations);
+      return await this.Model.findById(id)
+        .populate(relations)
+        .lean();
     } else {
-      return await this.Model.findById(id);
+      return await this.Model.findById(id).lean();
     }
   }
 
@@ -113,13 +115,8 @@ export class DbService {
       }
     }
 
-    Object.keys(updateDto).map(key => (data[key] = updateDto[key]));
-    await data.save();
-    if (relations && relations.length > 0) {
-      return this.getById(id, relations);
-    } else {
-      return data;
-    }
+    await this.Model.updateOne({ _id: id }, updateDto);
+    return this.getById(id, relations);
   }
 
   /**
@@ -128,8 +125,7 @@ export class DbService {
    * @param id
    */
   async destroy(modelName: string, id: string): Promise<string> {
-    const data = await this.show(modelName, id);
-    await data.remove();
-    return 'Data successfuly deleted';
+    await this.Model.deleteOne({ _id: id });
+    return `${modelName} successfully deleted`;
   }
 }

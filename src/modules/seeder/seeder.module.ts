@@ -1,5 +1,6 @@
 import { AppVersionSchema } from '@modules/app-version/app-version.schema';
 import { TocologistServiceSchema } from '@modules/tocologist-services/tocologist-services.schema';
+import { TocologistSchema } from '@modules/tocologist/tocologist.schema';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PermissionSchema } from '../permission/permission.schema';
@@ -16,6 +17,7 @@ import { SeederService } from './seeder.service';
       { name: 'User', schema: UserSchema },
       { name: 'AppVersion', schema: AppVersionSchema },
       { name: 'TocologistService', schema: TocologistServiceSchema },
+      { name: 'Tocologist', schema: TocologistSchema },
     ]),
   ],
   controllers: [SeederController],

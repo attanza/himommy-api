@@ -6,3 +6,5 @@ export const AppVersionSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+AppVersionSchema.index({ platform: 1 });

@@ -1,11 +1,9 @@
 import { apiItem } from '@modules/helpers/responseParser';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AppVersionService } from './app-version.service';
 
 @Controller('api/app-version')
-@UseGuards(AuthGuard('jwt'))
 export class ApiAppVersionController {
   modelName = 'AppVersion';
   constructor(private dbService: AppVersionService) {}

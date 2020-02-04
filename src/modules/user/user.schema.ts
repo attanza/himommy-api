@@ -5,8 +5,14 @@ export const UserSchema = new mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    email: String,
-    phone: String,
+    email: {
+      type: String,
+      unique: true,
+    },
+    phone: {
+      type: String,
+      unique: true,
+    },
     password: String,
     refreshToken: String,
     isActive: {
@@ -19,13 +25,6 @@ export const UserSchema = new mongoose.Schema(
       ref: 'Role',
     },
     avatar: String,
-    mommyDetail: {
-      dob: Date,
-      height: Number,
-      occupation: String,
-      education: String,
-      hpht: Date,
-    },
   },
   { timestamps: true },
 );

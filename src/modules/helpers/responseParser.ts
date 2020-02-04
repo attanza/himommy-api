@@ -6,7 +6,7 @@ import {
 export const apiItem = (modelName: string, data: any): IApiItem => {
   const meta: Meta2 = {
     status: 200,
-    message: `${modelName} item retreived`,
+    message: `${modelName} item retrieved`,
   };
 
   return { meta, data };

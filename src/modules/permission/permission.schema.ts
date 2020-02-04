@@ -2,8 +2,14 @@ import { paramCase } from 'change-case';
 import * as mongoose from 'mongoose';
 export const PermissionSchema = new mongoose.Schema(
   {
-    name: String,
-    slug: String,
+    name: {
+      type: String,
+      unique: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
+    },
     description: String,
   },
   { timestamps: true },

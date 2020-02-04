@@ -60,6 +60,7 @@ export default async (
     .find(options)
     .sort({ [sortBy]: sortMode })
     .skip(limit * page - limit)
-    .limit(limit);
+    .limit(limit)
+    .lean();
   return { meta, data };
 };
