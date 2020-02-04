@@ -1,7 +1,10 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
   IsIn,
+  IsInt,
   IsLatitude,
   IsLongitude,
   IsMongoId,
@@ -10,6 +13,7 @@ import {
   IsString,
   Length,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
 import { IHoliday } from './tocologist.interface';
 
@@ -168,4 +172,26 @@ export class UpdateTocologistDto {
   @IsNotEmpty({ each: true })
   @IsMongoId({ each: true })
   user: string;
+}
+
+export class AttachTocologistServicesDto {
+  @IsArray()
+  @ValidateNested()
+  @Type(() => TServiceDto)
+  services: TServiceDto[];
+}
+
+export class TServiceDto {
+  @IsNotEmpty()
+  @IsString()
+  @Length(3, 100)
+  name: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  price: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isAvailable: boolean;
 }

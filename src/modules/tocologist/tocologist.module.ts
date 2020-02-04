@@ -1,3 +1,4 @@
+import { TocologistServicesModule } from '@modules/tocologist-services/tocologist-services.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TocologistController } from './tocologist.controller';
@@ -9,6 +10,7 @@ import { TocologistService } from './tocologist.service';
     MongooseModule.forFeature([
       { name: 'Tocologist', schema: TocologistSchema },
     ]),
+    TocologistServicesModule,
   ],
   controllers: [TocologistController],
   providers: [TocologistService],

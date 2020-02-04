@@ -11,6 +11,7 @@ export interface ITocologist extends Document {
   isActive: boolean;
   operationTime: IOperationTime;
   holiday: IHoliday[];
+  services: ITServices[];
   user: IUser;
   createdAt: Date;
   updatedAt: Date;
@@ -43,4 +44,10 @@ export enum IHoliday {
   THURSDAY = 4,
   FRIDAY = 5,
   SATURDAY = 6,
+}
+
+export interface ITServices {
+  name: string;
+  price: number;
+  isAvailable: boolean;
 }

@@ -24,8 +24,13 @@ import {
 } from '../shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
-import { CreateTocologistDto, UpdateTocologistDto } from './tocologist.dto';
+import {
+  AttachTocologistServicesDto,
+  CreateTocologistDto,
+  UpdateTocologistDto,
+} from './tocologist.dto';
 import { TocologistService } from './tocologist.service';
+
 @Controller('admin/tocologists')
 @UseGuards(AuthGuard('jwt'))
 export class TocologistController {
@@ -86,5 +91,21 @@ export class TocologistController {
     const { id } = param;
     await this.dbService.destroy(this.modelName, id);
     return apiDeleted(this.modelName);
+  }
+
+  /**
+   * Attach Services
+   */
+
+  @Put('/:id/services')
+  @UsePipes(ValidationPipe)
+  async attachServices(
+    @Param() param: MongoIdPipe,
+    @Body() serviceDto: AttachTocologistServicesDto,
+  ): Promise<IApiItem> {
+    await this.dbService.checkServices(serviceDto);
+    const { id } = param;
+    const data = await this.dbService.attachServices(id, serviceDto);
+    return apiUpdated(this.modelName, data);
   }
 }
