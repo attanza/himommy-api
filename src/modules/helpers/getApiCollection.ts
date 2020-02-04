@@ -20,6 +20,7 @@ export default async (
   const sortBy = query.sortBy || 'createdAt';
   const sortMode = SortMode[query.sortMode];
   const search = query.search || '';
+  const coordinates = [];
 
   const { fieldKey, fieldValue, dateField, dateStart, dateEnd } = query;
   let options = {};
@@ -43,7 +44,69 @@ export default async (
     options = { ...options, [dateField]: { $gte: dateStart, $lte: dateEnd } };
   }
 
-  const total: number = await model.countDocuments(options);
+  // Coordinates
+  if (query.latitude && query.longitude) {
+    coordinates.push(parseFloat(query.longitude.toString()));
+    coordinates.push(parseFloat(query.latitude.toString()));
+  }
+
+  // NOTE: comeback later and DRY out the code bellow
+  let total: number = 0;
+  let data = null;
+
+  if (coordinates.length === 2) {
+    const totalCount = await model.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: 'Point',
+            coordinates,
+          },
+          distanceField: `distance`,
+          distanceMultiplier: 0.000998,
+          spherical: true,
+          limit: 1000,
+        },
+      },
+
+      {
+        $count: 'totalCount',
+      },
+    ]);
+    total = totalCount[0].totalCount;
+    data = await model.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: 'Point',
+            coordinates,
+          },
+          distanceField: `distance`,
+          distanceMultiplier: 0.000998,
+          spherical: true,
+          query: options,
+          limit: 1000,
+        },
+      },
+      { $sort: { distance: 1 } },
+      { $skip: limit * page - limit },
+      { $limit: limit },
+    ]);
+    const totalPages: number = Math.ceil(total / limit);
+    const meta: IMeta = {
+      status: 200,
+      message: `${modelName} Collection`,
+      total,
+      limit,
+      page,
+      totalPages,
+      nextPage: totalPages > page ? page + 1 : null,
+      prevPage: page > 1 ? page - 1 : null,
+    };
+    return { meta, data };
+  }
+
+  total = await model.countDocuments(options);
   const totalPages: number = Math.ceil(total / limit);
   const meta: IMeta = {
     status: 200,
@@ -56,7 +119,7 @@ export default async (
     prevPage: page > 1 ? page - 1 : null,
   };
 
-  const data = await model
+  data = await model
     .find(options)
     .sort({ [sortBy]: sortMode })
     .skip(limit * page - limit)

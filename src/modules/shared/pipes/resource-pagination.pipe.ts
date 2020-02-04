@@ -1,6 +1,8 @@
 import {
   IsDateString,
   IsIn,
+  IsLatitude,
+  IsLongitude,
   IsNumberString,
   IsOptional,
   IsString,
@@ -46,6 +48,14 @@ export class ResourcePaginationPipe {
   @IsOptional()
   @IsString()
   fieldValue: string;
+
+  @IsOptional()
+  @IsLatitude()
+  latitude: number;
+
+  @IsOptional()
+  @IsLongitude()
+  longitude: number;
 }
 
 export enum SortMode {
