@@ -11,7 +11,9 @@
     "baseUrl": "./src",
     "paths": {
       "@modules/*": ["modules/*"],
-      "@middlewares/*": ["middlewares/*"]
+      "@middlewares/*": ["middlewares/*"],
+      "@guards/*": ["guards/*"],
+      "@public/*": ["public/*"]
     },
     "incremental": true
   },

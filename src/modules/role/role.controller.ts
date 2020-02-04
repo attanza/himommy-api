@@ -1,3 +1,4 @@
+import { Permission } from '@guards/permission.decorator';
 import {
   Body,
   Controller,
@@ -36,6 +37,7 @@ export class RoleController {
   constructor(private dbService: RoleService) {}
 
   @Get()
+  @Permission('read-role')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['slug'];
     const keyValueSearchable = [];

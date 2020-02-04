@@ -87,6 +87,8 @@
   },
   "_moduleAliases": {
     "@modules": "dist/modules",
-    "@middlewares": "dist/middlewares"
+    "@middlewares": "dist/middlewares",
+    "@guards": "dist/guards",
+    "@public": "dist/public"
   }
 }

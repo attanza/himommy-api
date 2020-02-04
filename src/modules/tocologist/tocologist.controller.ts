@@ -1,21 +1,28 @@
+import tocologistImageInterceptor from '@modules/helpers/tocologistImageInterceptor';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   apiCreated,
   apiDeleted,
   apiItem,
+  apiSucceed,
   apiUpdated,
 } from '../helpers/responseParser';
 import {
@@ -107,5 +114,23 @@ export class TocologistController {
     const { id } = param;
     const data = await this.dbService.attachServices(id, serviceDto);
     return apiUpdated(this.modelName, data);
+  }
+
+  /**
+   * Image Upload
+   */
+
+  @Post('/:id/image-upload')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(200)
+  @UseInterceptors(FileInterceptor('image', tocologistImageInterceptor))
+  uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
+    if (!image)
+      throw new BadRequestException(
+        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+      );
+    const { id } = param;
+    this.dbService.saveImage(id, image);
+    return apiSucceed('Image Uploaded, actual result will be sent via socket');
   }
 }

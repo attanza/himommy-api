@@ -1,13 +1,17 @@
+import mqttHandler from '@modules/helpers/mqttHandler';
+import resizeImage from '@modules/helpers/resizeImage';
 import { DbService } from '@modules/shared/db.service';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import * as fs from 'fs';
 import { Model } from 'mongoose';
 import {
   AttachTocologistServicesDto,
   UpdateTocologistDto,
 } from './tocologist.dto';
 import { ITocologist } from './tocologist.interface';
+
 @Injectable()
 export class TocologistService extends DbService {
   constructor(
@@ -60,5 +64,24 @@ export class TocologistService extends DbService {
     return await this.update('Tocologist', id, {
       services: servicesData.services,
     });
+  }
+
+  async saveImage(id: string, image: any): Promise<boolean> {
+    const imageString = image.path.split('public')[1];
+
+    const found = await this.getById(id);
+    if (!found) {
+      fs.unlinkSync(`./public${imageString}`);
+      return false;
+    } else {
+      Promise.all([
+        this.update('Tocologist', id, { image: imageString }),
+        resizeImage([image.path], 400),
+      ]);
+      mqttHandler.sendMessage(
+        `tocologist/${id}/image`,
+        `${process.env.APP_URL}${imageString}`,
+      );
+    }
   }
 }

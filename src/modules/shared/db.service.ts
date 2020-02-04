@@ -59,11 +59,9 @@ export class DbService {
    */
   async getById(id: string, relations?: string[]): Promise<any> {
     if (relations && relations.length > 0) {
-      return await this.Model.findById(id)
-        .populate(relations)
-        .lean();
+      return await this.Model.findById(id).populate(relations);
     } else {
-      return await this.Model.findById(id).lean();
+      return await this.Model.findById(id);
     }
   }
 
