@@ -1,4 +1,5 @@
 import { Permission } from '@guards/permission.decorator';
+import { PermissionGuard } from '@guards/permission.guard';
 import {
   Body,
   Controller,
@@ -29,7 +30,7 @@ import { CreateRoleDto, UpdateRoleDto } from './role.dto';
 import { RoleService } from './role.service';
 
 @Controller('admin/roles')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class RoleController {
   modelName = 'Role';
   uniques = ['name'];
@@ -50,6 +51,7 @@ export class RoleController {
   }
 
   @Get(':id')
+  @Permission('read-role')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -58,6 +60,7 @@ export class RoleController {
   }
 
   @Post()
+  @Permission('create-role')
   async store(
     @Body(new ValidationPipe()) createDto: CreateRoleDto,
   ): Promise<IApiItem> {
@@ -71,6 +74,7 @@ export class RoleController {
   }
 
   @Put(':id')
+  @Permission('update-role')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
@@ -90,6 +94,7 @@ export class RoleController {
   }
 
   @Delete(':id')
+  @Permission('delete-role')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;

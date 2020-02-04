@@ -35,14 +35,17 @@ export const TocologistSchema = new mongoose.Schema(
       close: String,
     },
     holiday: [Number],
-    services: {
-      name: String,
-      price: Number,
-      isAvailable: {
-        type: Boolean,
-        default: true,
+    services: [
+      {
+        _id: false,
+        name: String,
+        price: Number,
+        isAvailable: {
+          type: Boolean,
+          default: true,
+        },
       },
-    },
+    ],
     user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   { timestamps: true },

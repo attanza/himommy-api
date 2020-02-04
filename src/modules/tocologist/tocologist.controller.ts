@@ -1,3 +1,5 @@
+import { Permission } from '@guards/permission.decorator';
+import { PermissionGuard } from '@guards/permission.guard';
 import tocologistImageInterceptor from '@modules/helpers/tocologistImageInterceptor';
 import {
   BadRequestException,
@@ -39,7 +41,7 @@ import {
 import { TocologistService } from './tocologist.service';
 
 @Controller('admin/tocologists')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class TocologistController {
   modelName = 'Tocologist';
   uniques = ['name', 'email', 'phone'];
@@ -47,6 +49,7 @@ export class TocologistController {
   constructor(private dbService: TocologistService) {}
 
   @Get()
+  @Permission('read-tocologist')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'email', 'phone'];
     const keyValueSearchable = [];
@@ -59,6 +62,7 @@ export class TocologistController {
   }
 
   @Get(':id')
+  @Permission('read-tocologist')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -67,6 +71,7 @@ export class TocologistController {
   }
 
   @Post()
+  @Permission('create-tocologist')
   async store(
     @Body(new ValidationPipe()) createDto: CreateTocologistDto,
   ): Promise<IApiItem> {
@@ -76,6 +81,7 @@ export class TocologistController {
   }
 
   @Put(':id')
+  @Permission('update-tocologist')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
@@ -93,6 +99,7 @@ export class TocologistController {
   }
 
   @Delete(':id')
+  @Permission('delete-tocologist')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -105,6 +112,7 @@ export class TocologistController {
    */
 
   @Put('/:id/services')
+  @Permission('update-tocologist')
   @UsePipes(ValidationPipe)
   async attachServices(
     @Param() param: MongoIdPipe,
@@ -121,7 +129,7 @@ export class TocologistController {
    */
 
   @Post('/:id/image-upload')
-  @UseGuards(AuthGuard('jwt'))
+  @Permission('update-tocologist')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('image', tocologistImageInterceptor))
   uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {

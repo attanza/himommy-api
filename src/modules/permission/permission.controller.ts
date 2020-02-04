@@ -1,3 +1,5 @@
+import { Permission } from '@guards/permission.decorator';
+import { PermissionGuard } from '@guards/permission.guard';
 import {
   Body,
   Controller,
@@ -28,13 +30,14 @@ import { CreatePermissionDto, UpdatePermissionDto } from './permission.dto';
 import { PermissionService } from './permission.service';
 
 @Controller('admin/permissions')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class PermissionController {
   modelName = 'Permission';
   uniques = ['name'];
   constructor(private dbService: PermissionService) {}
 
   @Get()
+  @Permission('read-permission')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['slug'];
     const keyValueSearchable = [];
@@ -47,6 +50,7 @@ export class PermissionController {
   }
 
   @Get(':id')
+  @Permission('read-permission')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -55,6 +59,7 @@ export class PermissionController {
   }
 
   @Post()
+  @Permission('create-permission')
   async store(
     @Body(new ValidationPipe()) createDto: CreatePermissionDto,
   ): Promise<IApiItem> {
@@ -63,6 +68,7 @@ export class PermissionController {
   }
 
   @Put(':id')
+  @Permission('update-permission')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
@@ -79,6 +85,7 @@ export class PermissionController {
   }
 
   @Delete(':id')
+  @Permission('delete-permission')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;

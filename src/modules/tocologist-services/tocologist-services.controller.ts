@@ -1,3 +1,5 @@
+import { Permission } from '@guards/permission.decorator';
+import { PermissionGuard } from '@guards/permission.guard';
 import {
   Body,
   Controller,
@@ -31,13 +33,14 @@ import {
 import { TocologistServicesService } from './tocologist-services.service';
 
 @Controller('admin/tocologist-services')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class TocologistServicesController {
   modelName = 'Tocologist Service';
   uniques = ['name'];
   constructor(private dbService: TocologistServicesService) {}
 
   @Get()
+  @Permission('read-tocologist-service')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name'];
     const keyValueSearchable = [];
@@ -50,6 +53,7 @@ export class TocologistServicesController {
   }
 
   @Get(':id')
+  @Permission('read-tocologist-service')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -58,6 +62,7 @@ export class TocologistServicesController {
   }
 
   @Post()
+  @Permission('create-tocologist-service')
   async store(
     @Body(new ValidationPipe()) createDto: CreateTocologistServiceDto,
   ): Promise<IApiItem> {
@@ -66,6 +71,7 @@ export class TocologistServicesController {
   }
 
   @Put(':id')
+  @Permission('update-tocologist-service')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
@@ -82,6 +88,7 @@ export class TocologistServicesController {
   }
 
   @Delete(':id')
+  @Permission('delete-tocologist-service')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;

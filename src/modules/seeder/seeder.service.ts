@@ -10,6 +10,19 @@ import * as Chance from 'chance';
 import { paramCase, snakeCase } from 'change-case';
 import { Model } from 'mongoose';
 
+const mainServices = [
+  'Pertolongan Persalinan',
+  'Pemeriksaan kehamilan',
+  'Pemeriksaan Ibu Nifas',
+  'Pemeriksaan Bayi',
+  'Pemeriksaan Anak',
+  'Keluarga Berencana',
+  'Imunisasi',
+  'Pengambilan Pap Smear',
+  'Labolatorium Sederhana',
+  'Konseling',
+];
+
 @Injectable()
 export class SeederService {
   private faker = new Chance();
@@ -61,7 +74,13 @@ export class SeederService {
 
     await this.permissionModel.deleteMany({});
 
-    const resources = ['Role', 'Permission', 'User'];
+    const resources = [
+      'Role',
+      'Permission',
+      'User',
+      'Tocologist',
+      'Tocologist Service',
+    ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     let permissionsData = [];
     resources.map(r => {
@@ -114,19 +133,6 @@ export class SeederService {
     Logger.log('Seeding Tocologist Service ...');
     await this.tocologistServiceModel.deleteMany({});
 
-    const mainServices = [
-      'Pertolongan Persalinan',
-      'Pemeriksaan kehamilan',
-      'Pemeriksaan Ibu Nifas',
-      'Pemeriksaan Bayi',
-      'Pemeriksaan Anak',
-      'Keluarga Berencana',
-      'Imunisasi',
-      'Pengambilan Pap Smear',
-      'Labolatorium Sederhana',
-      'Konseling',
-    ];
-
     let tocologistServices = [];
 
     mainServices.map(s => tocologistServices.push({ name: s }));
@@ -143,8 +149,17 @@ export class SeederService {
     Logger.log('Seeding Tocologist ...');
     await this.tocologistModel.deleteMany({});
 
+    const generateService = () => ({
+      name:
+        mainServices[
+          this.faker.integer({ min: 0, max: mainServices.length - 1 })
+        ],
+      price: this.faker.integer({ min: 100000, max: 1000000 }),
+    });
+
     let tocologistData = [];
     for (let i = 0; i < 25; i++) {
+      const services = [generateService(), generateService()];
       tocologistData.push({
         name: this.faker.company(),
         email: this.faker.email(),
@@ -163,6 +178,7 @@ export class SeederService {
           open: '08:00',
           close: '20:00',
         },
+        services,
         location: {
           type: 'Point',
           coordinates: [

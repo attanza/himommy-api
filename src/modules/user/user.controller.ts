@@ -1,3 +1,5 @@
+import { Permission } from '@guards/permission.decorator';
+import { PermissionGuard } from '@guards/permission.guard';
 import {
   Body,
   Controller,
@@ -28,7 +30,7 @@ import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller('admin/users')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class UserController {
   modelName = 'User';
   uniques = ['phone', 'email'];
@@ -36,6 +38,7 @@ export class UserController {
   constructor(private dbService: UserService) {}
 
   @Get()
+  @Permission('read-user')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'phone', 'email'];
     const keyValueSearchable = ['role'];
@@ -48,6 +51,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @Permission('read-user')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -56,6 +60,7 @@ export class UserController {
   }
 
   @Post()
+  @Permission('create-user')
   async store(
     @Body(new ValidationPipe()) createDto: CreateUserDto,
   ): Promise<IApiItem> {
@@ -70,6 +75,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @Permission('update-user')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
@@ -89,6 +95,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Permission('delete-user')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
