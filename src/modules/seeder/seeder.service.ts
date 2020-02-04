@@ -80,6 +80,7 @@ export class SeederService {
       'User',
       'Tocologist',
       'Tocologist Service',
+      'App Version',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     let permissionsData = [];

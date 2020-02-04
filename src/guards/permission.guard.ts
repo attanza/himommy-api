@@ -10,7 +10,6 @@ export class PermissionGuard implements CanActivate {
       'permission',
       context.getHandler(),
     );
-    console.log('permission', permission);
     if (!permission) {
       return true;
     }
@@ -21,7 +20,6 @@ export class PermissionGuard implements CanActivate {
     }
     let permissions = [];
     userPermissions.map(p => permissions.push(p.slug));
-    console.log('permissions', permissions);
     return permissions.includes(permission);
   }
 }

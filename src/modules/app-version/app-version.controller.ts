@@ -1,3 +1,5 @@
+import { Permission } from '@guards/permission.decorator';
+import { PermissionGuard } from '@guards/permission.guard';
 import {
   apiCreated,
   apiDeleted,
@@ -28,12 +30,13 @@ import { CreateAppVersionDto, UpdateAppVersionDto } from './app-version.dto';
 import { AppVersionService } from './app-version.service';
 
 @Controller('admin/app-versions')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class AppVersionController {
   modelName = 'AppVersion';
   constructor(private dbService: AppVersionService) {}
 
   @Get()
+  @Permission('read-app-version')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['platform'];
     const keyValueSearchable = [];
@@ -46,6 +49,7 @@ export class AppVersionController {
   }
 
   @Get(':id')
+  @Permission('read-app-version')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
@@ -54,6 +58,7 @@ export class AppVersionController {
   }
 
   @Post()
+  @Permission('create-app-version')
   async store(
     @Body(new ValidationPipe()) createDto: CreateAppVersionDto,
   ): Promise<IApiItem> {
@@ -62,6 +67,7 @@ export class AppVersionController {
   }
 
   @Put(':id')
+  @Permission('update-app-version')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
@@ -73,6 +79,7 @@ export class AppVersionController {
   }
 
   @Delete(':id')
+  @Permission('delete-app-version')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
