@@ -40,12 +40,12 @@ export class AppVersionController {
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['platform'];
     const keyValueSearchable = [];
-    return this.dbService.getPaginated(
-      this.modelName,
+    return this.dbService.getPaginated({
+      modelName: this.modelName,
       query,
       regexSearchable,
       keyValueSearchable,
-    );
+    });
   }
 
   @Get(':id')

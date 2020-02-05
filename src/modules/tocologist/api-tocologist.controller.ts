@@ -29,12 +29,12 @@ export class ApiTocologistController {
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'email', 'phone', 'services.name'];
     const keyValueSearchable = [];
-    return this.dbService.getPaginated(
-      this.modelName,
+    return this.dbService.getPaginated({
+      modelName: this.modelName,
       query,
       regexSearchable,
       keyValueSearchable,
-    );
+    });
   }
 
   @Get(':id')

@@ -1,7 +1,7 @@
 import { getApiCollection, isUnique } from '@modules/helpers';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { IPaginated } from './interfaces/paginated.inteface';
 import { IApiCollection } from './interfaces/response-parser.interface';
-import { ResourcePaginationPipe } from './pipes/resource-pagination.pipe';
 
 @Injectable()
 export class DbService {
@@ -17,19 +17,21 @@ export class DbService {
    * @param regexSearchable
    * @param keyValueSearchable
    */
-  async getPaginated(
-    modelName: string,
-    query: ResourcePaginationPipe,
-    regexSearchable: string[],
-    keyValueSearchable: string[],
-  ): Promise<IApiCollection> {
-    return await getApiCollection(
+  async getPaginated({
+    modelName,
+    query,
+    regexSearchable,
+    keyValueSearchable,
+    relations,
+  }: IPaginated): Promise<IApiCollection> {
+    return await getApiCollection({
       modelName,
-      this.Model,
+      model: this.Model,
       query,
       regexSearchable,
       keyValueSearchable,
-    );
+      relations,
+    });
   }
 
   /**

@@ -42,12 +42,12 @@ export class UserController {
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'phone', 'email'];
     const keyValueSearchable = ['role'];
-    return this.dbService.getPaginated(
-      this.modelName,
+    return this.dbService.getPaginated({
+      modelName: this.modelName,
       query,
       regexSearchable,
       keyValueSearchable,
-    );
+    });
   }
 
   @Get(':id')

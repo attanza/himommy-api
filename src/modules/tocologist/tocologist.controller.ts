@@ -53,12 +53,12 @@ export class TocologistController {
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'email', 'phone'];
     const keyValueSearchable = [];
-    return this.dbService.getPaginated(
-      this.modelName,
+    return this.dbService.getPaginated({
+      modelName: this.modelName,
       query,
       regexSearchable,
       keyValueSearchable,
-    );
+    });
   }
 
   @Get(':id')

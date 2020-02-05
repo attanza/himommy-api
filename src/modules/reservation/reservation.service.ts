@@ -1,9 +1,10 @@
 import { DbService } from '@modules/shared/db.service';
-import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
+import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { TServiceDto } from './reservation.dto';
 import { IReservation } from './reservation.interface';
 
 @Injectable()
@@ -11,16 +12,47 @@ export class ReservationService extends DbService {
   constructor(
     @InjectModel('Reservation') private model: Model<IReservation>,
     private tocologistService: TocologistService,
-    private tocologistServiceService: TocologistServicesService,
   ) {
     super(model);
   }
 
-  async checkTocologist(id: string): Promise<void> {
-    await this.tocologistService.show('Tocologist', id);
+  async checkServices(
+    id: string,
+    requestedServices: TServiceDto[],
+  ): Promise<void> {
+    const data: ITocologist = await this.tocologistService.show(
+      'Tocologist',
+      id,
+    );
+    if (!data.isActive) {
+      throw new BadRequestException('Tocologist cannot received reservation');
+    }
+    if (requestedServices && requestedServices.length > 0) {
+      const { services } = data;
+      const tocologistServices = services.map(s => s.name);
+
+      requestedServices.map(s => {
+        if (!tocologistServices.includes(s.name)) {
+          throw new BadRequestException(
+            'One or more services is not available at the chosen Tocologist',
+          );
+        }
+      });
+    }
   }
 
-  async checkServices(services: string[]): Promise<void> {
-    await this.tocologistServiceService.checkServicesExists(services);
+  async getMyReservationById(
+    userId: string,
+    id: string,
+  ): Promise<IReservation> {
+    const found = await this.model
+      .findOne({ user: userId, _id: id })
+      .populate('tocologist')
+      .lean();
+    if (!found) {
+      throw new BadRequestException('Reservation not found');
+    }
+
+    return found;
   }
 }

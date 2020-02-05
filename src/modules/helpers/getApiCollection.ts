@@ -1,20 +1,18 @@
-import { Model } from 'mongoose';
+import { IPaginated } from '@modules/shared/interfaces/paginated.inteface';
 import {
   IApiCollection,
   IMeta,
 } from '../shared/interfaces/response-parser.interface';
-import {
-  ResourcePaginationPipe,
-  SortMode,
-} from '../shared/pipes/resource-pagination.pipe';
+import { SortMode } from '../shared/pipes/resource-pagination.pipe';
 
-export default async (
-  modelName: string,
-  model: Model<any>,
-  query?: ResourcePaginationPipe,
-  regexSearchable?: string[],
-  keyValueSearchable?: string[],
-): Promise<IApiCollection> => {
+export default async ({
+  modelName,
+  model,
+  query,
+  regexSearchable,
+  keyValueSearchable,
+  relations,
+}: IPaginated): Promise<IApiCollection> => {
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 10;
   const sortBy = query.sortBy || 'createdAt';
@@ -122,6 +120,7 @@ export default async (
 
   data = await model
     .find(options)
+    .populate(relations)
     .sort({ [sortBy]: sortMode })
     .skip(limit * page - limit)
     .limit(limit)

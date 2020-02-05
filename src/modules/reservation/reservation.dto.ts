@@ -1,6 +1,7 @@
 import {
   ArrayNotEmpty,
   IsDateString,
+  IsIn,
   IsInt,
   IsMongoId,
   IsNotEmpty,
@@ -10,8 +11,9 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { EStatus } from './reservation.interface';
 
-class TServiceDto {
+export class TServiceDto {
   @IsNotEmpty()
   @IsString()
   @Length(3, 100)
@@ -34,6 +36,29 @@ export class CreateReservationDto {
   @IsNotEmpty()
   @IsDateString()
   date: Date;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  note: string;
+}
+
+export class UpdateReservationDto {
+  @ValidateNested({ each: true })
+  services: TServiceDto[];
+
+  @IsNotEmpty()
+  @IsDateString()
+  date: Date;
+
+  @IsOptional()
+  @IsIn([EStatus.CANCEL])
+  status: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  reason: string;
 
   @IsOptional()
   @IsString()

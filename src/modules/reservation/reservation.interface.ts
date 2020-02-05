@@ -21,7 +21,7 @@ export interface IReservation extends Document {
 
 export enum EStatus {
   NEW = 'NEW',
-  ACCEPTED = 'NEW',
+  ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   CANCEL = 'CANCEL',
   COMPLETE_CONFIRM = 'COMPLETE_CONFIRM',

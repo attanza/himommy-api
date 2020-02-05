@@ -1,7 +1,10 @@
-import { PermissionGuard } from '@guards/permission.guard';
 import { GetUser } from '@modules/auth/get-user.decorator';
 import mqttHandler from '@modules/helpers/mqttHandler';
-import { apiCreated, apiItem } from '@modules/helpers/responseParser';
+import {
+  apiCreated,
+  apiItem,
+  apiUpdated,
+} from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -10,25 +13,29 @@ import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { IUser } from '@modules/user/user.interface';
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateReservationDto } from './reservation.dto';
+import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
+import { EStatus } from './reservation.interface';
 import { ReservationService } from './reservation.service';
 
 @Controller('api/reservations')
-@UseGuards(AuthGuard('jwt'), PermissionGuard)
+@UseGuards(AuthGuard('jwt'))
 export class ApiReservationController {
   modelName = 'Reservation';
-  relations = ['user'];
+  relations = ['user', 'tocologist'];
   constructor(private reservationService: ReservationService) {}
 
   @Post()
@@ -39,12 +46,7 @@ export class ApiReservationController {
   ): Promise<IApiItem> {
     const { tocologist, services } = createReservationDto;
 
-    const serviceNames = [];
-    services.map(s => serviceNames.push(s.name));
-    await this.reservationService.checkServices(serviceNames);
-
-    // Check Tocologist and user are exist
-    await this.reservationService.checkTocologist(tocologist);
+    await this.reservationService.checkServices(tocologist, services);
 
     const code = Math.floor(Date.now() / 1000).toString();
     const data = await this.reservationService.store(
@@ -63,12 +65,14 @@ export class ApiReservationController {
 
   @Get(':id')
   @UsePipes(ValidationPipe)
-  async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
+  async show(
+    @GetUser() user: IUser,
+    @Param() param: MongoIdPipe,
+  ): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.reservationService.show(
-      this.modelName,
+    const data = await this.reservationService.getMyReservationById(
+      user._id,
       id,
-      this.relations,
     );
     return apiItem(this.modelName, data);
   }
@@ -80,14 +84,56 @@ export class ApiReservationController {
   ): Promise<IApiCollection> {
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist'];
+    const relations = ['tocologist'];
     query.fieldKey = 'user';
     query.fieldValue = user._id;
 
-    return this.reservationService.getPaginated(
-      this.modelName,
+    return this.reservationService.getPaginated({
+      modelName: this.modelName,
       query,
       regexSearchable,
       keyValueSearchable,
+      relations,
+    });
+  }
+
+  @Put(':id')
+  @UsePipes(ValidationPipe)
+  async update(
+    @Param() param: MongoIdPipe,
+    @Body() updateDto: UpdateReservationDto,
+    @GetUser() user: IUser,
+  ) {
+    const { id } = param;
+    let data = await this.reservationService.getById(id);
+    if (!data) {
+      throw new BadRequestException('Reservation not found');
+    }
+    if (data.user.toString() !== user._id.toString()) {
+      throw new ForbiddenException('Action forbidden');
+    }
+    if (data.status !== EStatus.NEW) {
+      throw new BadRequestException('Reservation status not NEW');
+    }
+    if (
+      updateDto.status === EStatus.CANCEL &&
+      (!updateDto.reason || updateDto.reason === '')
+    ) {
+      throw new BadRequestException('reason is required');
+    }
+
+    await this.reservationService.checkServices(
+      data.tocologist,
+      updateDto.services,
     );
+
+    data = await this.reservationService.update(
+      'Reservation',
+      id,
+      updateDto,
+      [],
+      this.relations,
+    );
+    return apiUpdated('Reservation', data);
   }
 }
