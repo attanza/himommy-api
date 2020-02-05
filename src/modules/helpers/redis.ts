@@ -41,6 +41,10 @@ class RedisInstance {
       });
     });
   }
+
+  async flushall() {
+    await this.redis.flushall();
+  }
 }
 
 export default new RedisInstance();

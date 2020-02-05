@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as Chance from 'chance';
 import { paramCase, snakeCase } from 'change-case';
 import { Model } from 'mongoose';
-
+import RedisInstance from '../helpers/redis';
 const mainServices = [
   'Pertolongan Persalinan',
   'Pemeriksaan kehamilan',
@@ -44,6 +44,8 @@ export class SeederService {
     Logger.log('Seeding Role and Users ...');
     await this.roleModel.deleteMany({});
     await this.userModel.deleteMany({});
+
+    RedisInstance.flushall();
 
     const roles = [
       'Super Administrator',
