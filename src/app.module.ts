@@ -8,8 +8,6 @@ import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RoleModule } from './modules/role/role.module';
@@ -22,9 +20,9 @@ const MONGO_DB_OPTIONS = {
 @Module({
   imports: [
     MongooseModule.forRoot(`mongodb://localhost/${DB_NAME}`, MONGO_DB_OPTIONS),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'public'),
+    // }),
     RoleModule,
     SeederModule,
     PermissionModule,
