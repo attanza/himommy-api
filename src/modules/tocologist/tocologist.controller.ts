@@ -133,10 +133,12 @@ export class TocologistController {
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('image', tocologistImageInterceptor))
   uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
-    if (!image)
+    if (!image) {
       throw new BadRequestException(
         'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
       );
+    }
+
     const { id } = param;
     this.dbService.saveImage(id, image);
     return apiSucceed('Image Uploaded, actual result will be sent via socket');

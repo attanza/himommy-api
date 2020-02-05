@@ -20,7 +20,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsEmail()
-  email: String;
+  email: string;
 
   @IsNotEmpty()
   @IsString()
@@ -50,7 +50,7 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsEmail()
-  email: String;
+  email: string;
 
   @IsOptional()
   @IsString()

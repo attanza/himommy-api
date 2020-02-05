@@ -1,3 +1,4 @@
+// tslint:disable:no-console
 import { Logger } from '@nestjs/common';
 import * as mqtt from 'mqtt';
 
@@ -33,11 +34,11 @@ class MqttHandler {
 
     // mqtt subscriptions
     this.mqttClient.subscribe('#', {
-      qos: 0,
+      qos: 1,
     });
 
     // When a message arrives, console.log it
-    this.mqttClient.on('message', function(topic, message) {
+    this.mqttClient.on('message', (topic, message) => {
       console.log('on message');
       console.log(topic);
       console.log(message.toString());

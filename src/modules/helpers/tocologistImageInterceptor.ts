@@ -9,13 +9,13 @@ export default {
     },
   }),
   limits: {
-    fileSize: 5000000, //5MB
+    fileSize: 5000000,
   },
   fileFilter: (req: Request, file, cb) => {
     if (
-      file.mimetype == 'image/png' ||
-      file.mimetype == 'image/jpg' ||
-      file.mimetype == 'image/jpeg'
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg'
     ) {
       cb(null, true);
     } else {

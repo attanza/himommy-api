@@ -49,5 +49,5 @@ export enum IHoliday {
 export interface ITServices {
   name: string;
   price: number;
-  isAvailable: boolean;
+  isAvailable?: boolean;
 }

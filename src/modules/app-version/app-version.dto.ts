@@ -16,12 +16,12 @@ export class CreateAppVersionDto {
     EPlatform.IOS_TOCOLOGIST,
     EPlatform.DASHBOARD,
   ])
-  platform: String;
+  platform: string;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(10)
-  version: String;
+  version: string;
 }
 
 export class UpdateAppVersionDto {
@@ -34,10 +34,10 @@ export class UpdateAppVersionDto {
     EPlatform.IOS_TOCOLOGIST,
     EPlatform.DASHBOARD,
   ])
-  platform: String;
+  platform: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(10)
-  version: String;
+  version: string;
 }

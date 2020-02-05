@@ -54,21 +54,21 @@ export class SeederService {
       'Tocologist',
     ];
 
-    for (const i in roles) {
+    roles.map(async r => {
       const newRole = await this.roleModel.create({
-        name: roles[i],
-        slug: paramCase(roles[i]),
+        name: r,
+        slug: paramCase(r),
       });
       await this.userModel.create({
-        firstName: roles[i],
-        email: `${snakeCase(roles[i])}@himommy.org`,
+        firstName: r,
+        email: `${snakeCase(r)}@himommy.org`,
         password: 'password',
         phone: this.faker.phone(),
         role: newRole._id,
         isActive: true,
         authProvider: 'local',
       });
-    }
+    });
 
     Logger.log('Seeding Role and Users Finish');
 
@@ -83,9 +83,10 @@ export class SeederService {
       'Tocologist',
       'Tocologist Service',
       'App Version',
+      'Reservation',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
-    let permissionsData = [];
+    const permissionsData = [];
     resources.map(r => {
       actions.map(a =>
         permissionsData.push({
@@ -100,7 +101,7 @@ export class SeederService {
 
     Logger.log('Attach Permissions into Roles');
     const permissionIds = await this.permissionModel.find({}, { _id: 1 });
-    let perIds = [];
+    const perIds = [];
     permissionIds.map(i => perIds.push(i._id));
     // Attach all permission for Super Administrator
     const superAdmin = await this.roleModel.findOne({
@@ -136,7 +137,7 @@ export class SeederService {
     Logger.log('Seeding Tocologist Service ...');
     await this.tocologistServiceModel.deleteMany({});
 
-    let tocologistServices = [];
+    const tocologistServices = [];
 
     mainServices.map(s => tocologistServices.push({ name: s }));
 
@@ -160,7 +161,7 @@ export class SeederService {
       price: this.faker.integer({ min: 100000, max: 1000000 }),
     });
 
-    let tocologistData = [];
+    const tocologistData = [];
     for (let i = 0; i < 25; i++) {
       const services = [generateService(), generateService()];
       tocologistData.push({

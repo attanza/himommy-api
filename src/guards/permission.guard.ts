@@ -18,7 +18,7 @@ export class PermissionGuard implements CanActivate {
     if (!userPermissions) {
       return false;
     }
-    let permissions = [];
+    const permissions = [];
     userPermissions.map(p => permissions.push(p.slug));
     return permissions.includes(permission);
   }

@@ -8,7 +8,7 @@ export default async (
   id?: string,
 ): Promise<boolean> => {
   if (key && value) {
-    let options = {
+    const options = {
       [key]: value,
     };
     const found = await model.findOne(options);

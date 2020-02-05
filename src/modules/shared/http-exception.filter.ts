@@ -1,9 +1,11 @@
+// tslint:disable:no-console
 import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { Meta2 } from './interfaces/response-parser.interface';
 
@@ -22,6 +24,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const NODE_ENV = process.env.NODE_ENV;
     if (NODE_ENV === 'development') {
       console.log(exception);
+      Logger.log(JSON.stringify(exception), 'Error');
     }
 
     let message =
@@ -29,7 +32,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.message.message || exception.message || null
         : 'Internal Server Error';
 
-    if (status === 401) message = 'Unauthorized';
+    if (status === 401) {
+      message = 'Unauthorized';
+    }
     const meta: Meta2 = {
       status,
       message,

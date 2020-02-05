@@ -1,5 +1,6 @@
 import { paramCase } from 'change-case';
 import * as mongoose from 'mongoose';
+import { IRole } from './role.interface';
 export const RoleSchema = new mongoose.Schema(
   {
     name: {
@@ -21,9 +22,11 @@ export const RoleSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-RoleSchema.pre('save', function(next: mongoose.HookNextFunction) {
+RoleSchema.pre<IRole>('save', function(next: mongoose.HookNextFunction) {
   try {
-    this['slug'] = paramCase(this['name']);
+    if (this.isModified('name')) {
+      this.slug = paramCase(this.name);
+    }
     return next();
   } catch (e) {
     return next(e);

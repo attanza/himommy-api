@@ -4,21 +4,18 @@ export default {
   storage: diskStorage({
     destination: './public/avatars',
     filename: (req, file, cb) => {
-      const randomName = Array(32)
-        .fill(null)
-        .map(() => Math.round(Math.random() * 16).toString(16))
-        .join('');
+      const randomName = Math.floor(Date.now() / 1000).toString();
       return cb(null, `${randomName}${extname(file.originalname)}`);
     },
   }),
   limits: {
-    fileSize: 5000000, //5MB
+    fileSize: 5000000,
   },
   fileFilter: (req: Request, file, cb) => {
     if (
-      file.mimetype == 'image/png' ||
-      file.mimetype == 'image/jpg' ||
-      file.mimetype == 'image/jpeg'
+      file.mimetype === 'image/png' ||
+      file.mimetype === 'image/jpg' ||
+      file.mimetype === 'image/jpeg'
     ) {
       cb(null, true);
     } else {

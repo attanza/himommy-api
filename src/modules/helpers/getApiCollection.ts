@@ -18,7 +18,7 @@ export default async (
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 10;
   const sortBy = query.sortBy || 'createdAt';
-  const sortMode = SortMode[query.sortMode];
+  const sortMode = SortMode[query.sortMode] || -1;
   const search = query.search || '';
   const coordinates = [];
 
@@ -53,7 +53,8 @@ export default async (
   // NOTE: comeback later and DRY out the code bellow
   let total: number = 0;
   let data = null;
-
+  let totalPages: number;
+  let meta: IMeta;
   if (coordinates.length === 2) {
     const totalCount = await model.aggregate([
       {
@@ -92,8 +93,8 @@ export default async (
       { $skip: limit * page - limit },
       { $limit: limit },
     ]);
-    const totalPages: number = Math.ceil(total / limit);
-    const meta: IMeta = {
+    totalPages = Math.ceil(total / limit);
+    meta = {
       status: 200,
       message: `${modelName} Collection`,
       total,
@@ -107,8 +108,8 @@ export default async (
   }
 
   total = await model.countDocuments(options);
-  const totalPages: number = Math.ceil(total / limit);
-  const meta: IMeta = {
+  totalPages = Math.ceil(total / limit);
+  meta = {
     status: 200,
     message: `${modelName} Collection`,
     total,

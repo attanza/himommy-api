@@ -24,7 +24,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         populate: { path: 'permissions', select: 'name slug' },
       },
     ]);
-    if (!user) throw new UnauthorizedException();
+    if (!user) {
+      throw new UnauthorizedException();
+    }
     return user;
   }
 }

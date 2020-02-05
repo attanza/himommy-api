@@ -1,3 +1,4 @@
+// tslint:disable:no-console
 import * as nodemailer from 'nodemailer';
 import * as hbs from 'nodemailer-express-handlebars';
 
@@ -73,7 +74,7 @@ class Mailer {
         context,
       });
     } catch (e) {
-      console.log('e', e);
+      console.log('e', e); //tslint:disable
     }
   }
 }

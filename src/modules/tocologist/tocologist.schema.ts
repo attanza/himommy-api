@@ -55,7 +55,9 @@ TocologistSchema.index({ location: '2dsphere' });
 
 TocologistSchema.methods.toJSON = function() {
   const obj = this.toObject();
-  if (obj.image || obj.image !== '')
+  if (obj.image && obj.image !== '') {
     obj.image = `${process.env.APP_URL}${obj.image}`;
+  }
+
   return obj;
 };

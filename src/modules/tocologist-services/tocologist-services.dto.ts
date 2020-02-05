@@ -4,22 +4,22 @@ export class CreateTocologistServiceDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  name: String;
+  name: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(250)
-  description: String;
+  description: string;
 }
 
 export class UpdateTocologistServiceDto {
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  name: String;
+  name: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(250)
-  description: String;
+  description: string;
 }

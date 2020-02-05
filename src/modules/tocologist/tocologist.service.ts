@@ -29,7 +29,7 @@ export class TocologistService extends DbService {
    * @param tocologistData
    */
   prepareTocologistData(tocologistData: UpdateTocologistDto) {
-    let data = Object.assign({}, tocologistData);
+    const data = Object.assign({}, tocologistData) as any;
     const addressKeys = [
       'street',
       'country',
@@ -43,10 +43,10 @@ export class TocologistService extends DbService {
         data[key] = tocologistData[key];
       }
     });
-    data['location'] = {
+    data.location = {
       coordinates: [tocologistData.longitude, tocologistData.latitude],
     };
-    data['operationTime'] = {
+    data.operationTime = {
       open: tocologistData.open,
       close: tocologistData.close,
     };
@@ -60,7 +60,7 @@ export class TocologistService extends DbService {
   async checkServices(
     servicesData: AttachTocologistServicesDto,
   ): Promise<void> {
-    let services: string[] = [];
+    const services: string[] = [];
     if (
       servicesData &&
       servicesData.services &&

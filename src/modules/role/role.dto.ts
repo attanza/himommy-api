@@ -11,12 +11,12 @@ export class CreateRoleDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(50)
-  name: String;
+  name: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(250)
-  description?: String;
+  description?: string;
 
   @IsOptional()
   @IsArray()
@@ -30,12 +30,12 @@ export class UpdateRoleDto {
   @IsOptional()
   @IsString()
   @MaxLength(50)
-  name: String;
+  name: string;
 
   @IsOptional()
   @IsString()
   @MaxLength(250)
-  description?: String;
+  description?: string;
 
   @IsOptional()
   @IsArray()

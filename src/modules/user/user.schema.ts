@@ -1,6 +1,7 @@
 import { hash } from 'bcrypt';
 import * as mongoose from 'mongoose';
 import { v4 as uuid } from 'uuid';
+import { IUser } from './user.interface';
 export const UserSchema = new mongoose.Schema(
   {
     firstName: String,
@@ -29,22 +30,22 @@ export const UserSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-UserSchema.pre('save', async function(next: mongoose.HookNextFunction) {
+UserSchema.pre<IUser>('save', async function(next: mongoose.HookNextFunction) {
   try {
     if (!this.isModified('password')) {
       return next();
     }
-    const hashed = await hash(this['password'], 12);
-    this['password'] = hashed;
+    const hashed = await hash(this.password, 12);
+    this.password = hashed;
     return next();
   } catch (e) {
     return next(e);
   }
 });
 
-UserSchema.pre('save', async function(next: mongoose.HookNextFunction) {
+UserSchema.pre<IUser>('save', async function(next: mongoose.HookNextFunction) {
   try {
-    this['refreshToken'] = uuid();
+    this.refreshToken = uuid();
     return next();
   } catch (e) {
     return next(e);
@@ -55,7 +56,8 @@ UserSchema.methods.toJSON = function() {
   const obj = this.toObject();
   delete obj.password;
   delete obj.refreshToken;
-  if (obj.avatar || obj.avatar !== '')
+  if (obj.avatar && obj.avatar !== '') {
     obj.avatar = `${process.env.APP_URL}${obj.avatar}`;
+  }
   return obj;
 };

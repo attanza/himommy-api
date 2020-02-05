@@ -15,5 +15,6 @@ import { TocologistService } from './tocologist.service';
   ],
   controllers: [TocologistController, ApiTocologistController],
   providers: [TocologistService],
+  exports: [TocologistService],
 })
 export class TocologistModule {}

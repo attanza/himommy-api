@@ -181,7 +181,7 @@ export class AttachTocologistServicesDto {
   services: TServiceDto[];
 }
 
-export class TServiceDto {
+class TServiceDto {
   @IsNotEmpty()
   @IsString()
   @Length(3, 100)
