@@ -4,27 +4,15 @@ import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  HttpCode,
-  Post,
-  Put,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpCode, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { apiSucceed, apiUpdated } from '../helpers/responseParser';
 import { ChangePasswordDto, ProfileUpdateDto } from './profile.dto';
 import { ProfileService } from './profile.service';
 
-@Controller('api/profile')
-export class ApiProfileController {
+@Controller('mobile/profile')
+export class MobileProfileController {
   modelName = 'Profile';
 
   constructor(private profileService: ProfileService) {}

@@ -4,11 +4,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { UserSchema } from '../user/user.schema';
-import { AuthApiController } from './auth-api.controller';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { FacebookStrategy } from './facebook.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { MobileAuthController } from './mobile-auth.controller';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -23,7 +23,7 @@ import { JwtStrategy } from './jwt.strategy';
       },
     }),
   ],
-  controllers: [AuthController, AuthApiController],
+  controllers: [AuthController, MobileAuthController],
   providers: [AuthService, JwtStrategy, FacebookStrategy],
   exports: [JwtStrategy, PassportModule],
 })

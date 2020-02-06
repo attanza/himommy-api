@@ -1,12 +1,5 @@
 // tslint:disable:no-console
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-  Logger,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Meta2 } from './interfaces/response-parser.interface';
 
 @Catch()
@@ -24,7 +17,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const NODE_ENV = process.env.NODE_ENV;
     if (NODE_ENV === 'development') {
       console.log(exception);
-      Logger.log(JSON.stringify(exception), 'Error');
     }
 
     let message =

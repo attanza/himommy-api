@@ -3,8 +3,8 @@ import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { Controller, Get, Query } from '@nestjs/common';
 import { AppVersionService } from './app-version.service';
 
-@Controller('api/app-version')
-export class ApiAppVersionController {
+@Controller('mobile/app-version')
+export class MobileAppVersionController {
   modelName = 'AppVersion';
   constructor(private dbService: AppVersionService) {}
 

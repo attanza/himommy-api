@@ -1,25 +1,14 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { apiItem } from '../helpers/responseParser';
-import {
-  IApiCollection,
-  IApiItem,
-} from '../shared/interfaces/response-parser.interface';
+import { IApiCollection, IApiItem } from '../shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
 import { TocologistService } from './tocologist.service';
 
-@Controller('api/tocologists')
+@Controller('mobile/tocologists')
 @UseGuards(AuthGuard('jwt'))
-export class ApiTocologistController {
+export class MobileTocologistController {
   modelName = 'Tocologist';
   uniques = ['name', 'email', 'phone'];
   relations = [];

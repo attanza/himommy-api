@@ -1,39 +1,19 @@
 import { GetUser } from '@modules/auth/get-user.decorator';
 import mqttHandler from '@modules/helpers/mqttHandler';
-import {
-  apiCreated,
-  apiItem,
-  apiUpdated,
-} from '@modules/helpers/responseParser';
-import {
-  IApiCollection,
-  IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
+import { apiCreated, apiItem, apiUpdated } from '@modules/helpers/responseParser';
+import { IApiCollection, IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { IUser } from '@modules/user/user.interface';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  ForbiddenException,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
 import { EStatus } from './reservation.interface';
 import { ReservationService } from './reservation.service';
 
-@Controller('api/reservations')
+@Controller('mobile/reservations')
 @UseGuards(AuthGuard('jwt'))
-export class ApiReservationController {
+export class MobileReservationController {
   modelName = 'Reservation';
   relations = ['user', 'tocologist'];
   constructor(private reservationService: ReservationService) {}
