@@ -1,11 +1,6 @@
 import { isUnique } from '@modules/helpers';
 import { IRole } from '@modules/role/role.interface';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcrypt';
@@ -15,12 +10,7 @@ import mail from '../helpers/mail';
 import RedisInstance from '../helpers/redis';
 import { IUser } from '../user/user.interface';
 import { RegisterDto } from './auth.dto';
-import {
-  JwtPayload,
-  LoginDto,
-  LoginOutput,
-  RefreshTokenDto,
-} from './auth.interface';
+import { JwtPayload, LoginDto, LoginOutput, RefreshTokenDto } from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -91,19 +81,25 @@ export class AuthService {
       .populate('role');
 
     if (!user) {
+      console.log("no user")
       this.throwError();
     }
 
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) {
+      console.log("invalid password")
+
       this.throwError();
     }
 
     if (!user.isActive) {
+      console.log("user not active")
+
       this.throwError();
     }
 
     if (!allowedRoles.includes(user.role.slug)) {
+      console.log("role not allowed")
       this.throwError();
     }
     const tokenData = await this.generateToken(user);

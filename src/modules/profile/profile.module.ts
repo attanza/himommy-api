@@ -4,10 +4,11 @@ import { Module } from '@nestjs/common';
 import { MobileProfileController } from './mobile-profile.controller';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
+import { TocologistProfileController } from './tocologist-profile.controller';
 
 @Module({
   imports: [UserModule, MommyDetailModule],
-  controllers: [ProfileController, MobileProfileController],
+  controllers: [ProfileController, MobileProfileController, TocologistProfileController],
   providers: [ProfileService],
 })
 export class ProfileModule {}

@@ -6,6 +6,7 @@ import { MobileReservationController } from './mobile-reservation.controller';
 import { ReservationController } from './reservation.controller';
 import { ReservationSchema } from './reservation.schema';
 import { ReservationService } from './reservation.service';
+import { TocologistReservationController } from './tocologist-reservation.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { ReservationService } from './reservation.service';
     TocologistModule,
     TocologistServicesModule,
   ],
-  controllers: [ReservationController, MobileReservationController],
+  controllers: [ReservationController, MobileReservationController, TocologistReservationController],
   providers: [ReservationService],
 })
 export class ReservationModule {}

@@ -4,6 +4,7 @@ import { AppVersionController } from './app-version.controller';
 import { AppVersionSchema } from './app-version.schema';
 import { AppVersionService } from './app-version.service';
 import { MobileAppVersionController } from './mobile-app-version.controller';
+import { TocologistAppVersionController } from './tocologist-app-version.controller';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { MobileAppVersionController } from './mobile-app-version.controller';
       { name: 'AppVersion', schema: AppVersionSchema },
     ]),
   ],
-  controllers: [AppVersionController, MobileAppVersionController],
+  controllers: [AppVersionController, MobileAppVersionController, TocologistAppVersionController],
   providers: [AppVersionService],
 })
 export class AppVersionModule {}

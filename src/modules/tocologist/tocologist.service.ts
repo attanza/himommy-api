@@ -137,4 +137,8 @@ export class TocologistService extends DbService {
 
     return data;
   }
+
+  async getByUser(userId: string) {
+    return await this.tocologistModel.findOne({ user: userId }).lean();
+  }
 }

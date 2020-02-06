@@ -1,3 +1,4 @@
+import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { Document } from 'mongoose';
 import { IRole } from '../role/role.interface';
 
@@ -12,7 +13,8 @@ export interface IUser extends Document {
   isActive: boolean;
   authProvider: string;
   avatar: string;
-  mommyDetail: MommyDetail;
+  mommyDetail?: MommyDetail;
+  tocologist?: ITocologist;
   createdAt: Date;
   updatedAt: Date;
 }

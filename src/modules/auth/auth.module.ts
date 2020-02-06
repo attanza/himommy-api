@@ -1,4 +1,5 @@
 import { RoleSchema } from '@modules/role/role.schema';
+import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -9,6 +10,7 @@ import { AuthService } from './auth.service';
 import { FacebookStrategy } from './facebook.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { MobileAuthController } from './mobile-auth.controller';
+import { TocologistAuthController } from './tocologist-auth.controller';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -22,8 +24,9 @@ import { MobileAuthController } from './mobile-auth.controller';
         expiresIn: '1h',
       },
     }),
+    TocologistModule,
   ],
-  controllers: [AuthController, MobileAuthController],
+  controllers: [AuthController, MobileAuthController, TocologistAuthController],
   providers: [AuthService, JwtStrategy, FacebookStrategy],
   exports: [JwtStrategy, PassportModule],
 })

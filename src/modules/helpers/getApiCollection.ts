@@ -123,7 +123,6 @@ export default async ({
     .populate(relations)
     .sort({ [sortBy]: sortMode })
     .skip(limit * page - limit)
-    .limit(limit)
-    .lean();
+    .limit(limit);
   return { meta, data };
 };

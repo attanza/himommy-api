@@ -31,7 +31,7 @@ export class MobileAuthController {
   @Post('login')
   @UsePipes(ValidationPipe)
   async login(@Res() res, @Body() loginDto: LoginDto): Promise<LoginOutput> {
-    const allowedRoles = ['mommy', 'tocologist'];
+    const allowedRoles = ['mommy'];
 
     const data = await this.authService.login(loginDto, allowedRoles);
     return res.status(200).send(data);

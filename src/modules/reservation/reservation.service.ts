@@ -55,4 +55,19 @@ export class ReservationService extends DbService {
 
     return found;
   }
+
+  async getMyReservationByTocologistId(
+    tocologistId: string,
+    id: string,
+  ): Promise<IReservation> {
+    const found = await this.model
+      .findOne({ tocologist: tocologistId, _id: id })
+      .populate('user');
+
+    if (!found) {
+      throw new BadRequestException('Reservation not found');
+    }
+
+    return found;
+  }
 }
