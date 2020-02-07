@@ -59,16 +59,6 @@ export class TocologistAuthController {
       'phone',
       'avatar',
     ];
-    const tocologistKeys = [
-      '_id',
-      'location',
-      'holiday',
-      'name',
-      'email',
-      'phone',
-      'operationTime',
-      'services',
-    ];
 
     const userData = {};
     userKeys.map(key => {
@@ -79,13 +69,26 @@ export class TocologistAuthController {
       }
     });
     const tocologistData = {};
-    tocologistKeys.map(key => {
-      if (key === 'image') {
-        tocologistData[key] = process.env.APP_URL + user.tocologist[key];
-      } else {
-        tocologistData[key] = user.tocologist[key];
-      }
-    });
+
+    if (user.tocologist) {
+      const tocologistKeys = [
+        '_id',
+        'location',
+        'holiday',
+        'name',
+        'email',
+        'phone',
+        'operationTime',
+        'services',
+      ];
+      tocologistKeys.map(key => {
+        if (key === 'image') {
+          tocologistData[key] = process.env.APP_URL + user.tocologist[key];
+        } else {
+          tocologistData[key] = user.tocologist[key];
+        }
+      });
+    }
 
     return { ...userData, tocologist: tocologistData };
   }

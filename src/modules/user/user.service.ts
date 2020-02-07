@@ -9,7 +9,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { Model } from 'mongoose';
 import { IRole } from '../role/role.interface';
 import { IUser } from './user.interface';
@@ -44,8 +44,10 @@ export class UserService extends DbService {
     if (!isMatched) {
       throw new BadRequestException('Old password incorrect');
     }
-    user.password = password;
-    await user.save();
+    await this.model.updateOne(
+      { _id: user._id },
+      { password: await hash(password, 12) },
+    );
     return 'Password successfully updated';
   }
 
@@ -53,7 +55,7 @@ export class UserService extends DbService {
     user.avatar = avatar.path.split('public')[1];
     Promise.all([user.save(), resizeImage([avatar.path], 400)]);
     mqttHandler.sendMessage(
-      `profile/avatar/${user._id}`,
+      `profile/${user._id}/avatar`,
       `${process.env.APP_URL}${user.avatar}`,
     );
   }

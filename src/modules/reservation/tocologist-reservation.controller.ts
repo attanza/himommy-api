@@ -38,6 +38,12 @@ export class TocologistReservationController {
     @GetUser() user: IUser,
     @Query() query: ResourcePaginationPipe,
   ): Promise<IApiCollection> {
+    if (!user.tocologist) {
+      throw new BadRequestException(
+        'this user does not belongs to any tocologist',
+      );
+    }
+
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist', 'status'];
     const relations = ['user'];
@@ -59,6 +65,11 @@ export class TocologistReservationController {
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
   ): Promise<IApiItem> {
+    if (!user.tocologist) {
+      throw new BadRequestException(
+        'this user does not belongs to any tocologist',
+      );
+    }
     const { id } = param;
     const data = await this.reservationService.getMyReservationByTocologistId(
       user.tocologist._id,
@@ -74,6 +85,11 @@ export class TocologistReservationController {
     @Body() updateDto: UpdateTocologistReservationDto,
     @GetUser() user: IUser,
   ) {
+    if (!user.tocologist) {
+      throw new BadRequestException(
+        'this user does not belongs to any tocologist',
+      );
+    }
     let updateData: any;
 
     const { id } = param;
