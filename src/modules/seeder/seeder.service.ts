@@ -1,4 +1,5 @@
 import { IAppVersion } from '@modules/app-version/app-version.interface';
+import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IRole } from '@modules/role/role.interface';
 import { ITocologistService } from '@modules/tocologist-services/tocologist-services.interface';
@@ -35,6 +36,8 @@ export class SeederService {
     private tocologistServiceModel: Model<ITocologistService>,
     @InjectModel('Tocologist')
     private tocologistModel: Model<ITocologist>,
+    @InjectModel('MommyDetail')
+    private mommyDetailModel: Model<IMommyDetail>,
   ) {}
 
   /**
@@ -44,6 +47,7 @@ export class SeederService {
     Logger.log('Seeding Role and Users ...');
     await this.roleModel.deleteMany({});
     await this.userModel.deleteMany({});
+    await this.mommyDetailModel.deleteMany({});
 
     RedisInstance.flushall();
 

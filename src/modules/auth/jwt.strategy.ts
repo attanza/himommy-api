@@ -1,3 +1,4 @@
+import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { IUser } from '@modules/user/user.interface';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
@@ -12,6 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectModel('User') private userModel: Model<IUser>,
     private tocologistService: TocologistService,
+    private mommyDetailService: MommyDetailService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -42,6 +44,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const tocologist = await this.tocologistService.getByUser(user._id);
       if (tocologist) {
         output.tocologist = tocologist;
+      }
+    }
+
+    if (user.role && user.role.slug === 'mommy') {
+      const detail = await this.mommyDetailService.getByUserId(user._id);
+      if (detail) {
+        output.detail = detail;
       }
     }
     return output;

@@ -22,4 +22,8 @@ export class MommyDetailService extends DbService {
     }
     return data;
   }
+
+  async getByUserId(userId: string) {
+    return await this.model.findOne({ user: userId });
+  }
 }

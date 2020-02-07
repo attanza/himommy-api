@@ -1,3 +1,4 @@
+import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
 import { RoleSchema } from '@modules/role/role.schema';
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { Module } from '@nestjs/common';
@@ -25,6 +26,7 @@ import { TocologistAuthController } from './tocologist-auth.controller';
       },
     }),
     TocologistModule,
+    MommyDetailModule,
   ],
   controllers: [AuthController, MobileAuthController, TocologistAuthController],
   providers: [AuthService, JwtStrategy, FacebookStrategy],
