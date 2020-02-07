@@ -8,4 +8,5 @@ export interface IPaginated {
   regexSearchable?: string[];
   keyValueSearchable?: string[];
   relations?: string[];
+  customOptions?: any;
 }

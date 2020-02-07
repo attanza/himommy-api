@@ -47,7 +47,7 @@ export class ResourcePaginationPipe {
 
   @IsOptional()
   @IsString()
-  fieldValue: string;
+  fieldValue: any;
 
   @IsOptional()
   @IsLatitude()

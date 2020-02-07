@@ -15,6 +15,7 @@ export class SeederController {
         this.seederService.seedAppVersion(),
         this.seederService.seedTocologistService(),
         this.seederService.seedTocologist(),
+        this.seederService.seedArticle(),
       ]);
       res.status(200).send({ message: 'Seed Succeed' });
     } else {

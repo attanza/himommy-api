@@ -23,6 +23,7 @@ export class DbService {
     regexSearchable,
     keyValueSearchable,
     relations,
+    customOptions,
   }: IPaginated): Promise<IApiCollection> {
     return await getApiCollection({
       modelName,
@@ -31,6 +32,7 @@ export class DbService {
       regexSearchable,
       keyValueSearchable,
       relations,
+      customOptions,
     });
   }
 

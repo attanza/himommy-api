@@ -12,6 +12,7 @@ export default async ({
   regexSearchable,
   keyValueSearchable,
   relations,
+  customOptions,
 }: IPaginated): Promise<IApiCollection> => {
   const page = Number(query.page) || 1;
   const limit = Number(query.limit) || 10;
@@ -22,6 +23,10 @@ export default async ({
 
   const { fieldKey, fieldValue, dateField, dateStart, dateEnd } = query;
   let options = {};
+
+  if (customOptions && Object.keys(customOptions).length > 0) {
+    options = { ...options, ...customOptions };
+  }
 
   // Regex Search
   if (search !== '' && regexSearchable.length > 0) {

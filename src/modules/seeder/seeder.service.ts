@@ -1,4 +1,5 @@
 import { IAppVersion } from '@modules/app-version/app-version.interface';
+import { IArticle } from '@modules/article/article.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IRole } from '@modules/role/role.interface';
@@ -38,6 +39,8 @@ export class SeederService {
     private tocologistModel: Model<ITocologist>,
     @InjectModel('MommyDetail')
     private mommyDetailModel: Model<IMommyDetail>,
+    @InjectModel('Article')
+    private articleModel: Model<IArticle>,
   ) {}
 
   /**
@@ -88,6 +91,7 @@ export class SeederService {
       'Tocologist Service',
       'App Version',
       'Reservation',
+      'Article',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -152,7 +156,6 @@ export class SeederService {
   /**
    * Tocologist Seeder
    */
-
   async seedTocologist() {
     Logger.log('Seeding Tocologist ...');
     await this.tocologistModel.deleteMany({});
@@ -200,5 +203,31 @@ export class SeederService {
     }
     await this.tocologistModel.insertMany(tocologistData);
     Logger.log('Seeding Tocologist  Finish');
+  }
+
+  /**
+   * Article Seeder
+   */
+  async seedArticle() {
+    Logger.log('Seeding Article ...');
+    await this.articleModel.deleteMany({});
+
+    const articleData = [];
+
+    for (let i = 0; i < 100; i++) {
+      const title = this.faker.sentence();
+      articleData.push({
+        title,
+        slug: paramCase(title),
+        subtile: this.faker.sentence(),
+        content: this.faker.paragraph(),
+        age: this.faker.integer({ min: 0, max: 40 }),
+        image: 'https://picsum.photos/400/200',
+        category: this.faker.word(),
+        isPublish: true,
+      });
+    }
+    await this.articleModel.insertMany(articleData);
+    Logger.log('Seeding Article  Finish');
   }
 }

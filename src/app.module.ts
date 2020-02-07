@@ -1,4 +1,5 @@
 import { AppVersionModule } from '@modules/app-version/app-version.module';
+import { ArticleModule } from '@modules/article/article.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { ProfileModule } from '@modules/profile/profile.module';
@@ -21,9 +22,6 @@ const MONGO_DB_OPTIONS = {
 @Module({
   imports: [
     MongooseModule.forRoot(`mongodb://localhost/${DB_NAME}`, MONGO_DB_OPTIONS),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'public'),
-    // }),
     RoleModule,
     SeederModule,
     PermissionModule,
@@ -34,6 +32,7 @@ const MONGO_DB_OPTIONS = {
     TocologistServicesModule,
     TocologistModule,
     ReservationModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

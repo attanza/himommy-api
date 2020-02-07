@@ -1,4 +1,5 @@
 import { AppVersionSchema } from '@modules/app-version/app-version.schema';
+import { ArticleSchema } from '@modules/article/article.schema';
 import { MommyDetailSchema } from '@modules/mommy-detail/mommy-detail.schema';
 import { TocologistServiceSchema } from '@modules/tocologist-services/tocologist-services.schema';
 import { TocologistSchema } from '@modules/tocologist/tocologist.schema';
@@ -20,6 +21,7 @@ import { SeederService } from './seeder.service';
       { name: 'TocologistService', schema: TocologistServiceSchema },
       { name: 'Tocologist', schema: TocologistSchema },
       { name: 'MommyDetail', schema: MommyDetailSchema },
+      { name: 'Article', schema: ArticleSchema },
     ]),
   ],
   controllers: [SeederController],
