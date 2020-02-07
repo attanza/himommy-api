@@ -39,7 +39,7 @@ export class ArticleController {
   @Permission('read-article')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['slug'];
-    const keyValueSearchable = ['age', 'isPublish'];
+    const keyValueSearchable = ['age', 'isPublish', 'category', 'isAuth'];
     return this.dbService.getPaginated({
       modelName: this.modelName,
       query,

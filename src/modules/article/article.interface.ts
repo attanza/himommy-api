@@ -7,8 +7,16 @@ export interface IArticle extends Document {
   content: string;
   age: number;
   image: string;
-  category: string;
+  category: IArticleCategory;
+  description: string;
   isPublish: boolean;
+  isAuth: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export enum IArticleCategory {
+  ARTICLES = 'ARTICLES',
+  MYTHS = 'MYTHS',
+  TIPS = 'TIPS',
 }

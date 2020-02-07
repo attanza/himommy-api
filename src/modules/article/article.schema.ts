@@ -11,7 +11,12 @@ export const ArticleSchema = new mongoose.Schema(
     age: Number,
     image: String,
     category: String,
+    description: String,
     isPublish: {
+      type: Boolean,
+      default: false,
+    },
+    isAuth: {
       type: Boolean,
       default: false,
     },

@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -7,6 +8,7 @@ import {
   Max,
   MaxLength,
 } from 'class-validator';
+import { IArticleCategory } from './article.interface';
 
 export class CreateArticleDto {
   @IsNotEmpty()
@@ -29,8 +31,11 @@ export class CreateArticleDto {
   age: number;
 
   @IsNotEmpty()
-  @IsString()
-  @MaxLength(30)
+  @IsIn([
+    IArticleCategory.ARTICLES,
+    IArticleCategory.MYTHS,
+    IArticleCategory.TIPS,
+  ])
   category: string;
 }
 
@@ -55,11 +60,18 @@ export class UpdateArticleDto {
   age: number;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(30)
+  @IsIn([
+    IArticleCategory.ARTICLES,
+    IArticleCategory.MYTHS,
+    IArticleCategory.TIPS,
+  ])
   category: string;
 
   @IsOptional()
   @IsBoolean()
   isPublish: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isAuth: boolean;
 }

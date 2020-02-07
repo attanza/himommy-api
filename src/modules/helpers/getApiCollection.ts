@@ -38,9 +38,25 @@ export default async ({
   }
 
   // key value search
-  if (fieldKey && keyValueSearchable.includes(fieldKey) && fieldValue) {
-    options = { ...options, [fieldKey]: fieldValue };
+  console.log('keyValueSearchable', keyValueSearchable);
+  if (fieldKey && fieldValue) {
+    if (Array.isArray(fieldKey) && Array.isArray(fieldValue)) {
+      for (let i = 0; i < fieldKey.length; i++) {
+        if (keyValueSearchable.includes(fieldKey[i])) {
+          options = { ...options, [fieldKey[i]]: fieldValue[i] };
+        }
+      }
+    } else {
+      if (keyValueSearchable.includes(fieldKey)) {
+        options = { ...options, [fieldKey]: fieldValue };
+      }
+    }
   }
+
+  // if (fieldKey && keyValueSearchable.includes(fieldKey) && fieldValue) {
+  //   options = { ...options, [fieldKey]: fieldValue };
+  // }
+  console.log('options', options);
 
   // Date Range Search
   if (dateField && dateStart && dateEnd) {

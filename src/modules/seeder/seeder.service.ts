@@ -212,6 +212,8 @@ export class SeederService {
     Logger.log('Seeding Article ...');
     await this.articleModel.deleteMany({});
 
+    const articleCategories = ['ARTICLES', 'MYTHS', 'TIPS'];
+    const bools = [true, false];
     const articleData = [];
 
     for (let i = 0; i < 100; i++) {
@@ -223,8 +225,9 @@ export class SeederService {
         content: this.faker.paragraph(),
         age: this.faker.integer({ min: 0, max: 40 }),
         image: 'https://picsum.photos/400/200',
-        category: this.faker.word(),
-        isPublish: true,
+        category: articleCategories[this.faker.integer({ min: 0, max: 2 })],
+        isPublish: bools[this.faker.integer({ min: 0, max: 1 })],
+        isAuth: bools[this.faker.integer({ min: 0, max: 1 })],
       });
     }
     await this.articleModel.insertMany(articleData);
