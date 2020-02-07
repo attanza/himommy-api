@@ -47,12 +47,12 @@ export class UpdateReservationDto {
   @ValidateNested({ each: true })
   services: TServiceDto[];
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
   date: Date;
 
   @IsOptional()
-  @IsIn([EStatus.CANCEL])
+  @IsIn([EStatus.CANCEL, EStatus.COMPLETED])
   status: string;
 
   @IsOptional()
@@ -64,4 +64,13 @@ export class UpdateReservationDto {
   @IsString()
   @MaxLength(250)
   note: string;
+
+  @IsOptional()
+  @IsInt()
+  rate: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
+  comment: string;
 }

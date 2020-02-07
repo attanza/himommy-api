@@ -21,6 +21,8 @@ export interface IReservation extends Document {
 
 export enum EStatus {
   NEW = 'NEW',
+  NEW_USER_UPDATE = 'NEW_USER_UPDATE',
+  NEW_TOCOLOGIST_UPDATE = 'NEW_TOCOLOGIST_UPDATE',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
   CANCEL = 'CANCEL',

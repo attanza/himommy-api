@@ -1,11 +1,31 @@
 import { GetUser } from '@modules/auth/get-user.decorator';
 import mqttHandler from '@modules/helpers/mqttHandler';
-import { apiCreated, apiItem, apiUpdated } from '@modules/helpers/responseParser';
-import { IApiCollection, IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import {
+  apiCreated,
+  apiItem,
+  apiUpdated,
+} from '@modules/helpers/responseParser';
+import {
+  IApiCollection,
+  IApiItem,
+} from '@modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { IUser } from '@modules/user/user.interface';
-import { BadRequestException, Body, Controller, ForbiddenException, Get, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
 import { EStatus } from './reservation.interface';
@@ -39,7 +59,10 @@ export class MobileReservationController {
       this.relations,
     );
 
-    mqttHandler.sendMessage(`reservations/${tocologist}`, JSON.stringify(data));
+    mqttHandler.sendMessage(
+      `reservations/${tocologist}/${EStatus.NEW}`,
+      JSON.stringify(data),
+    );
     return apiCreated(this.modelName, data);
   }
 
@@ -84,35 +107,84 @@ export class MobileReservationController {
     @Body() updateDto: UpdateReservationDto,
     @GetUser() user: IUser,
   ) {
+    let updateData: any;
+
+    // Check if reservation existed
     const { id } = param;
     let data = await this.reservationService.getById(id);
     if (!data) {
       throw new BadRequestException('Reservation not found');
     }
+
+    // check if reservation user id === logged user id
+    const tocologistId = data.tocologist;
     if (data.user.toString() !== user._id.toString()) {
       throw new ForbiddenException('Action forbidden');
     }
-    if (data.status !== EStatus.NEW) {
-      throw new BadRequestException('Reservation status not NEW');
-    }
-    if (
-      updateDto.status === EStatus.CANCEL &&
-      (!updateDto.reason || updateDto.reason === '')
-    ) {
-      throw new BadRequestException('reason is required');
+
+    updateData = Object.assign({}, updateDto);
+    updateData.status = EStatus.NEW_USER_UPDATE;
+
+    // ## STATUS ALLOWED FOR USER
+    // 1. NEW_USER_UPDATE
+    // 2. CANCEL
+    // 3. COMPLETED
+
+    // check if not allowed status
+    const notAllowedStatus = [
+      EStatus.ACCEPTED,
+      EStatus.CANCEL,
+      EStatus.REJECTED,
+      EStatus.COMPLETED,
+    ];
+    if (notAllowedStatus.includes(data.status)) {
+      throw new BadRequestException('Reservation cannot be modified');
     }
 
-    await this.reservationService.checkServices(
-      data.tocologist,
-      updateDto.services,
-    );
+    // STATUS CHANGES
+
+    // CANCEL
+    const { reason, status } = updateDto;
+    console.log('status', status);
+    if (status && status === EStatus.CANCEL) {
+      if (!reason || reason === '') {
+        throw new BadRequestException('reason is required');
+      }
+      updateData = { status, reason };
+    }
+
+    //COMPLETED
+    if (status && status === EStatus.COMPLETED) {
+      if (data.status !== EStatus.COMPLETE_CONFIRM) {
+        throw new BadRequestException(
+          'This reservation has not been complete by the tocologist',
+        );
+      }
+      updateData = {
+        status,
+        rate: updateDto.rate,
+        comment: updateDto.comment,
+      };
+    }
+
+    if (updateData.services && updateData.services.length > 0) {
+      await this.reservationService.checkServices(
+        data.tocologist,
+        updateData.services,
+      );
+    }
 
     data = await this.reservationService.update(
       'Reservation',
       id,
-      updateDto,
+      updateData,
       [],
       this.relations,
+    );
+
+    mqttHandler.sendMessage(
+      `reservations/${tocologistId}/${updateData.status}`,
+      JSON.stringify(data),
     );
     return apiUpdated('Reservation', data);
   }
