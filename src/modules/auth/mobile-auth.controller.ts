@@ -1,10 +1,14 @@
+import { Redis } from '@modules/helpers/redis';
 import { apiItem, apiSucceed } from '@modules/helpers/responseParser';
+import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { IUser } from '@modules/user/user.interface';
+import { UserService } from '@modules/user/user.service';
 import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Post,
   Req,
@@ -21,12 +25,26 @@ import { GetUser } from './get-user.decorator';
 
 @Controller('mobile')
 export class MobileAuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private mommyDetailService: MommyDetailService,
+    private userService: UserService,
+  ) {}
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async me(@GetUser() user: IUser) {
-    return apiItem('User', user);
+    const redisKey = `User_${user._id}`;
+    const cache = await Redis.get(redisKey);
+    if (cache && cache != null) {
+      Logger.log(`User_${user._id} from cache`, 'DB SERVICE');
+      return JSON.parse(cache);
+    }
+    const userData = await this.userService.getById({ id: user._id });
+    const detail = await this.mommyDetailService.getByUserId(user._id);
+    const output = apiItem('User', { ...userData.toJSON(), detail });
+    await Redis.set(redisKey, JSON.stringify(output));
+    return output;
   }
 
   @Post('register')

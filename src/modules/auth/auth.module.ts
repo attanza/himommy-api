@@ -1,6 +1,7 @@
 import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
 import { RoleSchema } from '@modules/role/role.schema';
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
+import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -27,6 +28,7 @@ import { TocologistAuthController } from './tocologist-auth.controller';
     }),
     TocologistModule,
     MommyDetailModule,
+    UserModule,
   ],
   controllers: [AuthController, MobileAuthController, TocologistAuthController],
   providers: [AuthService, JwtStrategy, FacebookStrategy],

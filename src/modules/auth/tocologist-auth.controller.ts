@@ -1,9 +1,11 @@
+import { Redis } from '@modules/helpers/redis';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { IUser } from '@modules/user/user.interface';
 import {
   Body,
   Controller,
   Get,
+  Logger,
   Post,
   Res,
   UseGuards,
@@ -47,7 +49,15 @@ export class TocologistAuthController {
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async me(@GetUser() user: IUser) {
-    return apiItem('User', this.parseUserTocologist(user));
+    const redisKey = `User_${user._id}`;
+    const cache = await Redis.get(redisKey);
+    if (cache && cache != null) {
+      Logger.log(`User_${user._id} from cache`, 'DB SERVICE');
+      return JSON.parse(cache);
+    }
+    const output = apiItem('User', this.parseUserTocologist(user));
+    await Redis.set(redisKey, JSON.stringify(output));
+    return output;
   }
 
   private parseUserTocologist(user) {

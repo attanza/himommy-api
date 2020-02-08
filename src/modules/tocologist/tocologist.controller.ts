@@ -1,5 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
+import { Redis } from '@modules/helpers/redis';
 import tocologistImageInterceptor from '@modules/helpers/tocologistImageInterceptor';
 import {
   BadRequestException,
@@ -88,13 +89,17 @@ export class TocologistController {
     @Body() updateDto: UpdateTocologistDto,
   ): Promise<IApiItem> {
     const { id } = param;
-    return await this.dbService.update({
+    const output = await this.dbService.update({
       modelName: this.modelName,
       id,
       updateDto,
       uniques: this.uniques,
       relations: this.relations,
     });
+    if (output.data.user && output.data.user.length > 0) {
+      output.data.user.map(user => Redis.del(`User_${user}`));
+    }
+    return output;
   }
 
   @Delete(':id')
@@ -102,6 +107,7 @@ export class TocologistController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
+    // TODO: Delete redis key User_userId
     return await this.dbService.destroy({ modelName: this.modelName, id });
   }
 

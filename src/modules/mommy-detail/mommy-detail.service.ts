@@ -22,6 +22,7 @@ export class MommyDetailService extends DbService {
       Object.keys(updateDto).map(key => (data[key] = updateDto[key]));
       await data.save();
     }
+    Redis.del(`User_${user}`);
     return data;
   }
 
