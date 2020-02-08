@@ -8,7 +8,11 @@ import { TocologistProfileController } from './tocologist-profile.controller';
 
 @Module({
   imports: [UserModule, MommyDetailModule],
-  controllers: [ProfileController, MobileProfileController, TocologistProfileController],
+  controllers: [
+    ProfileController,
+    MobileProfileController,
+    TocologistProfileController,
+  ],
   providers: [ProfileService],
 })
 export class ProfileModule {}

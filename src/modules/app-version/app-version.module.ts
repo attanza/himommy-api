@@ -12,7 +12,11 @@ import { TocologistAppVersionController } from './tocologist-app-version.control
       { name: 'AppVersion', schema: AppVersionSchema },
     ]),
   ],
-  controllers: [AppVersionController, MobileAppVersionController, TocologistAppVersionController],
+  controllers: [
+    AppVersionController,
+    MobileAppVersionController,
+    TocologistAppVersionController,
+  ],
   providers: [AppVersionService],
 })
 export class AppVersionModule {}

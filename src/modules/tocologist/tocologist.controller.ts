@@ -20,13 +20,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  apiCreated,
-  apiDeleted,
-  apiItem,
-  apiSucceed,
-  apiUpdated,
-} from '../helpers/responseParser';
+import { apiSucceed, apiUpdated } from '../helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -66,8 +60,11 @@ export class TocologistController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(this.modelName, id, this.relations);
-    return apiItem(this.modelName, data);
+    return await this.dbService.show({
+      modelName: this.modelName,
+      id,
+      relations: this.relations,
+    });
   }
 
   @Post()
@@ -76,8 +73,11 @@ export class TocologistController {
     @Body(new ValidationPipe()) createDto: CreateTocologistDto,
   ): Promise<IApiItem> {
     const tocologistData = this.dbService.prepareTocologistData(createDto);
-    const data = await this.dbService.store(tocologistData, this.uniques);
-    return apiCreated(this.modelName, data);
+    return await this.dbService.store({
+      modelName: this.modelName,
+      createDto: tocologistData,
+      uniques: this.uniques,
+    });
   }
 
   @Put(':id')
@@ -88,14 +88,13 @@ export class TocologistController {
     @Body() updateDto: UpdateTocologistDto,
   ): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.update(
-      this.modelName,
+    return await this.dbService.update({
+      modelName: this.modelName,
       id,
       updateDto,
-      this.uniques,
-      this.relations,
-    );
-    return apiUpdated(this.modelName, data);
+      uniques: this.uniques,
+      relations: this.relations,
+    });
   }
 
   @Delete(':id')
@@ -103,8 +102,7 @@ export class TocologistController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    await this.dbService.destroy(this.modelName, id);
-    return apiDeleted(this.modelName);
+    return await this.dbService.destroy({ modelName: this.modelName, id });
   }
 
   /**

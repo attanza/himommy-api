@@ -1,12 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
 import {
-  apiCreated,
-  apiDeleted,
-  apiItem,
-  apiUpdated,
-} from '@modules/helpers/responseParser';
-import {
   IApiCollection,
   IApiItem,
 } from '@modules/shared/interfaces/response-parser.interface';
@@ -53,8 +47,7 @@ export class AppVersionController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(this.modelName, id);
-    return apiItem(this.modelName, data);
+    return await this.dbService.show({ modelName: this.modelName, id });
   }
 
   @Post()
@@ -62,8 +55,7 @@ export class AppVersionController {
   async store(
     @Body(new ValidationPipe()) createDto: CreateAppVersionDto,
   ): Promise<IApiItem> {
-    const data = await this.dbService.store(createDto);
-    return apiCreated(this.modelName, data);
+    return await this.dbService.store({ modelName: this.modelName, createDto });
   }
 
   @Put(':id')
@@ -74,8 +66,11 @@ export class AppVersionController {
     @Body() updateDto: UpdateAppVersionDto,
   ): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.update(this.modelName, id, updateDto);
-    return apiUpdated(this.modelName, data);
+    return await this.dbService.update({
+      modelName: this.modelName,
+      id,
+      updateDto,
+    });
   }
 
   @Delete(':id')
@@ -83,7 +78,6 @@ export class AppVersionController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    await this.dbService.destroy(this.modelName, id);
-    return apiDeleted(this.modelName);
+    return await this.dbService.destroy({ modelName: this.modelName, id });
   }
 }

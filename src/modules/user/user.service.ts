@@ -52,11 +52,12 @@ export class UserService extends DbService {
   }
 
   async saveAvatar(avatar: any, user: IUser): Promise<void> {
-    user.avatar = avatar.path.split('public')[1];
-    Promise.all([user.save(), resizeImage([avatar.path], 400)]);
+    const userData = await this.model.findById(user._id);
+    userData.avatar = avatar.path.split('public')[1];
+    Promise.all([userData.save(), resizeImage([avatar.path], 400)]);
     mqttHandler.sendMessage(
       `profile/${user._id}/avatar`,
-      `${process.env.APP_URL}${user.avatar}`,
+      `${process.env.APP_URL}${userData.avatar}`,
     );
   }
 }

@@ -13,7 +13,7 @@ export interface IUser extends Document {
   isActive: boolean;
   authProvider: string;
   avatar: string;
-  mommyDetail?: MommyDetail;
+  detail?: MommyDetail;
   tocologist?: ITocologist;
   createdAt: Date;
   updatedAt: Date;

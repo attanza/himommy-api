@@ -1,3 +1,4 @@
+import { Redis } from '@modules/helpers/redis';
 import { DbService } from '@modules/shared/db.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,14 +17,22 @@ export class MommyDetailService extends DbService {
     let data: IMommyDetail;
     data = await this.model.findOne({ user });
     if (!data) {
-      data = await this.store(updateDto);
+      data = await this.model.create(updateDto);
     } else {
-      data = await this.update('Detail', data._id, updateDto);
+      Object.keys(updateDto).map(key => (data[key] = updateDto[key]));
+      await data.save();
     }
     return data;
   }
 
   async getByUserId(userId: string) {
-    return await this.model.findOne({ user: userId });
+    const redisKey = `MommyDetail_user_${userId}`;
+    const cache = await Redis.get(redisKey);
+    if (cache && cache != null) {
+      return JSON.parse(cache);
+    }
+    const data = await this.model.findOne({ user: userId }).lean();
+    Redis.set(redisKey, JSON.stringify(data));
+    return data;
   }
 }

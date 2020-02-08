@@ -1,10 +1,5 @@
 import { GetUser } from '@modules/auth/get-user.decorator';
-import mqttHandler from '@modules/helpers/mqttHandler';
-import {
-  apiCreated,
-  apiItem,
-  apiUpdated,
-} from '@modules/helpers/responseParser';
+import { apiItem } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -49,21 +44,16 @@ export class MobileReservationController {
     await this.reservationService.checkServices(tocologist, services);
 
     const code = Math.floor(Date.now() / 1000).toString();
-    const data = await this.reservationService.store(
-      {
+    return await this.reservationService.store({
+      modelName: this.modelName,
+      createDto: {
         ...createReservationDto,
         user: user._id,
         code,
       },
-      [],
-      this.relations,
-    );
-
-    mqttHandler.sendMessage(
-      `reservations/${tocologist}/${EStatus.NEW}`,
-      JSON.stringify(data),
-    );
-    return apiCreated(this.modelName, data);
+      relations: this.relations,
+      topic: `reservations/${tocologist}/${EStatus.NEW}`,
+    });
   }
 
   @Get(':id')
@@ -111,7 +101,7 @@ export class MobileReservationController {
 
     // Check if reservation existed
     const { id } = param;
-    let data = await this.reservationService.getById(id);
+    const data = await this.reservationService.getById({ id });
     if (!data) {
       throw new BadRequestException('Reservation not found');
     }
@@ -145,7 +135,6 @@ export class MobileReservationController {
 
     // CANCEL
     const { reason, status } = updateDto;
-    console.log('status', status);
     if (status && status === EStatus.CANCEL) {
       if (!reason || reason === '') {
         throw new BadRequestException('reason is required');
@@ -153,7 +142,7 @@ export class MobileReservationController {
       updateData = { status, reason };
     }
 
-    //COMPLETED
+    // COMPLETED
     if (status && status === EStatus.COMPLETED) {
       if (data.status !== EStatus.COMPLETE_CONFIRM) {
         throw new BadRequestException(
@@ -173,19 +162,12 @@ export class MobileReservationController {
         updateData.services,
       );
     }
-
-    data = await this.reservationService.update(
-      'Reservation',
+    return await this.reservationService.update({
+      modelName: this.modelName,
       id,
-      updateData,
-      [],
-      this.relations,
-    );
-
-    mqttHandler.sendMessage(
-      `reservations/${tocologistId}/${updateData.status}`,
-      JSON.stringify(data),
-    );
-    return apiUpdated('Reservation', data);
+      updateDto: updateData,
+      relations: this.relations,
+      topic: `reservations/${tocologistId}/${updateData.status}`,
+    });
   }
 }

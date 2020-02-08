@@ -15,12 +15,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  apiCreated,
-  apiDeleted,
-  apiItem,
-  apiUpdated,
-} from '../helpers/responseParser';
-import {
   IApiCollection,
   IApiItem,
 } from '../shared/interfaces/response-parser.interface';
@@ -55,8 +49,11 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(this.modelName, id, this.relations);
-    return apiItem(this.modelName, data);
+    return await this.dbService.show({
+      modelName: this.modelName,
+      id,
+      relations: this.relations,
+    });
   }
 
   @Post()
@@ -66,12 +63,12 @@ export class UserController {
   ): Promise<IApiItem> {
     await this.dbService.checkRole(createDto.role);
 
-    const data = await this.dbService.store(
+    return await this.dbService.store({
+      modelName: this.modelName,
       createDto,
-      this.uniques,
-      this.relations,
-    );
-    return apiCreated(this.modelName, data);
+      uniques: this.uniques,
+      relations: this.relations,
+    });
   }
 
   @Put(':id')
@@ -84,14 +81,13 @@ export class UserController {
     await this.dbService.checkRole(updateDto.role);
 
     const { id } = param;
-    const data = await this.dbService.update(
-      this.modelName,
+    return await this.dbService.update({
+      modelName: this.modelName,
       id,
       updateDto,
-      this.uniques,
-      this.relations,
-    );
-    return apiUpdated(this.modelName, data);
+      uniques: this.uniques,
+      relations: this.relations,
+    });
   }
 
   @Delete(':id')
@@ -99,7 +95,6 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    await this.dbService.destroy(this.modelName, id);
-    return apiDeleted(this.modelName);
+    return await this.dbService.destroy({ modelName: this.modelName, id });
   }
 }

@@ -16,7 +16,11 @@ import { TocologistReservationController } from './tocologist-reservation.contro
     TocologistModule,
     TocologistServicesModule,
   ],
-  controllers: [ReservationController, MobileReservationController, TocologistReservationController],
+  controllers: [
+    ReservationController,
+    MobileReservationController,
+    TocologistReservationController,
+  ],
   providers: [ReservationService],
 })
 export class ReservationModule {}

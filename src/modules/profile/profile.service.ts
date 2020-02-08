@@ -22,13 +22,13 @@ export class ProfileService {
   async updateUser(id: string, updateDto: UpdateUserDto) {
     const uniques = ['phone', 'email'];
     const relations = ['role'];
-    return await this.userService.update(
-      'User',
+    return await this.userService.update({
+      modelName: 'User',
       id,
       updateDto,
       uniques,
       relations,
-    );
+    });
   }
 
   async updateDetail(updateDto: UpdateMommyDto) {

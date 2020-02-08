@@ -1,9 +1,9 @@
-import * as Redis from 'ioredis';
+import * as ioredis from 'ioredis';
 class RedisInstance {
   redis;
   defaultExpiry = 60 * 60 * 4; // 4 hours
   constructor() {
-    this.redis = new Redis(process.env.REDIS_URL, {
+    this.redis = new ioredis(process.env.REDIS_URL, {
       keyPrefix: process.env.REDIS_PREFIX,
     });
   }
@@ -28,16 +28,19 @@ class RedisInstance {
     const prefix: string = process.env.REDIS_PREFIX;
     return new Promise((resolve, reject) => {
       const stream = this.redis.scanStream({
-        match: prefix + pattern,
+        match: `${prefix}${pattern}*`,
         count: 10,
       });
       stream.on('data', resultKeys => {
         resultKeys.map(key => {
-          this.redis.del(key.split(':')[1]);
+          this.del(key.split(prefix)[1]);
         });
       });
       stream.on('end', () => {
         resolve();
+      });
+      stream.on('error', function(err) {
+        console.log('error', err);
       });
     });
   }
@@ -47,4 +50,4 @@ class RedisInstance {
   }
 }
 
-export default new RedisInstance();
+export const Redis = new RedisInstance();

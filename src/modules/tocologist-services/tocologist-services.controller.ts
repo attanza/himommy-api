@@ -15,12 +15,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  apiCreated,
-  apiDeleted,
-  apiItem,
-  apiUpdated,
-} from '../helpers/responseParser';
-import {
   IApiCollection,
   IApiItem,
 } from '../shared/interfaces/response-parser.interface';
@@ -57,8 +51,7 @@ export class TocologistServicesController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(this.modelName, id);
-    return apiItem(this.modelName, data);
+    return await this.dbService.show({ modelName: this.modelName, id });
   }
 
   @Post()
@@ -66,8 +59,11 @@ export class TocologistServicesController {
   async store(
     @Body(new ValidationPipe()) createDto: CreateTocologistServiceDto,
   ): Promise<IApiItem> {
-    const data = await this.dbService.store(createDto, this.uniques);
-    return apiCreated(this.modelName, data);
+    return await this.dbService.store({
+      modelName: this.modelName,
+      createDto,
+      uniques: this.uniques,
+    });
   }
 
   @Put(':id')
@@ -78,13 +74,12 @@ export class TocologistServicesController {
     @Body() updateDto: UpdateTocologistServiceDto,
   ): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.update(
-      this.modelName,
+    return await this.dbService.update({
+      modelName: this.modelName,
       id,
       updateDto,
-      this.uniques,
-    );
-    return apiUpdated(this.modelName, data);
+      uniques: this.uniques,
+    });
   }
 
   @Delete(':id')
@@ -92,7 +87,6 @@ export class TocologistServicesController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    await this.dbService.destroy(this.modelName, id);
-    return apiDeleted(this.modelName);
+    return await this.dbService.destroy({ modelName: this.modelName, id });
   }
 }

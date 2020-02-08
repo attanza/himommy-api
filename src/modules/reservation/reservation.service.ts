@@ -20,10 +20,10 @@ export class ReservationService extends DbService {
     id: string,
     requestedServices: TServiceDto[],
   ): Promise<void> {
-    const data: ITocologist = await this.tocologistService.show(
-      'Tocologist',
+    const data: ITocologist = await this.tocologistService.getById({
+      modelName: 'Tocologist',
       id,
-    );
+    });
     if (!data.isActive) {
       throw new BadRequestException('Tocologist cannot received reservation');
     }

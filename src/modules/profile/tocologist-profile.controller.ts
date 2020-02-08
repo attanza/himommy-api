@@ -3,7 +3,19 @@ import avatarInterceptor from '@modules/helpers/avatarInterceptor';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
-import { BadRequestException, Body, Controller, HttpCode, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Put,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { apiSucceed, apiUpdated } from '../helpers/responseParser';
@@ -59,12 +71,9 @@ export class TocologistProfileController {
       }
     });
 
-    const updatedUser = await this.profileService.updateUser(
+    return await this.profileService.updateUser(
       user._id,
       userData as UpdateUserDto,
     );
-
-    
-    return apiUpdated(this.modelName, updatedUser)
   }
 }

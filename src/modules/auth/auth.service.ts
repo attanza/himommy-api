@@ -1,16 +1,26 @@
 import { isUnique } from '@modules/helpers';
 import { IRole } from '@modules/role/role.interface';
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcrypt';
 import { Model } from 'mongoose';
 import { v4 } from 'uuid';
 import mail from '../helpers/mail';
-import RedisInstance from '../helpers/redis';
+import { Redis } from '../helpers/redis';
 import { IUser } from '../user/user.interface';
 import { RegisterDto } from './auth.dto';
-import { JwtPayload, LoginDto, LoginOutput, RefreshTokenDto } from './auth.interface';
+import {
+  JwtPayload,
+  LoginDto,
+  LoginOutput,
+  RefreshTokenDto,
+} from './auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +47,7 @@ export class AuthService {
     // Generate confirmation link
     const confirmationToken = v4();
 
-    await RedisInstance.set(confirmationToken, user._id, 60 * 60 * 24); // expires in one day
+    await Redis.set(confirmationToken, user._id, 60 * 60 * 24); // expires in one day
     // send verification mail
     const confirmationLink = `${
       process.env.APP_URL
@@ -54,7 +64,7 @@ export class AuthService {
       throw new BadRequestException('Invalid token');
     }
 
-    const userId = await RedisInstance.get(token);
+    const userId = await Redis.get(token);
     if (!userId || userId == null) {
       throw new BadRequestException('Invalid token');
     }
@@ -66,7 +76,7 @@ export class AuthService {
 
     user.isActive = true;
 
-    Promise.all([user.save(), RedisInstance.del(token)]);
+    Promise.all([user.save(), Redis.del(token)]);
   }
 
   async login(
@@ -81,25 +91,19 @@ export class AuthService {
       .populate('role');
 
     if (!user) {
-      console.log("no user")
       this.throwError();
     }
 
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) {
-      console.log("invalid password")
-
       this.throwError();
     }
 
     if (!user.isActive) {
-      console.log("user not active")
-
       this.throwError();
     }
 
     if (!allowedRoles.includes(user.role.slug)) {
-      console.log("role not allowed")
       this.throwError();
     }
     const tokenData = await this.generateToken(user);
@@ -119,7 +123,6 @@ export class AuthService {
   ): Promise<LoginOutput> {
     const { refreshToken } = refreshTokenDto;
     const { uid } = this.jwtService.verify(refreshToken);
-
     if (uid !== user.refreshToken) {
       throw new BadRequestException('Refresh token failed');
     }

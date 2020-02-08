@@ -40,7 +40,7 @@ export class MobileArticleController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(this.modelName, id);
+    const data = await this.dbService.show({ modelName: this.modelName, id });
     return apiItem(this.modelName, data);
   }
 }

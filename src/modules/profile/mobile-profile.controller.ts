@@ -95,13 +95,15 @@ export class MobileProfileController {
       userData as UpdateUserDto,
     );
 
+    console.log('updatedUser', updatedUser);
+
     const updatedDetail = await this.profileService.updateDetail(
       detailData as UpdateMommyDto,
     );
 
     return apiUpdated(this.modelName, {
-      ...updatedUser.toJSON(),
-      ...updatedDetail.toJSON(),
+      ...updatedUser.data.toJSON(),
+      detail: updatedDetail,
     });
   }
 }

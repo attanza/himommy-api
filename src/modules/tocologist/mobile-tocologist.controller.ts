@@ -1,7 +1,17 @@
-import { Controller, Get, Param, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { apiItem } from '../helpers/responseParser';
-import { IApiCollection, IApiItem } from '../shared/interfaces/response-parser.interface';
+import {
+  IApiCollection,
+  IApiItem,
+} from '../shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
 import { TocologistService } from './tocologist.service';
@@ -30,7 +40,10 @@ export class MobileTocologistController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show(this.modelName, id, this.relations);
-    return apiItem(this.modelName, data);
+    return await this.dbService.show({
+      modelName: this.modelName,
+      id,
+      relations: this.relations,
+    });
   }
 }

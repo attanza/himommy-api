@@ -1,6 +1,5 @@
 import { GetUser } from '@modules/auth/get-user.decorator';
-import mqttHandler from '@modules/helpers/mqttHandler';
-import { apiItem, apiUpdated } from '@modules/helpers/responseParser';
+import { apiItem } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -93,14 +92,12 @@ export class TocologistReservationController {
     let updateData: any;
 
     const { id } = param;
-    let data = await this.reservationService.getById(id);
+    const data = await this.reservationService.getById({ id });
 
     // Check if reservation existed
     if (!data) {
       throw new BadRequestException('Reservation not found');
     }
-
-    console.log('user', user);
 
     // check if reservation tocologist id === logged user id
     if (
@@ -135,14 +132,11 @@ export class TocologistReservationController {
     // REJECTED
     const { reason, status } = updateDto;
 
-    console.log('status', status);
-    console.log('reason', reason);
     if (status && status === EStatus.REJECTED) {
       if (!reason || reason === '') {
         throw new BadRequestException('reason is required');
       }
 
-      console.log('REJECTED updateData', updateData);
       updateData = { reason, status };
     }
 
@@ -152,13 +146,11 @@ export class TocologistReservationController {
         throw new BadRequestException('reservation cannot be completed');
       }
 
-      console.log('COMPLETE_CONFIRM updateData', updateData);
       updateData = { reason, status };
     }
 
     // ACCEPTED
     if (status && status === EStatus.ACCEPTED) {
-      console.log('ACCEPTED updateData', updateData);
       updateData = { status };
     }
 
@@ -170,20 +162,12 @@ export class TocologistReservationController {
       );
     }
 
-    console.log('final updateData', updateData);
-
-    data = await this.reservationService.update(
-      'Reservation',
+    return await this.reservationService.update({
+      modelName: this.modelName,
       id,
-      updateData,
-      [],
-      this.relations,
-    );
-
-    mqttHandler.sendMessage(
-      `reservations/${data.user._id}/${updateData.status}`,
-      JSON.stringify(data),
-    );
-    return apiUpdated('Reservation', data);
+      updateDto: updateData,
+      relations: this.relations,
+      topic: `reservations/${data.user._id}/${updateData.status}`,
+    });
   }
 }

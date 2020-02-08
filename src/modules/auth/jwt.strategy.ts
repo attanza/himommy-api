@@ -23,7 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: JwtPayload): Promise<IUser> {
     const { uid } = payload;
-    let output: any;
     const user = await this.userModel
       .findById(uid)
       .populate([
@@ -37,22 +36,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException();
     }
-
-    output = user;
-
-    if (user.role && user.role.slug === 'tocologist') {
-      const tocologist = await this.tocologistService.getByUser(user._id);
-      if (tocologist) {
-        output.tocologist = tocologist;
-      }
-    }
-
-    if (user.role && user.role.slug === 'mommy') {
-      const detail = await this.mommyDetailService.getByUserId(user._id);
-      if (detail) {
-        output.detail = detail;
-      }
-    }
-    return output;
+    return user;
   }
 }

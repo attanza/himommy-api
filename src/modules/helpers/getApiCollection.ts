@@ -1,9 +1,10 @@
 import { IPaginated } from '@modules/shared/interfaces/paginated.inteface';
+import { Logger } from '@nestjs/common';
 import {
   IApiCollection,
   IMeta,
 } from '../shared/interfaces/response-parser.interface';
-import { SortMode } from '../shared/pipes/resource-pagination.pipe';
+import { Redis } from './redis';
 
 export default async ({
   modelName,
@@ -14,16 +15,32 @@ export default async ({
   relations,
   customOptions,
 }: IPaginated): Promise<IApiCollection> => {
-  const page = Number(query.page) || 1;
-  const limit = Number(query.limit) || 10;
-  const sortBy = query.sortBy || 'createdAt';
-  const sortMode = SortMode[query.sortMode] || -1;
-  const search = query.search || '';
-  const coordinates = [];
+  query = normalizeQuery(query);
+  const redisKey = `${modelName}_${generateRedisKey(query)}`;
+  // Cache
+  const cache = await Redis.get(redisKey);
+  if (cache && cache != null) {
+    Logger.log(`${modelName} from cache`, 'DB SERVICE');
+    return JSON.parse(cache);
+  }
 
-  const { fieldKey, fieldValue, dateField, dateStart, dateEnd } = query;
+  const {
+    page,
+    limit,
+    sortBy,
+    sortMode,
+    search,
+    fieldKey,
+    fieldValue,
+    dateField,
+    dateStart,
+    dateEnd,
+  } = query;
   let options = {};
 
+  const coordinates = [];
+
+  // Custom DB Options
   if (customOptions && Object.keys(customOptions).length > 0) {
     options = { ...options, ...customOptions };
   }
@@ -38,7 +55,6 @@ export default async ({
   }
 
   // key value search
-  console.log('keyValueSearchable', keyValueSearchable);
   if (fieldKey && fieldValue) {
     if (Array.isArray(fieldKey) && Array.isArray(fieldValue)) {
       for (let i = 0; i < fieldKey.length; i++) {
@@ -52,11 +68,6 @@ export default async ({
       }
     }
   }
-
-  // if (fieldKey && keyValueSearchable.includes(fieldKey) && fieldValue) {
-  //   options = { ...options, [fieldKey]: fieldValue };
-  // }
-  console.log('options', options);
 
   // Date Range Search
   if (dateField && dateStart && dateEnd) {
@@ -74,6 +85,7 @@ export default async ({
   let data = null;
   let totalPages: number;
   let meta: IMeta;
+  let output: IApiCollection;
   if (coordinates.length === 2) {
     const totalCount = await model.aggregate([
       {
@@ -113,21 +125,19 @@ export default async ({
       { $limit: limit },
     ]);
     totalPages = Math.ceil(total / limit);
-    meta = {
-      status: 200,
-      message: `${modelName} Collection`,
-      total,
-      limit,
-      page,
-      totalPages,
-      nextPage: totalPages > page ? page + 1 : null,
-      prevPage: page > 1 ? page - 1 : null,
-    };
-    return { meta, data };
+  } else {
+    total = await model.countDocuments(options);
+    totalPages = Math.ceil(total / limit);
+
+    data = await model
+      .find(options)
+      .populate(relations)
+      .sort({ [sortBy]: sortMode })
+      .skip(limit * page - limit)
+      .limit(limit)
+      .lean();
   }
 
-  total = await model.countDocuments(options);
-  totalPages = Math.ceil(total / limit);
   meta = {
     status: 200,
     message: `${modelName} Collection`,
@@ -139,11 +149,32 @@ export default async ({
     prevPage: page > 1 ? page - 1 : null,
   };
 
-  data = await model
-    .find(options)
-    .populate(relations)
-    .sort({ [sortBy]: sortMode })
-    .skip(limit * page - limit)
-    .limit(limit);
-  return { meta, data };
+  output = { meta, data };
+  if (search === '') {
+    Redis.set(redisKey, JSON.stringify(output));
+  }
+  return output;
+};
+
+const normalizeQuery = query => {
+  if (!query.page) {
+    query.page = 1;
+  }
+  if (!query.limit) {
+    query.limit = 10;
+  }
+  if (!query.sortBy) {
+    query.sortBy = 'createdAt';
+  }
+  if (!query.sortMode) {
+    query.sortMode = -1;
+  }
+  if (!query.search) {
+    query.search = '';
+  }
+  return query;
+};
+
+const generateRedisKey = query => {
+  return Object.values(query).join('_');
 };

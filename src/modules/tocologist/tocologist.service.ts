@@ -1,7 +1,7 @@
 import mqttHandler from '@modules/helpers/mqttHandler';
+import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { DbService } from '@modules/shared/db.service';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -79,8 +79,10 @@ export class TocologistService extends DbService {
    * @param servicesData
    */
   async attachServices(id: string, servicesData: AttachTocologistServicesDto) {
-    return await this.update('Tocologist', id, {
-      services: servicesData.services,
+    return await this.update({
+      modelName: 'Tocologist',
+      id,
+      updateDto: { services: servicesData.services },
     });
   }
 
@@ -92,13 +94,13 @@ export class TocologistService extends DbService {
   async saveImage(id: string, image: any): Promise<boolean> {
     const imageString = image.path.split('public')[1];
 
-    const found = await this.getById(id);
+    const found = await this.getById({ id });
     if (!found) {
       fs.unlinkSync(image);
       return false;
     } else {
       Promise.all([
-        this.update('Tocologist', id, { image: imageString }),
+        this.dbUpdate(id, { image: imageString }),
         resizeImage([image.path], 400),
       ]);
       mqttHandler.sendMessage(
@@ -108,37 +110,14 @@ export class TocologistService extends DbService {
     }
   }
 
-  async getByLocation(
-    query: ResourcePaginationPipe,
-    regexSearchable: string[],
-    keyValueSearchable: string[],
-  ) {
-    const { latitude, longitude } = query;
-    const data = await this.tocologistModel.aggregate([
-      {
-        $geoNear: {
-          near: {
-            type: 'Point',
-            coordinates: [
-              parseFloat(longitude.toString()),
-              parseFloat(latitude.toString()),
-            ],
-          },
-          distanceField: `distance`,
-          distanceMultiplier: 0.000998,
-          spherical: true,
-          limit: 1000,
-        },
-      },
-      { $sort: { distance: 1 } },
-      { $skip: 0 },
-      { $limit: 10 },
-    ]);
-
-    return data;
-  }
-
   async getByUser(userId: string) {
-    return await this.tocologistModel.findOne({ user: userId }).lean();
+    const redisKey = `Tocologist_user_${userId}`;
+    const cache = await Redis.get(redisKey);
+    if (cache && cache != null) {
+      return JSON.parse(cache);
+    }
+    const data = await this.tocologistModel.findOne({ user: userId }).lean();
+    Redis.set(redisKey, JSON.stringify(data));
+    return data;
   }
 }

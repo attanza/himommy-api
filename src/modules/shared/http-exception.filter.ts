@@ -1,5 +1,11 @@
 // tslint:disable:no-console
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Meta2 } from './interfaces/response-parser.interface';
 
 @Catch()
