@@ -9,7 +9,7 @@ export default {
     },
   }),
   limits: {
-    fileSize: 5000000,
+    fileSize: 10000000,
   },
   fileFilter: (req: Request, file, cb) => {
     if (
