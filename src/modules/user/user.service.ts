@@ -1,4 +1,5 @@
 import mqttHandler from '@modules/helpers/mqttHandler';
+import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { ChangePasswordDto } from '@modules/profile/profile.dto';
 import { DbService } from '@modules/shared/db.service';
@@ -54,7 +55,11 @@ export class UserService extends DbService {
   async saveAvatar(avatar: any, user: IUser): Promise<void> {
     const userData = await this.model.findById(user._id);
     userData.avatar = avatar.path.split('public')[1];
-    Promise.all([userData.save(), resizeImage([avatar.path], 400)]);
+    Promise.all([
+      userData.save(),
+      resizeImage([avatar.path], 400),
+      Redis.del(`User_${user._id}`),
+    ]);
     mqttHandler.sendMessage(
       `profile/${user._id}/avatar`,
       `${process.env.APP_URL}${userData.avatar}`,
