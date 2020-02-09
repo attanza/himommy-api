@@ -13,6 +13,7 @@ import { FacebookStrategy } from './facebook.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { MobileAuthController } from './mobile-auth.controller';
 import { TocologistAuthController } from './tocologist-auth.controller';
+
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -23,7 +24,7 @@ import { TocologistAuthController } from './tocologist-auth.controller';
     JwtModule.register({
       secret: process.env.APP_SECRET,
       signOptions: {
-        expiresIn: Math.floor(Date.now() / 1000) * 60 * 60 * 4,
+        expiresIn: '4h',
       },
     }),
     TocologistModule,
