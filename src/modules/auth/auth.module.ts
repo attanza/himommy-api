@@ -23,7 +23,7 @@ import { TocologistAuthController } from './tocologist-auth.controller';
     JwtModule.register({
       secret: process.env.APP_SECRET,
       signOptions: {
-        expiresIn: '1h',
+        expiresIn: Math.floor(Date.now() / 1000) * 60 * 60 * 4,
       },
     }),
     TocologistModule,
