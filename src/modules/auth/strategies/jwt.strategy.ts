@@ -37,9 +37,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (jsonUser.role && jsonUser.role.slug === 'tocologist') {
       jsonUser.tocologist = await this.getTocologist();
     }
-    if (jsonUser.avatar && jsonUser.avatar !== '') {
-      jsonUser.avatar = `${process.env.APP_URL}${jsonUser.avatar}`;
-    }
     return jsonUser;
   }
 
