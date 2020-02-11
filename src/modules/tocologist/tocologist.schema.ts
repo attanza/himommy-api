@@ -59,6 +59,5 @@ TocologistSchema.methods.toJSON = function() {
   if (obj.image && obj.image !== '') {
     obj.image = generateImageLink(obj.image);
   }
-
   return obj;
 };
