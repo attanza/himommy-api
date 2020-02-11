@@ -1,5 +1,5 @@
-import { GetUser } from '@modules/auth/get-user.decorator';
 import { apiItem } from '@modules/helpers/responseParser';
+import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
   IApiItem,
@@ -22,9 +22,12 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateReservationDto, UpdateReservationDto } from './reservation.dto';
-import { EStatus } from './reservation.interface';
-import { ReservationService } from './reservation.service';
+import {
+  CreateReservationDto,
+  UpdateReservationDto,
+} from '../dto/reservation.dto';
+import { EStatus, IReservation } from '../reservation.interface';
+import { ReservationService } from '../reservation.service';
 
 @Controller('mobile/reservations')
 @UseGuards(AuthGuard('jwt'))
@@ -78,8 +81,7 @@ export class MobileReservationController {
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist'];
     const relations = ['tocologist'];
-    query.fieldKey = 'user';
-    query.fieldValue = user._id;
+    const customOptions = { user: user._id };
 
     return this.reservationService.getPaginated({
       modelName: this.modelName,
@@ -87,6 +89,7 @@ export class MobileReservationController {
       regexSearchable,
       keyValueSearchable,
       relations,
+      customOptions,
     });
   }
 
@@ -101,7 +104,7 @@ export class MobileReservationController {
 
     // Check if reservation existed
     const { id } = param;
-    const data = await this.reservationService.getById({ id });
+    const data: IReservation = await this.reservationService.getById({ id });
     if (!data) {
       throw new BadRequestException('Reservation not found');
     }
@@ -156,12 +159,12 @@ export class MobileReservationController {
       };
     }
 
-    if (updateData.services && updateData.services.length > 0) {
-      await this.reservationService.checkServices(
-        data.tocologist,
-        updateData.services,
-      );
-    }
+    // if (updateData.services && updateData.services.length > 0) {
+    //   await this.reservationService.checkServices(
+    //     tocologistId,
+    //     updateData.services,
+    //   );
+    // }
     return await this.reservationService.update({
       modelName: this.modelName,
       id,

@@ -1,5 +1,5 @@
-import { GetUser } from '@modules/auth/get-user.decorator';
 import avatarInterceptor from '@modules/helpers/avatarInterceptor';
+import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
@@ -18,12 +18,12 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed, apiUpdated } from '../helpers/responseParser';
-import { ChangePasswordDto, ProfileUpdateDto } from './profile.dto';
-import { ProfileService } from './profile.service';
+import { apiSucceed, apiUpdated } from '../../helpers/responseParser';
+import { ChangePasswordDto } from '../profile.dto';
+import { ProfileService } from '../profile.service';
 
-@Controller('admin/profile')
-export class ProfileController {
+@Controller('tocologist/profile')
+export class TocologistProfileController {
   modelName = 'Profile';
 
   constructor(private profileService: ProfileService) {}
@@ -60,8 +60,9 @@ export class ProfileController {
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,
-    @Body() updateDto: ProfileUpdateDto,
-  ): Promise<IApiItem> {
+    @Body() updateDto: UpdateUserDto,
+  ): Promise<void> {
+    // User Basic Info
     const userKeys = ['firstName', 'lastName', 'email', 'phone'];
     let userData = {};
     userKeys.map(key => {
@@ -70,10 +71,10 @@ export class ProfileController {
       }
     });
 
-    const updated = await this.profileService.updateUser(
-      user._id,
-      userData as UpdateUserDto,
-    );
-    return apiUpdated(this.modelName, updated);
+    // return await this.profileService.updateUser(
+    //   user._id,
+    //   userData as UpdateUserDto,
+    // );
+    return;
   }
 }

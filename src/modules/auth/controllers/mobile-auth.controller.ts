@@ -1,14 +1,10 @@
-import { Redis } from '@modules/helpers/redis';
 import { apiItem, apiSucceed } from '@modules/helpers/responseParser';
-import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { IUser } from '@modules/user/user.interface';
-import { UserService } from '@modules/user/user.service';
 import {
   Body,
   Controller,
   Get,
-  Logger,
   Param,
   Post,
   Req,
@@ -18,33 +14,19 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { RegisterDto } from './auth.dto';
-import { LoginDto, LoginOutput, RefreshTokenDto } from './auth.interface';
-import { AuthService } from './auth.service';
-import { GetUser } from './get-user.decorator';
+import { GetUser } from '../../shared/decorators/get-user.decorator';
+import { RegisterDto } from '../auth.dto';
+import { LoginDto, LoginOutput, RefreshTokenDto } from '../auth.interface';
+import { AuthService } from '../auth.service';
 
 @Controller('mobile')
 export class MobileAuthController {
-  constructor(
-    private authService: AuthService,
-    private mommyDetailService: MommyDetailService,
-    private userService: UserService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async me(@GetUser() user: IUser) {
-    const redisKey = `User_${user._id}`;
-    const cache = await Redis.get(redisKey);
-    if (cache && cache != null) {
-      Logger.log(`User_${user._id} from cache`, 'DB SERVICE');
-      return JSON.parse(cache);
-    }
-    const userData = await this.userService.getById({ id: user._id });
-    const detail = await this.mommyDetailService.getByUserId(user._id);
-    const output = apiItem('User', { ...userData.toJSON(), detail });
-    await Redis.set(redisKey, JSON.stringify(output));
-    return output;
+    return apiItem('User', user);
   }
 
   @Post('register')

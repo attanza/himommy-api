@@ -233,4 +233,15 @@ export class SeederService {
     await this.articleModel.insertMany(articleData);
     Logger.log('Seeding Article  Finish');
   }
+
+  async seedTocologistUser() {
+    Redis.flushall();
+
+    const tocologist = await this.tocologistModel.findOne();
+    const user = await this.userModel
+      .findOne({ email: 'tocologist@himommy.org' })
+      .lean();
+    tocologist.user = user;
+    await tocologist.save();
+  }
 }

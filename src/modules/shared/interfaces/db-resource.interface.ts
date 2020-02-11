@@ -26,3 +26,9 @@ export interface IResourceDestroy {
   id: string;
   topic?: string;
 }
+
+export interface IResourceByKey {
+  modelName: string;
+  key: string;
+  value: string;
+}

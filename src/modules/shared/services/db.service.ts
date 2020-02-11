@@ -7,18 +7,24 @@ import {
   apiItem,
   apiUpdated,
 } from '@modules/helpers/responseParser';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import {
   IResourceDestroy,
   IResourceShow,
   IResourceStore,
   IResourceUpdate,
-} from './interfaces/db-resource.interface';
-import { IPaginated } from './interfaces/paginated.inteface';
+} from '../interfaces/db-resource.interface';
+import { IPaginated } from '../interfaces/paginated.inteface';
 import {
   IApiCollection,
   IApiItem,
-} from './interfaces/response-parser.interface';
+} from '../interfaces/response-parser.interface';
 
 @Injectable()
 export class DbService {
@@ -33,6 +39,7 @@ export class DbService {
    * @param query
    * @param regexSearchable
    * @param keyValueSearchable
+   * @param customOptions
    */
   async getPaginated({
     modelName,
@@ -60,14 +67,14 @@ export class DbService {
    * @param relations
    */
   async show(resourceShow: IResourceShow): Promise<IApiItem> {
-    const { modelName, id, relations } = resourceShow;
-    const redisKey = `${modelName}_${id}`;
+    const { modelName } = resourceShow;
+    const redisKey = Object.values(resourceShow).join('_');
     const cache = await Redis.get(redisKey);
     if (cache && cache != null) {
       Logger.log(`${modelName} detail from cache`, 'DB SERVICE');
       return JSON.parse(cache);
     }
-    const data = await this.getById({ id, relations });
+    const data = await this.getById(resourceShow);
 
     if (!data) {
       throw new HttpException(`${modelName} not found`, HttpStatus.NOT_FOUND);
@@ -82,14 +89,13 @@ export class DbService {
    * @param id
    * @param relations
    */
-  async getById(resourceShow: IResourceShow): Promise<any> {
+  async getById<T>(resourceShow: IResourceShow): Promise<T> {
     const { id, relations } = resourceShow;
+    return await this.Model.findById(id).populate(relations);
+  }
 
-    if (relations && relations.length > 0) {
-      return await this.Model.findById(id).populate(relations);
-    } else {
-      return await this.Model.findById(id);
-    }
+  async getByKey<T>(key: string, value: any): Promise<T> {
+    return await this.Model.findOne({ [key]: value });
   }
 
   /**
@@ -107,8 +113,7 @@ export class DbService {
         await isUnique(this.Model, key, createDto[key]);
       }
     }
-    const newData = await this.dbStore(createDto);
-    Redis.deletePattern(modelName);
+    const newData = await this.dbStore(modelName, createDto);
 
     let output: IApiItem;
     if (relations && relations.length > 0) {
@@ -125,7 +130,9 @@ export class DbService {
     return output;
   }
 
-  async dbStore(createDto: any) {
+  async dbStore(modelName: string, createDto: any) {
+    Redis.deletePattern(modelName);
+
     return await this.Model.create(createDto);
   }
 
@@ -153,8 +160,7 @@ export class DbService {
         await isUnique(this.Model, key, updateDto[key], id);
       }
     }
-    await this.dbUpdate(id, updateDto);
-    Redis.deletePattern(modelName);
+    await this.dbUpdate(modelName, id, updateDto);
 
     const output = apiUpdated(modelName, await this.getById({ id, relations }));
     if (topic) {
@@ -163,7 +169,9 @@ export class DbService {
     return output;
   }
 
-  async dbUpdate(id: string, updateDto: any) {
+  async dbUpdate(modelName: string, id: string, updateDto: any) {
+    Redis.deletePattern(modelName);
+
     return await this.Model.updateOne({ _id: id }, updateDto);
   }
 
@@ -186,5 +194,18 @@ export class DbService {
 
   async dbDestroy(id: string) {
     return await this.Model.deleteOne({ _id: id });
+  }
+
+  async isUnique(key: string, value: any, id?: string): Promise<boolean> {
+    const found = await this.Model.findOne({ [key]: value })
+      .select('_id')
+      .lean();
+    if (found && id && found._id.toString() === id.toString()) {
+      return true;
+    } else if (found) {
+      throw new BadRequestException(`${key} is already exists`);
+    } else {
+      return true;
+    }
   }
 }

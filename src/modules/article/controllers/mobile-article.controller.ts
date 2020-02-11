@@ -13,7 +13,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ArticleService } from './article.service';
+import { ArticleService } from '../article.service';
 
 @Controller('mobile/articles')
 export class MobileArticleController {

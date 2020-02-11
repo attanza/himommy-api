@@ -1,16 +1,16 @@
 import { IRole } from '@modules/role/role.interface';
+import { RoleService } from '@modules/role/role.service';
 import { IUser } from '@modules/user/user.interface';
+import { UserService } from '@modules/user/user.service';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { use } from 'passport';
 import * as FacebookTokenStrategy from 'passport-facebook-token';
 
 @Injectable()
 export class FacebookStrategy {
   constructor(
-    @InjectModel('User') private userModel: Model<IUser>,
-    @InjectModel('Role') private roleModel: Model<IRole>,
+    private roleService: RoleService,
+    private userService: UserService,
   ) {
     this.init();
   }
@@ -30,9 +30,12 @@ export class FacebookStrategy {
         ) => {
           const { id, first_name, last_name, email } = profile._json;
           let user: IUser;
-          user = await this.userModel.findOne({ email });
+          user = await this.userService.getByKey('email', email);
           if (!user) {
-            const mommyRole = await this.roleModel.findOne({ slug: 'mommy' });
+            const mommyRole: IRole = await this.roleService.getByKey(
+              'slug',
+              'mommy',
+            );
             const userData = {
               firstName: first_name || '',
               lastName: last_name || '',
@@ -43,7 +46,7 @@ export class FacebookStrategy {
               authProvider: 'facebook',
               avatar: profile.photos[0].value || '',
             };
-            user = await this.userModel.create(userData);
+            user = await this.userService.dbStore('User', userData);
           }
           return done(null, user);
         },

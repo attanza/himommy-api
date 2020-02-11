@@ -2,11 +2,11 @@ import { TocologistServicesModule } from '@modules/tocologist-services/tocologis
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MobileReservationController } from './mobile-reservation.controller';
-import { ReservationController } from './reservation.controller';
+import { MobileReservationController } from './controllers/mobile-reservation.controller';
+import { ReservationController } from './controllers/reservation.controller';
+import { TocologistReservationController } from './controllers/tocologist-reservation.controller';
 import { ReservationSchema } from './reservation.schema';
 import { ReservationService } from './reservation.service';
-import { TocologistReservationController } from './tocologist-reservation.controller';
 
 @Module({
   imports: [

@@ -1,10 +1,10 @@
-import { DbService } from '@modules/shared/db.service';
+import { DbService } from '@modules/shared/services/db.service';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { TServiceDto } from './reservation.dto';
+import { TServiceDto } from './dto/reservation.dto';
 import { IReservation } from './reservation.interface';
 
 @Injectable()
@@ -24,6 +24,9 @@ export class ReservationService extends DbService {
       modelName: 'Tocologist',
       id,
     });
+    if (!data) {
+      throw new BadRequestException('Tocologist not found');
+    }
     if (!data.isActive) {
       throw new BadRequestException('Tocologist cannot received reservation');
     }

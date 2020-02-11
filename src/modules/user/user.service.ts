@@ -2,37 +2,53 @@ import mqttHandler from '@modules/helpers/mqttHandler';
 import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { ChangePasswordDto } from '@modules/profile/profile.dto';
-import { DbService } from '@modules/shared/db.service';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { RoleService } from '@modules/role/role.service';
+import { DbService } from '@modules/shared/services/db.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { compare, hash } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { Model } from 'mongoose';
-import { IRole } from '../role/role.interface';
 import { IUser } from './user.interface';
 
 @Injectable()
 export class UserService extends DbService {
   constructor(
     @InjectModel('User') private model: Model<IUser>,
-    @InjectModel('Role') private roleModel: Model<IRole>,
+    private roleService: RoleService,
   ) {
     super(model);
   }
 
+  async findByUid(uid: string): Promise<IUser> {
+    return await this.model
+      .findOne({
+        $or: [{ email: uid }, { phone: uid }],
+      })
+      .populate([
+        {
+          path: 'role',
+          select: 'name slug',
+          populate: { path: 'permissions', select: 'name slug' },
+        },
+      ]);
+  }
+
+  async findByIdWithRolePermissions(id: string): Promise<IUser> {
+    return await this.model.findById(id).populate([
+      {
+        path: 'role',
+        select: 'name slug',
+        populate: { path: 'permissions', select: 'name slug' },
+      },
+    ]);
+  }
+
   async checkRole(roleId: string): Promise<void> {
     if (roleId && roleId !== '') {
-      const found = await this.roleModel.findById(roleId);
-      if (!found) {
-        throw new HttpException(
-          `roleId not existed in database`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      await this.roleService.show({
+        modelName: 'Role',
+        id: roleId,
+      });
     }
   }
 
@@ -41,14 +57,13 @@ export class UserService extends DbService {
     changePasswordDto: ChangePasswordDto,
   ): Promise<string> {
     const { oldPassword, password } = changePasswordDto;
-    const isMatched = await compare(oldPassword, user.password);
+    const userData = await this.model.findById(user._id);
+    const isMatched = await compare(oldPassword, userData.password);
     if (!isMatched) {
       throw new BadRequestException('Old password incorrect');
     }
-    await this.model.updateOne(
-      { _id: user._id },
-      { password: await hash(password, 12) },
-    );
+    userData.password = password;
+    await userData.save();
     return 'Password successfully updated';
   }
 

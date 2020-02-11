@@ -11,7 +11,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import { EStatus } from './reservation.interface';
+import { EStatus } from '../reservation.interface';
 
 export class TServiceDto {
   @IsNotEmpty()

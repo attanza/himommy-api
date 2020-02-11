@@ -1,6 +1,6 @@
-import { GetUser } from '@modules/auth/get-user.decorator';
 import avatarInterceptor from '@modules/helpers/avatarInterceptor';
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
+import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
@@ -19,9 +19,9 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed, apiUpdated } from '../helpers/responseParser';
-import { ChangePasswordDto, ProfileUpdateDto } from './profile.dto';
-import { ProfileService } from './profile.service';
+import { apiSucceed, apiUpdated } from '../../helpers/responseParser';
+import { ChangePasswordDto, ProfileUpdateDto } from '../profile.dto';
+import { ProfileService } from '../profile.service';
 
 @Controller('mobile/profile')
 export class MobileProfileController {
@@ -90,19 +90,17 @@ export class MobileProfileController {
       }
     });
 
-    const updatedUser = await this.profileService.updateUser(
+    const updatedUser: IUser = await this.profileService.updateUser(
       user._id,
       userData as UpdateUserDto,
     );
-
-    console.log('updatedUser', updatedUser);
 
     const updatedDetail = await this.profileService.updateDetail(
       detailData as UpdateMommyDto,
     );
 
     return apiUpdated(this.modelName, {
-      ...updatedUser.data.toJSON(),
+      ...updatedUser.toJSON(),
       detail: updatedDetail,
     });
   }

@@ -20,8 +20,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateArticleDto, UpdateArticleDto } from './article.dto';
-import { ArticleService } from './article.service';
+import { CreateArticleDto, UpdateArticleDto } from '../article.dto';
+import { ArticleService } from '../article.service';
 
 @Controller('admin/articles')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)

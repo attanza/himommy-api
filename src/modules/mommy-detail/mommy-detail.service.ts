@@ -1,5 +1,5 @@
 import { Redis } from '@modules/helpers/redis';
-import { DbService } from '@modules/shared/db.service';
+import { DbService } from '@modules/shared/services/db.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -26,7 +26,7 @@ export class MommyDetailService extends DbService {
     return data;
   }
 
-  async getByUserId(userId: string) {
+  async getByUser(userId: string) {
     const redisKey = `MommyDetail_user_${userId}`;
     const cache = await Redis.get(redisKey);
     if (cache && cache != null) {

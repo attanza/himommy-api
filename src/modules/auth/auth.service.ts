@@ -1,15 +1,16 @@
-import { isUnique } from '@modules/helpers';
 import { IRole } from '@modules/role/role.interface';
+import { RoleService } from '@modules/role/role.service';
+import { UserService } from '@modules/user/user.service';
 import {
   BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcrypt';
-import { Model } from 'mongoose';
 import { v4 } from 'uuid';
 import mail from '../helpers/mail';
 import { Redis } from '../helpers/redis';
@@ -25,8 +26,8 @@ import {
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel('User') private userModel: Model<IUser>,
-    @InjectModel('Role') private roleModel: Model<IRole>,
+    private userService: UserService,
+    private roleService: RoleService,
     private jwtService: JwtService,
   ) {}
 
@@ -35,14 +36,17 @@ export class AuthService {
     role: string = 'mommy',
   ): Promise<string> {
     // Find role id
-    const roleId = await this.roleModel.findOne({ slug: role }).select('_id');
+    const roleData: IRole = await this.roleService.getByKey('slug', role);
+    if (!roleData) {
+      throw new InternalServerErrorException('mommy role not found');
+    }
 
     // Create User
     const { email, phone } = registerDto;
-    await isUnique(this.userModel, 'email', email);
-    await isUnique(this.userModel, 'phone', phone);
-    const userData = { ...registerDto, role: roleId._id };
-    const user = await this.userModel.create(userData);
+    await this.userService.isUnique('email', email);
+    await this.userService.isUnique('phone', phone);
+    const userData = { ...registerDto, role: roleData._id };
+    const user = await this.userService.dbStore('User', userData);
 
     // Generate confirmation link
     const confirmationToken = v4();
@@ -69,7 +73,7 @@ export class AuthService {
       throw new BadRequestException('Invalid token');
     }
 
-    const user = await this.userModel.findById(userId);
+    const user: IUser = await this.userService.getById({ id: userId });
     if (!user) {
       throw new BadRequestException('User not found');
     }
@@ -84,26 +88,28 @@ export class AuthService {
     allowedRoles: string[],
   ): Promise<LoginOutput> {
     const { uid, password } = loginDto;
-    const user = await this.userModel
-      .findOne({
-        $or: [{ email: uid }, { phone: uid }],
-      })
-      .populate('role');
+    const user = await this.userService.findByUid(uid);
 
     if (!user) {
+      Logger.log('No User', 'Auth');
       this.throwError();
     }
 
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) {
+      Logger.log('Invalid Password', 'Auth');
+
       this.throwError();
     }
 
     if (!user.isActive) {
+      Logger.log('User not active', 'Auth');
+
       this.throwError();
     }
-
     if (!allowedRoles.includes(user.role.slug)) {
+      Logger.log('Role not allowed', 'Auth');
+
       this.throwError();
     }
     const tokenData = await this.generateToken(user);
@@ -123,10 +129,11 @@ export class AuthService {
   ): Promise<LoginOutput> {
     const { refreshToken } = refreshTokenDto;
     const { uid } = this.jwtService.verify(refreshToken);
-    if (uid !== user.refreshToken) {
+    const userData: IUser = await this.userService.getById({ id: user._id });
+    if (uid !== userData.refreshToken) {
       throw new BadRequestException('Refresh token failed');
     }
-    const tokenData = await this.generateToken(user);
+    const tokenData = await this.generateToken(userData);
 
     return {
       meta: {

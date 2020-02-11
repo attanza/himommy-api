@@ -21,19 +21,19 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed, apiUpdated } from '../helpers/responseParser';
+import { apiSucceed, apiUpdated } from '../../helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
-} from '../shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
+} from '../../shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '../../shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '../../shared/pipes/resource-pagination.pipe';
 import {
   AttachTocologistServicesDto,
   CreateTocologistDto,
   UpdateTocologistDto,
-} from './tocologist.dto';
-import { TocologistService } from './tocologist.service';
+} from '../tocologist.dto';
+import { TocologistService } from '../tocologist.service';
 
 @Controller('admin/tocologists')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)

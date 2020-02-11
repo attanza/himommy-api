@@ -24,13 +24,14 @@ import { CreatePermissionDto, UpdatePermissionDto } from './permission.dto';
 import { PermissionService } from './permission.service';
 
 @Controller('admin/permissions')
-@UseGuards(AuthGuard('jwt'), PermissionGuard)
+// @UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class PermissionController {
   modelName = 'Permission';
   uniques = ['name'];
   constructor(private dbService: PermissionService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'), PermissionGuard)
   @Permission('read-permission')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['slug'];

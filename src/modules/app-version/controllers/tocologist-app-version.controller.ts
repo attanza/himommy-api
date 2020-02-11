@@ -1,10 +1,10 @@
 import { apiItem } from '@modules/helpers/responseParser';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { Controller, Get, Query } from '@nestjs/common';
-import { AppVersionService } from './app-version.service';
+import { AppVersionService } from '../app-version.service';
 
-@Controller('mobile/app-version')
-export class MobileAppVersionController {
+@Controller('tocologist/app-version')
+export class TocologistAppVersionController {
   modelName = 'AppVersion';
   constructor(private dbService: AppVersionService) {}
 

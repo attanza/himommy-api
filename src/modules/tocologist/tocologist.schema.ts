@@ -1,3 +1,4 @@
+import { generateImageLink } from '@modules/helpers/generateImageLink';
 import * as mongoose from 'mongoose';
 export const TocologistSchema = new mongoose.Schema(
   {
@@ -56,7 +57,7 @@ TocologistSchema.index({ location: '2dsphere' });
 TocologistSchema.methods.toJSON = function() {
   const obj = this.toObject();
   if (obj.image && obj.image !== '') {
-    obj.image = `${process.env.APP_URL}${obj.image}`;
+    obj.image = generateImageLink(obj.image);
   }
 
   return obj;

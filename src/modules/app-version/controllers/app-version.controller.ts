@@ -20,8 +20,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateAppVersionDto, UpdateAppVersionDto } from './app-version.dto';
-import { AppVersionService } from './app-version.service';
+import { CreateAppVersionDto, UpdateAppVersionDto } from '../app-version.dto';
+import { AppVersionService } from '../app-version.service';
 
 @Controller('admin/app-versions')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)

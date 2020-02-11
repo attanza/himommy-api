@@ -1,3 +1,4 @@
+import { apiItem } from '@modules/helpers/responseParser';
 import { IUser } from '@modules/user/user.interface';
 import {
   Body,
@@ -10,19 +11,18 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { apiItem } from '../helpers/responseParser';
-import { LoginDto, LoginOutput, RefreshTokenDto } from './auth.interface';
-import { AuthService } from './auth.service';
-import { GetUser } from './get-user.decorator';
+import { GetUser } from '../../shared/decorators/get-user.decorator';
+import { LoginDto, LoginOutput, RefreshTokenDto } from '../auth.interface';
+import { AuthService } from '../auth.service';
 
-@Controller('admin')
-export class AuthController {
+@Controller('tocologist')
+export class TocologistAuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
   @UsePipes(ValidationPipe)
   async login(@Res() res, @Body() loginDto: LoginDto): Promise<LoginOutput> {
-    const allowedRoles = ['super-administrator', 'administrator'];
+    const allowedRoles = ['tocologist'];
 
     const data = await this.authService.login(loginDto, allowedRoles);
     return res.status(200).send(data);

@@ -1,3 +1,6 @@
+import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
+import { RoleModule } from '@modules/role/role.module';
+import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoleSchema } from '../role/role.schema';
@@ -11,6 +14,9 @@ import { UserService } from './user.service';
       { name: 'User', schema: UserSchema },
       { name: 'Role', schema: RoleSchema },
     ]),
+    RoleModule,
+    MommyDetailModule,
+    TocologistModule,
   ],
   controllers: [UserController],
   providers: [UserService],

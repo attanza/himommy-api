@@ -1,3 +1,4 @@
+import { apiItem } from '@modules/helpers/responseParser';
 import {
   Controller,
   Get,
@@ -11,10 +12,11 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   IApiCollection,
   IApiItem,
-} from '../shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
-import { TocologistService } from './tocologist.service';
+} from '../../shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '../../shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '../../shared/pipes/resource-pagination.pipe';
+import { ITocologist } from '../tocologist.interface';
+import { TocologistService } from '../tocologist.service';
 
 @Controller('mobile/tocologists')
 @UseGuards(AuthGuard('jwt'))
@@ -45,5 +47,12 @@ export class MobileTocologistController {
       id,
       relations: this.relations,
     });
+  }
+
+  @Get('/getByUser/:id')
+  @UsePipes(ValidationPipe)
+  async getByUser(@Param() param: MongoIdPipe) {
+    const data: ITocologist = await this.dbService.getByKey('user', param.id);
+    return apiItem('Tocologist', data);
   }
 }

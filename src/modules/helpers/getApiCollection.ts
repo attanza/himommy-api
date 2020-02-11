@@ -133,9 +133,8 @@ export default async ({
       .find(options)
       .populate(relations)
       .sort({ [sortBy]: sortMode })
-      .skip(limit * page - limit)
-      .limit(limit)
-      .lean();
+      .skip(Number(limit * page - limit))
+      .limit(Number(limit));
   }
 
   meta = {

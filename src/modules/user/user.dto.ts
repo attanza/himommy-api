@@ -41,21 +41,21 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @Length(3, 50)
-  firstName: string;
+  firstName?: string;
 
   @IsOptional()
   @IsString()
   @Length(3, 50)
-  lastName: string;
+  lastName?: string;
 
   @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsOptional()
   @IsString()
   @Length(8, 30)
-  phone: string;
+  phone?: string;
 
   @IsOptional()
   @IsMongoId()

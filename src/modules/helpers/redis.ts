@@ -1,4 +1,5 @@
 import * as ioredis from 'ioredis';
+
 class RedisInstance {
   redis;
   defaultExpiry = 60 * 60 * 4; // 4 hours
@@ -38,9 +39,6 @@ class RedisInstance {
       });
       stream.on('end', () => {
         resolve();
-      });
-      stream.on('error', function(err) {
-        console.log('error', err);
       });
     });
   }

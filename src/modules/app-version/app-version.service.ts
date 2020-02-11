@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { DbService } from '../shared/db.service';
+import { DbService } from '../shared/services/db.service';
 import { IAppVersion } from './app-version.interface';
 
 @Injectable()

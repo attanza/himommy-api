@@ -1,3 +1,4 @@
+import { generateImageLink } from '@modules/helpers/generateImageLink';
 import { hash } from 'bcrypt';
 import * as mongoose from 'mongoose';
 import { v4 as uuid } from 'uuid';
@@ -57,7 +58,7 @@ UserSchema.methods.toJSON = function() {
   delete obj.password;
   delete obj.refreshToken;
   if (obj.avatar && obj.avatar !== '') {
-    obj.avatar = `${process.env.APP_URL}${obj.avatar}`;
+    obj.avatar = generateImageLink(obj.avatar);
   }
   return obj;
 };

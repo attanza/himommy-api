@@ -20,15 +20,14 @@ export class ProfileService {
   }
 
   async updateUser(id: string, updateDto: UpdateUserDto) {
-    const uniques = ['phone', 'email'];
-    const relations = ['role'];
-    return await this.userService.update({
-      modelName: 'User',
-      id,
-      updateDto,
-      uniques,
-      relations,
-    });
+    if (updateDto.email) {
+      this.userService.isUnique('email', updateDto.email, id);
+    }
+    if (updateDto.phone) {
+      this.userService.isUnique('phone', updateDto.phone, id);
+    }
+    await this.userService.dbUpdate('User', id, updateDto);
+    return this.userService.findByIdWithRolePermissions(id);
   }
 
   async updateDetail(updateDto: UpdateMommyDto) {

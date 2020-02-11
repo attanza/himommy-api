@@ -1,4 +1,4 @@
-import { DbService } from '@modules/shared/db.service';
+import { DbService } from '@modules/shared/services/db.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

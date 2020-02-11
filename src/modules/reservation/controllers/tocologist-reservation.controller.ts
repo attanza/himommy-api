@@ -1,11 +1,13 @@
-import { GetUser } from '@modules/auth/get-user.decorator';
 import { apiItem } from '@modules/helpers/responseParser';
+import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
   IApiItem,
 } from '@modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+import { ITocologist } from '@modules/tocologist/tocologist.interface';
+import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { IUser } from '@modules/user/user.interface';
 import {
   BadRequestException,
@@ -21,33 +23,34 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { EStatus } from './reservation.interface';
-import { ReservationService } from './reservation.service';
-import { UpdateTocologistReservationDto } from './todologist-reservation.dto';
+import { UpdateTocologistReservationDto } from '../dto/todologist-reservation.dto';
+import { EStatus, IReservation } from '../reservation.interface';
+import { ReservationService } from '../reservation.service';
 
 @Controller('tocologist/reservations')
 @UseGuards(AuthGuard('jwt'))
 export class TocologistReservationController {
   modelName = 'Reservation';
   relations = ['tocologist', 'user'];
-  constructor(private reservationService: ReservationService) {}
+  constructor(
+    private reservationService: ReservationService,
+    private tocologistService: TocologistService,
+  ) {}
 
   @Get()
   async all(
     @GetUser() user: IUser,
     @Query() query: ResourcePaginationPipe,
   ): Promise<IApiCollection> {
-    if (!user.tocologist) {
-      throw new BadRequestException(
-        'this user does not belongs to any tocologist',
-      );
-    }
-
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist', 'status'];
+
+    const tocologist: ITocologist = await this.tocologistService.getByKey(
+      'user',
+      user._id,
+    );
     const relations = ['user'];
-    query.fieldKey = 'tocologist';
-    query.fieldValue = user.tocologist._id;
+    const customOptions = { tocologist: tocologist._id };
 
     return this.reservationService.getPaginated({
       modelName: this.modelName,
@@ -55,6 +58,7 @@ export class TocologistReservationController {
       regexSearchable,
       keyValueSearchable,
       relations,
+      customOptions,
     });
   }
 
@@ -64,14 +68,13 @@ export class TocologistReservationController {
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
   ): Promise<IApiItem> {
-    if (!user.tocologist) {
-      throw new BadRequestException(
-        'this user does not belongs to any tocologist',
-      );
-    }
+    const tocologist: ITocologist = await this.tocologistService.getByKey(
+      'user',
+      user._id,
+    );
     const { id } = param;
     const data = await this.reservationService.getMyReservationByTocologistId(
-      user.tocologist._id,
+      tocologist._id,
       id,
     );
     return apiItem(this.modelName, data);
@@ -84,15 +87,10 @@ export class TocologistReservationController {
     @Body() updateDto: UpdateTocologistReservationDto,
     @GetUser() user: IUser,
   ) {
-    if (!user.tocologist) {
-      throw new BadRequestException(
-        'this user does not belongs to any tocologist',
-      );
-    }
     let updateData: any;
 
     const { id } = param;
-    const data = await this.reservationService.getById({ id });
+    const data: IReservation = await this.reservationService.getById({ id });
 
     // Check if reservation existed
     if (!data) {
@@ -157,7 +155,7 @@ export class TocologistReservationController {
     // Check if services is existed
     if (updateData.services && updateData.services.length > 0) {
       await this.reservationService.checkServices(
-        data.tocologist,
+        user.tocologist._id,
         updateData.services,
       );
     }

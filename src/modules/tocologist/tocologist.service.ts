@@ -1,7 +1,6 @@
 import mqttHandler from '@modules/helpers/mqttHandler';
-import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
-import { DbService } from '@modules/shared/db.service';
+import { DbService } from '@modules/shared/services/db.service';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -100,7 +99,7 @@ export class TocologistService extends DbService {
       return false;
     } else {
       Promise.all([
-        this.dbUpdate(id, { image: imageString }),
+        this.dbUpdate('Tocologist', id, { image: imageString }),
         resizeImage([image.path], 400),
       ]);
       mqttHandler.sendMessage(
@@ -108,16 +107,5 @@ export class TocologistService extends DbService {
         `${process.env.APP_URL}${imageString}`,
       );
     }
-  }
-
-  async getByUser(userId: string) {
-    const redisKey = `Tocologist_user_${userId}`;
-    const cache = await Redis.get(redisKey);
-    if (cache && cache != null) {
-      return JSON.parse(cache);
-    }
-    const data = await this.tocologistModel.findOne({ user: userId }).lean();
-    Redis.set(redisKey, JSON.stringify(data));
-    return data;
   }
 }
