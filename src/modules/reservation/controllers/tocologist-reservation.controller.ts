@@ -1,3 +1,5 @@
+import { Role } from '@guards/role.decorator';
+import { RoleGuard } from '@guards/role.guard';
 import { apiItem } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
@@ -28,7 +30,7 @@ import { EStatus, IReservation } from '../reservation.interface';
 import { ReservationService } from '../reservation.service';
 
 @Controller('tocologist/reservations')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 export class TocologistReservationController {
   modelName = 'Reservation';
   relations = ['tocologist', 'user'];
@@ -38,6 +40,7 @@ export class TocologistReservationController {
   ) {}
 
   @Get()
+  @Role('tocologist')
   async all(
     @GetUser() user: IUser,
     @Query() query: ResourcePaginationPipe,

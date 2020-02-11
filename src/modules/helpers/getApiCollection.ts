@@ -141,9 +141,9 @@ export default async ({
     status: 200,
     message: `${modelName} Collection`,
     total,
-    limit,
-    page,
-    totalPages,
+    limit: Number(limit),
+    page: Number(page),
+    totalPages: Number(totalPages),
     nextPage: totalPages > page ? page + 1 : null,
     prevPage: page > 1 ? page - 1 : null,
   };
