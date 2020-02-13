@@ -5,6 +5,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Param,
   Post,
   Req,
@@ -47,6 +48,7 @@ export class MobileAuthController {
 
   @Post('login')
   @UsePipes(ValidationPipe)
+  @HttpCode(200)
   async login(@Body() loginDto: LoginDto): Promise<IApiItem> {
     const allowedRoles = ['mommy'];
 

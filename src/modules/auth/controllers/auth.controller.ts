@@ -4,6 +4,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Res,
   UseGuards,
@@ -22,6 +23,7 @@ export class AuthController {
 
   @Post('login')
   @UsePipes(ValidationPipe)
+  @HttpCode(200)
   async login(@Body() loginDto: LoginDto): Promise<IApiItem> {
     const allowedRoles = ['super-administrator', 'administrator'];
 

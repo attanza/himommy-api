@@ -5,6 +5,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Res,
   UseGuards,
@@ -22,6 +23,7 @@ export class TocologistAuthController {
 
   @Post('login')
   @UsePipes(ValidationPipe)
+  @HttpCode(200)
   async login(@Body() loginDto: LoginDto): Promise<IApiItem> {
     const data = await this.authService.tocologistLogin(loginDto);
     return apiSucceed('Login Succeed', data);
