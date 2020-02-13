@@ -1,3 +1,4 @@
+import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { IUser } from '@modules/user/user.interface';
 import {
   Body,
@@ -10,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { apiItem } from '../../helpers/responseParser';
+import { apiItem, apiSucceed } from '../../helpers/responseParser';
 import { GetUser } from '../../shared/decorators/get-user.decorator';
 import { LoginDto, LoginOutput, RefreshTokenDto } from '../auth.interface';
 import { AuthService } from '../auth.service';
@@ -21,11 +22,11 @@ export class AuthController {
 
   @Post('login')
   @UsePipes(ValidationPipe)
-  async login(@Res() res, @Body() loginDto: LoginDto): Promise<LoginOutput> {
+  async login(@Body() loginDto: LoginDto): Promise<IApiItem> {
     const allowedRoles = ['super-administrator', 'administrator'];
 
     const data = await this.authService.login(loginDto, allowedRoles);
-    return res.status(200).send(data);
+    return apiSucceed('Login Succeed', data);
   }
 
   @Post('refreshToken')

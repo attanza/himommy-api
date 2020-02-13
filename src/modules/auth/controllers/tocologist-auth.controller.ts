@@ -1,4 +1,5 @@
-import { apiItem } from '@modules/helpers/responseParser';
+import { apiItem, apiSucceed } from '@modules/helpers/responseParser';
+import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { IUser } from '@modules/user/user.interface';
 import {
   Body,
@@ -21,11 +22,9 @@ export class TocologistAuthController {
 
   @Post('login')
   @UsePipes(ValidationPipe)
-  async login(@Res() res, @Body() loginDto: LoginDto): Promise<LoginOutput> {
-    const allowedRoles = ['tocologist'];
-
-    const data = await this.authService.login(loginDto, allowedRoles);
-    return res.status(200).send(data);
+  async login(@Body() loginDto: LoginDto): Promise<IApiItem> {
+    const data = await this.authService.tocologistLogin(loginDto);
+    return apiSucceed('Login Succeed', data);
   }
 
   @Post('refreshToken')

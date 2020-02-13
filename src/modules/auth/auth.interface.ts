@@ -26,7 +26,7 @@ export interface LoginOutput {
   data: LoginData;
 }
 
-interface LoginData {
+export interface LoginData {
   token: string;
   refreshToken: string;
 }

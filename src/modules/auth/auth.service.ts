@@ -1,5 +1,7 @@
 import { IRole } from '@modules/role/role.interface';
 import { RoleService } from '@modules/role/role.service';
+import { ITocologist } from '@modules/tocologist/tocologist.interface';
+import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { UserService } from '@modules/user/user.service';
 import {
   BadRequestException,
@@ -18,6 +20,7 @@ import { IUser } from '../user/user.interface';
 import { RegisterDto } from './auth.dto';
 import {
   JwtPayload,
+  LoginData,
   LoginDto,
   LoginOutput,
   RefreshTokenDto,
@@ -29,6 +32,7 @@ export class AuthService {
     private userService: UserService,
     private roleService: RoleService,
     private jwtService: JwtService,
+    private tocologistService: TocologistService,
   ) {}
 
   async register(
@@ -83,12 +87,41 @@ export class AuthService {
     Promise.all([user.save(), Redis.del(token)]);
   }
 
-  async login(
-    loginDto: LoginDto,
-    allowedRoles: string[],
-  ): Promise<LoginOutput> {
-    const { uid, password } = loginDto;
+  async tocologistLogin(loginDto: LoginDto): Promise<LoginData> {
+    const { uid } = loginDto;
+    const allowedRoles = ['tocologist'];
     const user = await this.userService.findByUid(uid);
+    await this.checkUser(user, loginDto);
+    if (!allowedRoles.includes(user.role.slug)) {
+      Logger.log('Role not allowed', 'Auth');
+
+      this.throwError();
+    }
+    const tocologist: ITocologist = await this.tocologistService.getByKey(
+      'user',
+      user._id,
+    );
+    if (!tocologist) {
+      Logger.log('No Tocologist Attached', 'Auth');
+      this.throwError();
+    }
+    return await this.generateToken(user);
+  }
+
+  async login(loginDto: LoginDto, allowedRoles: string[]): Promise<LoginData> {
+    const { uid } = loginDto;
+    const user = await this.userService.findByUid(uid);
+    await this.checkUser(user, loginDto);
+    if (!allowedRoles.includes(user.role.slug)) {
+      Logger.log('Role not allowed', 'Auth');
+
+      this.throwError();
+    }
+    return await this.generateToken(user);
+  }
+
+  private async checkUser(user: IUser, loginDto: LoginDto): Promise<void> {
+    const { password } = loginDto;
 
     if (!user) {
       Logger.log('No User', 'Auth');
@@ -107,20 +140,6 @@ export class AuthService {
 
       this.throwError();
     }
-    if (!allowedRoles.includes(user.role.slug)) {
-      Logger.log('Role not allowed', 'Auth');
-
-      this.throwError();
-    }
-    const tokenData = await this.generateToken(user);
-
-    return {
-      meta: {
-        status: 200,
-        message: 'Login Succeed',
-      },
-      data: tokenData,
-    };
   }
 
   async refreshToken(

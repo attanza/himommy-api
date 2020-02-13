@@ -1,5 +1,8 @@
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
+import { UpdateTocologistDto } from '@modules/tocologist/tocologist.dto';
+import { ITocologist } from '@modules/tocologist/tocologist.interface';
+import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
 import { UserService } from '@modules/user/user.service';
@@ -10,6 +13,7 @@ export class ProfileService {
   constructor(
     private userService: UserService,
     private mommyService: MommyDetailService,
+    private tocologistService: TocologistService,
   ) {}
   async changePassword(user: IUser, changePasswordDto: ChangePasswordDto) {
     return this.userService.changePassword(user, changePasswordDto);
@@ -32,5 +36,13 @@ export class ProfileService {
 
   async updateDetail(updateDto: UpdateMommyDto) {
     return await this.mommyService.createOrUpdateDetail(updateDto);
+  }
+
+  async updateTocologistDetail(
+    id: string,
+    updateDto: UpdateTocologistDto,
+  ): Promise<ITocologist> {
+    await this.tocologistService.dbUpdate('Tocologist', id, updateDto);
+    return await this.tocologistService.getById({ id });
   }
 }

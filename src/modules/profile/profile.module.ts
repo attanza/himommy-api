@@ -1,4 +1,5 @@
 import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
+import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { MobileProfileController } from './controllers/mobile-profile.controller';
@@ -7,7 +8,7 @@ import { TocologistProfileController } from './controllers/tocologist-profile.co
 import { ProfileService } from './profile.service';
 
 @Module({
-  imports: [UserModule, MommyDetailModule],
+  imports: [UserModule, MommyDetailModule, TocologistModule],
   controllers: [
     ProfileController,
     MobileProfileController,
