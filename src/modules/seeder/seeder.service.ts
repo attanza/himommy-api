@@ -1,5 +1,6 @@
 import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IArticle } from '@modules/article/article.interface';
+import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IRole } from '@modules/role/role.interface';
@@ -41,6 +42,8 @@ export class SeederService {
     private mommyDetailModel: Model<IMommyDetail>,
     @InjectModel('Article')
     private articleModel: Model<IArticle>,
+    @InjectModel('CheckList')
+    private checkListModel: Model<ICheckList>,
   ) {}
 
   /**
@@ -92,6 +95,7 @@ export class SeederService {
       'App Version',
       'Reservation',
       'Article',
+      'CheckList',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -205,6 +209,17 @@ export class SeederService {
     Logger.log('Seeding Tocologist  Finish');
   }
 
+  async seedTocologistUser() {
+    Redis.flushall();
+
+    const tocologist = await this.tocologistModel.findOne();
+    const user = await this.userModel
+      .findOne({ email: 'tocologist@himommy.org' })
+      .lean();
+    tocologist.user = user;
+    await tocologist.save();
+  }
+
   /**
    * Article Seeder
    */
@@ -213,6 +228,7 @@ export class SeederService {
     await this.articleModel.deleteMany({});
 
     const articleCategories = ['ARTICLES', 'MYTHS', 'TIPS'];
+
     const bools = [true, false];
     const articleData = [];
 
@@ -225,7 +241,10 @@ export class SeederService {
         content: this.faker.paragraph(),
         age: this.faker.integer({ min: 0, max: 40 }),
         image: 'https://picsum.photos/400/200',
-        category: articleCategories[this.faker.integer({ min: 0, max: 2 })],
+        category:
+          articleCategories[
+            this.faker.integer({ min: 0, max: articleCategories.length - 1 })
+          ],
         isPublish: bools[this.faker.integer({ min: 0, max: 1 })],
         isAuth: bools[this.faker.integer({ min: 0, max: 1 })],
       });
@@ -234,14 +253,33 @@ export class SeederService {
     Logger.log('Seeding Article  Finish');
   }
 
-  async seedTocologistUser() {
-    Redis.flushall();
+  /**
+   * CheckList Seeder
+   */
+  async seedCheckList() {
+    Logger.log('Seeding Check List ...');
+    await this.checkListModel.deleteMany({});
 
-    const tocologist = await this.tocologistModel.findOne();
-    const user = await this.userModel
-      .findOne({ email: 'tocologist@himommy.org' })
-      .lean();
-    tocologist.user = user;
-    await tocologist.save();
+    const articleCategories = [
+      'LABORATORY',
+      'NUTRITION',
+      'HEALTH',
+      'PREGNANCY_PREPARATION',
+      'PREGNANCY_SIGNS',
+    ];
+    const checkListData = [];
+
+    for (let i = 0; i < 100; i++) {
+      checkListData.push({
+        item: this.faker.sentence(),
+        category:
+          articleCategories[
+            this.faker.integer({ min: 0, max: articleCategories.length - 1 })
+          ],
+        description: '',
+      });
+    }
+    await this.checkListModel.insertMany(checkListData);
+    Logger.log('Seeding Check List  Finish');
   }
 }

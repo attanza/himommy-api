@@ -48,12 +48,8 @@ export class TocologistReservationController {
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist', 'status'];
 
-    const tocologist: ITocologist = await this.tocologistService.getByKey(
-      'user',
-      user._id,
-    );
     const relations = ['user'];
-    const customOptions = { tocologist: tocologist._id };
+    const customOptions = { tocologist: user.tocologist._id };
 
     return this.reservationService.getPaginated({
       modelName: this.modelName,

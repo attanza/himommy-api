@@ -8,7 +8,7 @@ import {
   Max,
   MaxLength,
 } from 'class-validator';
-import { IArticleCategory } from './article.interface';
+import { EArticleCategory } from './article.interface';
 
 export class CreateArticleDto {
   @IsNotEmpty()
@@ -32,9 +32,9 @@ export class CreateArticleDto {
 
   @IsNotEmpty()
   @IsIn([
-    IArticleCategory.ARTICLES,
-    IArticleCategory.MYTHS,
-    IArticleCategory.TIPS,
+    EArticleCategory.ARTICLES,
+    EArticleCategory.MYTHS,
+    EArticleCategory.TIPS,
   ])
   category: string;
 }
@@ -61,9 +61,9 @@ export class UpdateArticleDto {
 
   @IsOptional()
   @IsIn([
-    IArticleCategory.ARTICLES,
-    IArticleCategory.MYTHS,
-    IArticleCategory.TIPS,
+    EArticleCategory.ARTICLES,
+    EArticleCategory.MYTHS,
+    EArticleCategory.TIPS,
   ])
   category: string;
 
