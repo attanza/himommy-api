@@ -3,6 +3,7 @@ import { IArticle } from '@modules/article/article.interface';
 import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IPermission } from '@modules/permission/permission.interface';
+import { IQuestion } from '@modules/question/question.interface';
 import { IRole } from '@modules/role/role.interface';
 import { ITocologistService } from '@modules/tocologist-services/tocologist-services.interface';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
@@ -44,6 +45,8 @@ export class SeederService {
     private articleModel: Model<IArticle>,
     @InjectModel('CheckList')
     private checkListModel: Model<ICheckList>,
+    @InjectModel('Question')
+    private questionModel: Model<IQuestion>,
   ) {}
 
   /**
@@ -96,6 +99,7 @@ export class SeederService {
       'Reservation',
       'Article',
       'CheckList',
+      'Question',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -259,27 +263,63 @@ export class SeederService {
   async seedCheckList() {
     Logger.log('Seeding Check List ...');
     await this.checkListModel.deleteMany({});
-
-    const articleCategories = [
+    const checkListCategory = [
       'LABORATORY',
       'NUTRITION',
       'HEALTH',
       'PREGNANCY_PREPARATION',
       'PREGNANCY_SIGNS',
     ];
+
     const checkListData = [];
 
     for (let i = 0; i < 100; i++) {
       checkListData.push({
-        item: this.faker.sentence(),
         category:
-          articleCategories[
-            this.faker.integer({ min: 0, max: articleCategories.length - 1 })
+          checkListCategory[
+            this.faker.integer({ min: 0, max: checkListCategory.length - 1 })
           ],
+        item: this.faker.sentence(),
         description: '',
       });
     }
+
     await this.checkListModel.insertMany(checkListData);
-    Logger.log('Seeding Check List  Finish');
+
+    Logger.log('Seeding Check List Finish');
+  }
+
+  /**
+   * Question Seeder
+   */
+  async seedQuestions() {
+    Logger.log('Seeding Questions ...');
+    await this.questionModel.deleteMany({});
+
+    const questionData = [];
+
+    for (let i = 0; i < 50; i++) {
+      const question = {
+        question: this.faker.sentence(),
+        level: this.faker.integer({ min: 1, max: 10 }),
+        description: '',
+        answers: [],
+      };
+      const answers = [];
+      for (let j = 0; j < 3; j++) {
+        answers.push({
+          answer: this.faker.sentence(),
+          isCorrectAnswer: false,
+        });
+      }
+      answers.push({
+        answer: this.faker.sentence(),
+        isCorrectAnswer: true,
+      });
+      question.answers = answers;
+      questionData.push(question);
+    }
+    await this.questionModel.insertMany(questionData);
+    Logger.log('Seeding Question Finish');
   }
 }

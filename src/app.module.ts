@@ -4,6 +4,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { CheckListModule } from '@modules/check-list/check-list.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { ProfileModule } from '@modules/profile/profile.module';
+import { QuestionModule } from '@modules/question/question.module';
 import { ReservationModule } from '@modules/reservation/reservation.module';
 import { RoleModule } from '@modules/role/role.module';
 import { SeederModule } from '@modules/seeder/seeder.module';
@@ -35,6 +36,7 @@ const MONGO_DB_OPTIONS = {
     ArticleModule,
     ReservationModule,
     CheckListModule,
+    QuestionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
