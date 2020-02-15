@@ -1,3 +1,4 @@
+import { CheckListService } from '@modules/check-list/check-list.service';
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { UpdateTocologistDto } from '@modules/tocologist/tocologist.dto';
@@ -14,6 +15,7 @@ export class ProfileService {
     private userService: UserService,
     private mommyService: MommyDetailService,
     private tocologistService: TocologistService,
+    private checkListService: CheckListService,
   ) {}
   async changePassword(user: IUser, changePasswordDto: ChangePasswordDto) {
     return this.userService.changePassword(user, changePasswordDto);
@@ -44,5 +46,9 @@ export class ProfileService {
   ): Promise<ITocologist> {
     await this.tocologistService.dbUpdate('Tocologist', id, updateDto);
     return await this.tocologistService.getById({ id });
+  }
+
+  async isCheckListsExists(checkLists: string[]): Promise<void> {
+    await this.checkListService.isCheckListsExists(checkLists);
   }
 }

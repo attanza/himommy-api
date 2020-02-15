@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsEmail,
   IsInt,
@@ -76,4 +77,9 @@ export class ProfileUpdateDto {
   @IsOptional()
   @IsDateString()
   hpht: Date;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  checkLists: string[];
 }

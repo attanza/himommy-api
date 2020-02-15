@@ -13,8 +13,8 @@ export default async ({
   query,
   regexSearchable,
   keyValueSearchable,
-  relations,
-  customOptions,
+  relations = [],
+  customOptions = [],
 }: IPaginated): Promise<IApiCollection> => {
   query = normalizeQuery(query);
   const redisKey = `${modelName}_${generateRedisKey(
@@ -91,6 +91,7 @@ export default async ({
   let totalPages: number;
   let meta: IMeta;
   let output: IApiCollection;
+
   if (coordinates.length === 2) {
     const totalCount = await model.aggregate([
       {

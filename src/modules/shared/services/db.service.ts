@@ -46,7 +46,7 @@ export class DbService {
     query,
     regexSearchable,
     keyValueSearchable,
-    relations,
+    relations = [],
     customOptions,
   }: IPaginated): Promise<IApiCollection> {
     return await getApiCollection({

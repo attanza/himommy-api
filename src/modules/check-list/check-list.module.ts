@@ -11,5 +11,6 @@ import { MobileCheckListController } from './controllers/mobile-check-list.contr
   ],
   controllers: [CheckListController, MobileCheckListController],
   providers: [CheckListService],
+  exports: [CheckListService],
 })
 export class CheckListModule {}

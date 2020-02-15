@@ -81,6 +81,7 @@ export class MobileProfileController {
       'education',
       'husbandName',
       'hpht',
+      'checkLists',
     ];
 
     let detailData = { user: user._id };
@@ -94,6 +95,9 @@ export class MobileProfileController {
       user._id,
       userData as UpdateUserDto,
     );
+
+    // check lists
+    await this.profileService.isCheckListsExists(updateDto.checkLists);
 
     const updatedDetail = await this.profileService.updateDetail(
       detailData as UpdateMommyDto,

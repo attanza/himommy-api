@@ -1,3 +1,4 @@
+import { CheckListModule } from '@modules/check-list/check-list.module';
 import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { UserModule } from '@modules/user/user.module';
@@ -8,7 +9,7 @@ import { TocologistProfileController } from './controllers/tocologist-profile.co
 import { ProfileService } from './profile.service';
 
 @Module({
-  imports: [UserModule, MommyDetailModule, TocologistModule],
+  imports: [UserModule, MommyDetailModule, TocologistModule, CheckListModule],
   controllers: [
     ProfileController,
     MobileProfileController,
