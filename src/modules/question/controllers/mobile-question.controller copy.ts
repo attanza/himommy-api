@@ -1,5 +1,3 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
 import {
   IApiCollection,
   IApiItem,
@@ -19,13 +17,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { QuestionService } from '../question.service';
 
 @Controller('mobile/questions')
-@UseGuards(AuthGuard('jwt'), PermissionGuard)
+@UseGuards(AuthGuard('jwt'))
 export class MobileQuestionController {
   modelName = 'Question';
   constructor(private dbService: QuestionService) {}
 
   @Get()
-  @Permission('read-question')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['slug'];
     const keyValueSearchable = [];
@@ -38,7 +35,6 @@ export class MobileQuestionController {
   }
 
   @Get(':id')
-  @Permission('read-question')
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
