@@ -32,8 +32,8 @@ export class QuestionController {
   @Get()
   @Permission('read-question')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['slug'];
-    const keyValueSearchable = [];
+    const regexSearchable = ['question'];
+    const keyValueSearchable = ['level'];
     return this.dbService.getPaginated({
       modelName: this.modelName,
       query,
