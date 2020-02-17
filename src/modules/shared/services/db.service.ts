@@ -132,7 +132,6 @@ export class DbService {
 
   async dbStore(modelName: string, createDto: any) {
     Redis.deletePattern(modelName);
-
     return await this.Model.create(createDto);
   }
 

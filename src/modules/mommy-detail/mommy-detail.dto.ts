@@ -80,7 +80,4 @@ export class UpdateMommyDto {
   @IsOptional()
   @IsDateString()
   hpht: Date;
-
-  @IsOptional()
-  checkLists: string[];
 }

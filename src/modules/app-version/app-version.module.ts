@@ -9,7 +9,11 @@ import { TocologistAppVersionController } from './controllers/tocologist-app-ver
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'AppVersion', schema: AppVersionSchema },
+      {
+        name: 'AppVersion',
+        schema: AppVersionSchema,
+        collection: 'app_versions',
+      },
     ]),
   ],
   controllers: [

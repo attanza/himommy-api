@@ -8,6 +8,8 @@ export const AuditTrailSchema = new mongoose.Schema(
     auditableId: String,
     auditableType: String,
     action: String,
+    dataBefore: String,
+    dataAfter: String,
     detail: String,
     ip: String,
     browser: String,

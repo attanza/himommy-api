@@ -5,11 +5,13 @@ export interface IAuditTrail extends Document {
   auditableId: string;
   auditableType: string;
   action: EAuditTrailAction;
+  dataBefore: String;
+  dataAfter: String;
   detail: string;
   ip: string;
   browser: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum EAuditTrailAction {

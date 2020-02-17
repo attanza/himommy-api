@@ -13,12 +13,6 @@ export const MommyDetailSchema = new mongoose.Schema(
     education: String,
     husbandName: String,
     hpht: Date,
-    checkLists: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CheckList',
-      },
-    ],
   },
   { timestamps: true },
 );

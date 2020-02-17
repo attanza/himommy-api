@@ -7,7 +7,11 @@ import { TocologistServicesService } from './tocologist-services.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'TocologistService', schema: TocologistServiceSchema },
+      {
+        name: 'TocologistService',
+        schema: TocologistServiceSchema,
+        collection: 'tocologist_services',
+      },
     ]),
   ],
   controllers: [TocologistServicesController],

@@ -6,7 +6,11 @@ import { MommyDetailService } from './mommy-detail.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'MommyDetail', schema: MommyDetailSchema },
+      {
+        name: 'MommyDetail',
+        schema: MommyDetailSchema,
+        collection: 'mommy_details',
+      },
     ]),
   ],
   providers: [MommyDetailService],

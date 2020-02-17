@@ -7,7 +7,9 @@ import { MobileCheckListController } from './controllers/mobile-check-list.contr
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'CheckList', schema: CheckListSchema }]),
+    MongooseModule.forFeature([
+      { name: 'CheckList', schema: CheckListSchema, collection: 'check_lists' },
+    ]),
   ],
   controllers: [CheckListController, MobileCheckListController],
   providers: [CheckListService],

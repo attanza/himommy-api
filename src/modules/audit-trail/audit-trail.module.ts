@@ -6,7 +6,11 @@ import { AuditTrailService } from './audit-trail.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'AuditTrail', schema: AuditTrailSchema },
+      {
+        name: 'AuditTrail',
+        schema: AuditTrailSchema,
+        collection: 'audit_trails',
+      },
     ]),
   ],
   providers: [AuditTrailService],
