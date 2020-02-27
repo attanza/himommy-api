@@ -21,7 +21,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateReasonDto, UpdateReasonDto } from '../Reason.dto';
-import { ReasonService } from '../Reason.service';
+import { ReasonService } from '../reason.service';
 
 @Controller('admin/reasons')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)

@@ -4,7 +4,7 @@ import { MobileReasonController } from './controllers/mobile-reason.controller';
 import { ReasonController } from './controllers/reason.controller';
 import { TocologistReasonController } from './controllers/tocologist-reason.controller';
 import { ReasonSchema } from './reason.schema';
-import { ReasonService } from './Reason.service';
+import { ReasonService } from './reason.service';
 
 @Module({
   imports: [

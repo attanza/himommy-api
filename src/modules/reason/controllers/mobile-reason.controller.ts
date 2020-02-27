@@ -2,7 +2,7 @@ import { IApiCollection } from '@modules/shared/interfaces/response-parser.inter
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ReasonService } from '../Reason.service';
+import { ReasonService } from '../reason.service';
 
 @Controller('mobile/reasons')
 @UseGuards(AuthGuard('jwt'))
