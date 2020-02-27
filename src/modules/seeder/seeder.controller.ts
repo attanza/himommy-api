@@ -16,6 +16,7 @@ export class SeederController {
       this.seederService.seedArticle(),
       this.seederService.seedCheckList(),
       this.seederService.seedQuestions(),
+      this.seederService.seedReasons(),
     ]);
     res.status(200).send({ message: 'Seed Succeed' });
   }

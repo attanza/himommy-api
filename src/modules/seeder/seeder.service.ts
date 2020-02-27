@@ -4,6 +4,7 @@ import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IQuestion } from '@modules/question/question.interface';
+import { EReasonCategory, IReason } from '@modules/reason/reason.interface';
 import { IRole } from '@modules/role/role.interface';
 import { ITocologistService } from '@modules/tocologist-services/tocologist-services.interface';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
@@ -47,6 +48,8 @@ export class SeederService {
     private checkListModel: Model<ICheckList>,
     @InjectModel('Question')
     private questionModel: Model<IQuestion>,
+    @InjectModel('Reason')
+    private reasonModel: Model<IReason>,
   ) {}
 
   /**
@@ -100,6 +103,7 @@ export class SeederService {
       'Article',
       'CheckList',
       'Question',
+      'Reason',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -321,5 +325,34 @@ export class SeederService {
     }
     await this.questionModel.insertMany(questionData);
     Logger.log('Seeding Question Finish');
+  }
+
+  /**
+   * Reason Seeder
+   */
+  async seedReasons() {
+    Logger.log('Seeding Questions ...');
+    await this.reasonModel.deleteMany({});
+    const reasons = [
+      {
+        category: EReasonCategory.ORDER_CANCEL,
+        reason: 'Bidan tidak di tempat',
+      },
+      {
+        category: EReasonCategory.ORDER_CANCEL,
+        reason: 'Jadwal tidak cocok',
+      },
+      {
+        category: EReasonCategory.ORDER_REJECT,
+        reason: 'Layanan tidak tersedia',
+      },
+      {
+        category: EReasonCategory.ORDER_REJECT,
+        reason: 'Pasien melebihi quota',
+      },
+    ];
+
+    await this.reasonModel.insertMany(reasons);
+    Logger.log('Seeding Reason Finish');
   }
 }

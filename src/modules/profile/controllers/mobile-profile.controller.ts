@@ -1,3 +1,5 @@
+import { Role } from '@guards/role.decorator';
+import { RoleGuard } from '@guards/role.guard';
 import avatarInterceptor from '@modules/helpers/avatarInterceptor';
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
@@ -24,14 +26,15 @@ import { ChangePasswordDto, ProfileUpdateDto } from '../profile.dto';
 import { ProfileService } from '../profile.service';
 
 @Controller('mobile/profile')
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 export class MobileProfileController {
   modelName = 'Profile';
 
   constructor(private profileService: ProfileService) {}
 
   @Post('change-password')
+  @Role('mommy')
   @HttpCode(200)
-  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   async changePassword(
     @GetUser() user: IUser,
@@ -42,7 +45,6 @@ export class MobileProfileController {
   }
 
   @Post('avatar-upload')
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
   uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
@@ -57,7 +59,7 @@ export class MobileProfileController {
   }
 
   @Put('')
-  @UseGuards(AuthGuard('jwt'))
+  @Role('mommy')
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,

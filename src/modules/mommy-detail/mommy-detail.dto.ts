@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsInt,
   IsMongoId,
@@ -43,6 +44,11 @@ export class CreateMommyDto {
   @IsOptional()
   @IsDateString()
   hpht: Date;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  checkLists: string[];
 }
 
 export class UpdateMommyDto {
@@ -80,4 +86,9 @@ export class UpdateMommyDto {
   @IsOptional()
   @IsDateString()
   hpht: Date;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  checkLists: string[];
 }

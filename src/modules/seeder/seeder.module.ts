@@ -3,6 +3,7 @@ import { ArticleSchema } from '@modules/article/article.schema';
 import { CheckListSchema } from '@modules/check-list/check-list.schema';
 import { MommyDetailSchema } from '@modules/mommy-detail/mommy-detail.schema';
 import { QuestionSchema } from '@modules/question/question.schema';
+import { ReasonSchema } from '@modules/reason/reason.schema';
 import { TocologistServiceSchema } from '@modules/tocologist-services/tocologist-services.schema';
 import { TocologistSchema } from '@modules/tocologist/tocologist.schema';
 import { Module } from '@nestjs/common';
@@ -38,6 +39,7 @@ import { SeederService } from './seeder.service';
       { name: 'Article', schema: ArticleSchema },
       { name: 'CheckList', schema: CheckListSchema, collection: 'check_lists' },
       { name: 'Question', schema: QuestionSchema },
+      { name: 'Reason', schema: ReasonSchema },
     ]),
   ],
   controllers: [SeederController],

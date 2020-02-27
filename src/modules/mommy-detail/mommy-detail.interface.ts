@@ -1,3 +1,4 @@
+import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Document } from 'mongoose';
 
@@ -10,6 +11,7 @@ export interface IMommyDetail extends Document {
   education: string;
   husbandName: string;
   hpht: Date;
+  checkLists: ICheckList[];
   createdAt: Date;
   updatedAt: Date;
 }

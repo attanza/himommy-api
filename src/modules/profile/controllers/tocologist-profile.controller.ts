@@ -1,3 +1,5 @@
+import { Role } from '@guards/role.decorator';
+import { RoleGuard } from '@guards/role.guard';
 import avatarInterceptor from '@modules/helpers/avatarInterceptor';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
@@ -25,14 +27,15 @@ import { ChangePasswordDto } from '../profile.dto';
 import { ProfileService } from '../profile.service';
 
 @Controller('tocologist/profile')
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 export class TocologistProfileController {
   modelName = 'Profile';
 
   constructor(private profileService: ProfileService) {}
 
   @Post('change-password')
+  @Role('tocologist')
   @HttpCode(200)
-  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   async changePassword(
     @GetUser() user: IUser,
@@ -43,7 +46,7 @@ export class TocologistProfileController {
   }
 
   @Post('avatar-upload')
-  @UseGuards(AuthGuard('jwt'))
+  @Role('tocologist')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
   uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
@@ -58,7 +61,7 @@ export class TocologistProfileController {
   }
 
   @Put('')
-  @UseGuards(AuthGuard('jwt'))
+  @Role('tocologist')
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,
@@ -72,27 +75,6 @@ export class TocologistProfileController {
         userData = { ...userData, [key]: updateDto[key] };
       }
     });
-
-    // Tocologist Detail
-    // const tocologistDetailKeys = [
-    //   'name',
-    //   'email',
-    //   'phone',
-    //   'address',
-    //   'location',
-    //   'image',
-    //   'isActive',
-    //   'operationTime',
-    //   'holiday',
-    //   'services',
-    // ];
-
-    // let detailData = { user: user._id };
-    // tocologistDetailKeys.map(key => {
-    //   if (updateDto[key]) {
-    //     detailData = { ...detailData, [key]: updateDto[key] };
-    //   }
-    // });
 
     const updatedUser: IUser = await this.profileService.updateUser(
       user._id,
