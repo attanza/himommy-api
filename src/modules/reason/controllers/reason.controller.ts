@@ -20,7 +20,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateReasonDto, UpdateReasonDto } from '../Reason.dto';
+import { CreateReasonDto, UpdateReasonDto } from '../reason.dto';
 import { ReasonService } from '../reason.service';
 
 @Controller('admin/reasons')
