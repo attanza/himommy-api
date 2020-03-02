@@ -2,6 +2,7 @@ import { AppVersionSchema } from '@modules/app-version/app-version.schema';
 import { ArticleSchema } from '@modules/article/article.schema';
 import { CheckListSchema } from '@modules/check-list/check-list.schema';
 import { MommyDetailSchema } from '@modules/mommy-detail/mommy-detail.schema';
+import { NotificationSchema } from '@modules/notification/notification.schema';
 import { QuestionSchema } from '@modules/question/question.schema';
 import { ReasonSchema } from '@modules/reason/reason.schema';
 import { TocologistServiceSchema } from '@modules/tocologist-services/tocologist-services.schema';
@@ -40,6 +41,7 @@ import { SeederService } from './seeder.service';
       { name: 'CheckList', schema: CheckListSchema, collection: 'check_lists' },
       { name: 'Question', schema: QuestionSchema },
       { name: 'Reason', schema: ReasonSchema },
+      { name: 'Notification', schema: NotificationSchema },
     ]),
   ],
   controllers: [SeederController],

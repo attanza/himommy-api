@@ -2,6 +2,7 @@ import { AppVersionModule } from '@modules/app-version/app-version.module';
 import { ArticleModule } from '@modules/article/article.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { CheckListModule } from '@modules/check-list/check-list.module';
+import { NotificationModule } from '@modules/notification/notification.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { ProfileModule } from '@modules/profile/profile.module';
 import { QuestionModule } from '@modules/question/question.module';
@@ -39,6 +40,7 @@ const MONGO_DB_OPTIONS = {
     CheckListModule,
     QuestionModule,
     ReasonModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

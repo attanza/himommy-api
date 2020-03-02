@@ -23,6 +23,7 @@ export default async ({
     customOptions,
   )}`;
   // Cache
+  console.log('redisKey', redisKey);
   const cache = await Redis.get(redisKey);
   if (cache && cache != null) {
     Logger.log(`${modelName} from cache`, 'DB SERVICE');
@@ -153,7 +154,6 @@ export default async ({
     nextPage: totalPages > page ? page + 1 : null,
     prevPage: page > 1 ? page - 1 : null,
   };
-
   output = { meta, data };
   if (search === '') {
     Redis.set(redisKey, JSON.stringify(output));
@@ -186,9 +186,9 @@ const generateRedisKey = (
   customOptions: any,
 ) => {
   const redisQuery = [
+    ...Object.values(customOptions),
     ...Object.values(query),
     ...relations,
-    ...Object.values(customOptions),
   ];
   return Object.values(redisQuery).join('_');
 };

@@ -2,6 +2,7 @@ import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IArticle } from '@modules/article/article.interface';
 import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
+import { INotification } from '@modules/notification/notification.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IQuestion } from '@modules/question/question.interface';
 import { EReasonCategory, IReason } from '@modules/reason/reason.interface';
@@ -50,6 +51,8 @@ export class SeederService {
     private questionModel: Model<IQuestion>,
     @InjectModel('Reason')
     private reasonModel: Model<IReason>,
+    @InjectModel('Notification')
+    private notificationModel: Model<INotification>,
   ) {}
 
   /**
@@ -70,21 +73,21 @@ export class SeederService {
       'Tocologist',
     ];
 
-    roles.map(async r => {
+    for (let i = 0; i < roles.length; i++) {
       const newRole = await this.roleModel.create({
-        name: r,
-        slug: paramCase(r),
+        name: roles[i],
+        slug: paramCase(roles[i]),
       });
       await this.userModel.create({
-        firstName: r,
-        email: `${snakeCase(r)}@himommy.org`,
+        firstName: roles[i],
+        email: `${snakeCase(roles[i])}@himommy.org`,
         password: 'password',
         phone: this.faker.phone(),
         role: newRole._id,
         isActive: true,
         authProvider: 'local',
       });
-    });
+    }
 
     Logger.log('Seeding Role and Users Finish');
 
@@ -104,6 +107,7 @@ export class SeederService {
       'CheckList',
       'Question',
       'Reason',
+      'Notification',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -129,6 +133,7 @@ export class SeederService {
     });
     superAdmin.permissions = perIds;
     await superAdmin.save();
+    await this.seedNotifications();
   }
 
   /**
@@ -331,7 +336,7 @@ export class SeederService {
    * Reason Seeder
    */
   async seedReasons() {
-    Logger.log('Seeding Questions ...');
+    Logger.log('Seeding Reason ...');
     await this.reasonModel.deleteMany({});
     const reasons = [
       {
@@ -354,5 +359,37 @@ export class SeederService {
 
     await this.reasonModel.insertMany(reasons);
     Logger.log('Seeding Reason Finish');
+  }
+
+  /**
+   * Notification Seeder
+   */
+  async seedNotifications() {
+    Logger.log('Seeding Notification ...');
+    await this.notificationModel.deleteMany({});
+
+    const notifications = [];
+    const user = await this.userModel.findOne({ email: 'mommy@himommy.org' });
+    for (let i = 0; i < 25; i++) {
+      notifications.push({
+        user: user._id,
+        title: this.faker.sentence(),
+        content: this.faker.sentence(),
+      });
+    }
+
+    const tocologist = await this.userModel.findOne({
+      email: 'tocologist@himommy.org',
+    });
+    for (let i = 0; i < 25; i++) {
+      notifications.push({
+        user: tocologist._id,
+        title: this.faker.sentence(),
+        content: this.faker.sentence(),
+      });
+    }
+
+    await this.notificationModel.insertMany(notifications);
+    Logger.log('Seeding Notification Finish');
   }
 }
