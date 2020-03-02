@@ -1,3 +1,4 @@
+import { fcm } from '@modules/helpers/fcmHelper';
 import { apiItem } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
@@ -47,7 +48,8 @@ export class MobileReservationController {
     await this.reservationService.checkServices(tocologist, services);
 
     const code = Math.floor(Date.now() / 1000).toString();
-    return await this.reservationService.store({
+    const topic = `reservations/${tocologist}/${EStatus.NEW}`;
+    const data = await this.reservationService.store({
       modelName: this.modelName,
       createDto: {
         ...createReservationDto,
@@ -55,8 +57,17 @@ export class MobileReservationController {
         code,
       },
       relations: this.relations,
-      topic: `reservations/${tocologist}/${EStatus.NEW}`,
+      topic,
     });
+    const fcmData = {
+      reservation: JSON.stringify(data.data),
+      click_action: 'FLUTTER_NOTIFICATION_CLICK',
+    };
+    const fcmNotification = {
+      title: `HiMommy-Reservasi Baru #${data.data.code}`,
+    };
+    fcm.sendToMobile(topic, fcmData, fcmNotification);
+    return data;
   }
 
   @Get(':id')
@@ -158,19 +169,22 @@ export class MobileReservationController {
         comment: updateDto.comment,
       };
     }
-
-    // if (updateData.services && updateData.services.length > 0) {
-    //   await this.reservationService.checkServices(
-    //     tocologistId,
-    //     updateData.services,
-    //   );
-    // }
-    return await this.reservationService.update({
+    const topic = `reservations/${tocologistId}/${updateData.status}`;
+    const updateResult = await this.reservationService.update({
       modelName: this.modelName,
       id,
       updateDto: updateData,
       relations: this.relations,
-      topic: `reservations/${tocologistId}/${updateData.status}`,
+      topic,
     });
+    const fcmData = {
+      reservation: JSON.stringify(updateResult.data),
+      click_action: 'FLUTTER_NOTIFICATION_CLICK',
+    };
+    const fcmNotification = {
+      title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
+    };
+    fcm.sendToMobile(topic, fcmData, fcmNotification);
+    return updateResult;
   }
 }
