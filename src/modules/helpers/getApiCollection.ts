@@ -23,7 +23,6 @@ export default async ({
     customOptions,
   )}`;
   // Cache
-  console.log('redisKey', redisKey);
   const cache = await Redis.get(redisKey);
   if (cache && cache != null) {
     Logger.log(`${modelName} from cache`, 'DB SERVICE');
