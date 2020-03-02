@@ -1,5 +1,6 @@
 import { Role } from '@guards/role.decorator';
 import { RoleGuard } from '@guards/role.guard';
+import { fcm } from '@modules/helpers/fcmHelper';
 import { apiItem } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
@@ -159,12 +160,26 @@ export class TocologistReservationController {
       );
     }
 
-    return await this.reservationService.update({
+    const updateResult = await this.reservationService.update({
       modelName: this.modelName,
       id,
       updateDto: updateData,
       relations: this.relations,
       topic: `reservations/${data.user._id}/${updateData.status}`,
     });
+
+    const fcmData = {
+      reservation: JSON.stringify(updateResult.data),
+      click_action: 'FLUTTER_NOTIFICATION_CLICK',
+    };
+    const fcmNotification = {
+      title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
+    };
+    fcm.sendToMobile(
+      `reservations-${data.user._id}-${updateData.status}`,
+      fcmData,
+      fcmNotification,
+    );
+    return updateResult;
   }
 }
