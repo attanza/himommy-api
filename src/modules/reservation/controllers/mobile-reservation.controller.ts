@@ -66,7 +66,7 @@ export class MobileReservationController {
       title: `HiMommy-Reservasi Baru #${data.data.code}`,
     };
     fcm.sendToMobile(
-      `reservations_${tocologist}_${EStatus.NEW}`,
+      `reservations-${tocologist}-${EStatus.NEW}`,
       fcmData,
       fcmNotification,
     );
@@ -187,7 +187,7 @@ export class MobileReservationController {
       title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
     };
     fcm.sendToMobile(
-      `reservations_${tocologistId}_${updateData.status}`,
+      `reservations-${tocologistId}-${updateData.status}`,
       fcmData,
       fcmNotification,
     );
