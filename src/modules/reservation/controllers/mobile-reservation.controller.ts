@@ -48,7 +48,6 @@ export class MobileReservationController {
     await this.reservationService.checkServices(tocologist, services);
 
     const code = Math.floor(Date.now() / 1000).toString();
-    const topic = `reservations/${tocologist}/${EStatus.NEW}`;
     const data = await this.reservationService.store({
       modelName: this.modelName,
       createDto: {
@@ -57,7 +56,7 @@ export class MobileReservationController {
         code,
       },
       relations: this.relations,
-      topic,
+      topic: `reservations/${tocologist}/${EStatus.NEW}`,
     });
     const fcmData = {
       reservation: JSON.stringify(data.data),
@@ -66,7 +65,11 @@ export class MobileReservationController {
     const fcmNotification = {
       title: `HiMommy-Reservasi Baru #${data.data.code}`,
     };
-    fcm.sendToMobile(topic, fcmData, fcmNotification);
+    fcm.sendToMobile(
+      `reservations_${tocologist}_${EStatus.NEW}`,
+      fcmData,
+      fcmNotification,
+    );
     return data;
   }
 
@@ -169,13 +172,12 @@ export class MobileReservationController {
         comment: updateDto.comment,
       };
     }
-    const topic = `reservations/${tocologistId}/${updateData.status}`;
     const updateResult = await this.reservationService.update({
       modelName: this.modelName,
       id,
       updateDto: updateData,
       relations: this.relations,
-      topic,
+      topic: `reservations/${tocologistId}/${updateData.status}`,
     });
     const fcmData = {
       reservation: JSON.stringify(updateResult.data),
@@ -184,7 +186,11 @@ export class MobileReservationController {
     const fcmNotification = {
       title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
     };
-    fcm.sendToMobile(topic, fcmData, fcmNotification);
+    fcm.sendToMobile(
+      `reservations_${tocologistId}_${updateData.status}`,
+      fcmData,
+      fcmNotification,
+    );
     return updateResult;
   }
 }

@@ -21,6 +21,7 @@ class PushNotification {
       notification,
     };
     // Send a message to devices subscribed to the provided topic.
+    console.log('message', message);
     admin
       .messaging()
       .send(message)
