@@ -174,6 +174,7 @@ export class TocologistReservationController {
     };
     const fcmNotification = {
       title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
+      sound: 'default',
     };
     fcm.sendToMobile(
       `reservations-${data.user._id}-${updateData.status}`,
