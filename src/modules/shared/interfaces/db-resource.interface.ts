@@ -5,7 +5,7 @@ export interface IResourceShow {
 }
 
 export interface IResourceStore {
-  modelName: string;
+  modelName?: string;
   createDto: any;
   uniques?: string[];
   relations?: string[];
@@ -13,7 +13,7 @@ export interface IResourceStore {
 }
 
 export interface IResourceUpdate {
-  modelName?: string;
+  modelName: string;
   id: string;
   updateDto;
   uniques?: string[];

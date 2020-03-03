@@ -27,7 +27,7 @@ export class ResourcePaginationPipe {
 
   @IsOptional()
   @IsIn(['asc', 'desc'])
-  sortMode: SortMode;
+  sortMode: ESortMode;
 
   @IsOptional()
   @IsString()
@@ -58,7 +58,7 @@ export class ResourcePaginationPipe {
   longitude: number;
 }
 
-export enum SortMode {
+export enum ESortMode {
   asc = 1,
   desc = -1,
 }
