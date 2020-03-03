@@ -12,15 +12,20 @@ class PushNotification {
 
   async sendToMobile(
     topic: string,
-    data: any,
-    notification: any,
+    data: { [key: string]: string },
+    notification: admin.messaging.AndroidNotification,
   ): Promise<void> {
-    const message = {
+    const message: admin.messaging.Message = {
       data,
       topic,
       notification,
     };
-    // Send a message to devices subscribed to the provided topic.
+    message.android = {
+      notification: {
+        sound: 'default',
+        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+      },
+    };
     console.log('message', message);
     admin
       .messaging()

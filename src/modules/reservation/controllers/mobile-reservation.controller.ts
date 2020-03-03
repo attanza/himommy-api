@@ -60,11 +60,9 @@ export class MobileReservationController {
     });
     const fcmData = {
       reservation: JSON.stringify(data.data),
-      click_action: 'FLUTTER_NOTIFICATION_CLICK',
     };
     const fcmNotification = {
       title: `HiMommy-Reservasi Baru #${data.data.code}`,
-      sound: 'default',
     };
     fcm.sendToMobile(
       `reservations-${tocologist}-${EStatus.NEW}`,
@@ -186,7 +184,6 @@ export class MobileReservationController {
     };
     const fcmNotification = {
       title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
-      sound: 'default',
     };
     fcm.sendToMobile(
       `reservations-${tocologistId}-${updateData.status}`,
