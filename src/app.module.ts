@@ -14,6 +14,7 @@ import { TocologistServicesModule } from '@modules/tocologist-services/tocologis
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -26,6 +27,9 @@ const MONGO_DB_OPTIONS = {
 @Module({
   imports: [
     MongooseModule.forRoot(`mongodb://localhost/${DB_NAME}`, MONGO_DB_OPTIONS),
+    GraphQLModule.forRoot({
+      autoSchemaFile: 'schema.gql',
+    }),
     SeederModule,
     AuthModule,
     ProfileModule,

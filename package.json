@@ -22,6 +22,7 @@
   "dependencies": {
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
+    "@nestjs/graphql": "^6.6.2",
     "@nestjs/jwt": "^6.1.1",
     "@nestjs/mongoose": "^6.3.0",
     "@nestjs/passport": "^6.1.1",
@@ -29,6 +30,7 @@
     "@nestjs/serve-static": "^1.0.2",
     "@sendgrid/mail": "^6.5.1",
     "@types/ioredis": "^4.14.6",
+    "apollo-server-express": "^2.10.1",
     "axios": "^0.19.2",
     "bcrypt": "^3.0.7",
     "change-case": "^4.1.1",
@@ -37,6 +39,8 @@
     "dotenv": "^8.2.0",
     "express-handlebars": "^3.1.0",
     "firebase-admin": "^8.9.2",
+    "graphql": "^14.6.0",
+    "graphql-tools": "^4.0.7",
     "ioredis": "^4.14.1",
     "jimp": "^0.9.3",
     "module-alias": "^2.2.2",
@@ -50,6 +54,7 @@
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
+    "type-graphql": "^0.17.6",
     "uuid": "^3.4.0"
   },
   "devDependencies": {
@@ -79,7 +84,7 @@
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
-    "typescript": "3.4.3"
+    "typescript": "^3.8.3"
   },
   "jest": {
     "moduleFileExtensions": [

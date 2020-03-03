@@ -22,4 +22,8 @@ export class PermissionService extends DbService {
       }
     }
   }
+
+  async all() {
+    return await this.model.find();
+  }
 }
