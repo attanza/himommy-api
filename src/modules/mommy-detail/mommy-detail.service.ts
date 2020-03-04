@@ -12,7 +12,7 @@ export class MommyDetailService extends DbService {
     super(model);
   }
 
-  async createOrUpdateDetail(updateDto: UpdateMommyDto) {
+  async createOrUpdateDetail(updateDto: Partial<UpdateMommyDto>) {
     const { user } = updateDto;
     let data: IMommyDetail;
     data = await this.model.findOne({ user });

@@ -1,3 +1,4 @@
+import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { Document } from 'mongoose';
 import { IRole } from '../role/role.interface';
@@ -13,16 +14,8 @@ export interface IUser extends Document {
   isActive: boolean;
   authProvider: string;
   avatar: string;
-  detail?: MommyDetail;
+  detail?: IMommyDetail;
   tocologist?: ITocologist;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface MommyDetail {
-  dob: Date;
-  height: number;
-  occupation: string;
-  education: string;
-  hpht: Date;
 }

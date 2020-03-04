@@ -91,4 +91,13 @@ export class UpdateMommyDto {
   @IsArray()
   @IsMongoId({ each: true })
   checkLists: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  questions: string[];
+
+  @IsOptional()
+  @IsInt()
+  currentQuestionLevel: number;
 }

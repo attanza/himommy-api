@@ -1,6 +1,7 @@
 import { CheckListService } from '@modules/check-list/check-list.service';
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
+import { QuestionService } from '@modules/question/question.service';
 import { UpdateTocologistDto } from '@modules/tocologist/tocologist.dto';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
@@ -16,6 +17,7 @@ export class ProfileService {
     private mommyService: MommyDetailService,
     private tocologistService: TocologistService,
     private checkListService: CheckListService,
+    private questionService: QuestionService,
   ) {}
   async changePassword(user: IUser, changePasswordDto: ChangePasswordDto) {
     return this.userService.changePassword(user, changePasswordDto);
@@ -36,7 +38,7 @@ export class ProfileService {
     return this.userService.findByIdWithRolePermissions(id);
   }
 
-  async updateDetail(updateDto: UpdateMommyDto) {
+  async updateDetail(updateDto: Partial<UpdateMommyDto>) {
     return await this.mommyService.createOrUpdateDetail(updateDto);
   }
 
@@ -50,5 +52,13 @@ export class ProfileService {
 
   async isCheckListsExists(checkLists: string[]): Promise<void> {
     await this.checkListService.isCheckListsExists(checkLists);
+  }
+
+  async isQuestionsExists(questions: string[]): Promise<void> {
+    await this.questionService.isQuestionsExists(questions);
+  }
+
+  async getLevelFromIds(questions: string[]): Promise<number> {
+    return await this.questionService.getLevelFromIds(questions);
   }
 }

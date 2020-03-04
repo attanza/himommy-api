@@ -1,4 +1,5 @@
 import { ICheckList } from '@modules/check-list/check-list.interface';
+import { IQuestion } from '@modules/question/question.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Document } from 'mongoose';
 
@@ -11,7 +12,10 @@ export interface IMommyDetail extends Document {
   education: string;
   husbandName: string;
   hpht: Date;
+  pregnancyAge: number;
   checkLists: ICheckList[];
+  currentQuestionLevel: number;
+  questions: IQuestion[];
   createdAt: Date;
   updatedAt: Date;
 }

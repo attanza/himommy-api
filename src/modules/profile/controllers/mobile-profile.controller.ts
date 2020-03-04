@@ -45,6 +45,7 @@ export class MobileProfileController {
   }
 
   @Post('avatar-upload')
+  @Role('mommy')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
   uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
@@ -67,12 +68,17 @@ export class MobileProfileController {
   ): Promise<IApiItem> {
     // User Basic Info
     const userKeys = ['firstName', 'lastName', 'email', 'phone'];
-    let userData = {};
+    let userData: UpdateUserDto = {};
     userKeys.map(key => {
       if (updateDto[key]) {
         userData = { ...userData, [key]: updateDto[key] };
       }
     });
+
+    const updatedUser: IUser = await this.profileService.updateUser(
+      user._id,
+      userData,
+    );
 
     // Mommy Detail
     const mommyDetailKeys = [
@@ -84,26 +90,30 @@ export class MobileProfileController {
       'husbandName',
       'hpht',
       'checkLists',
+      'questions',
     ];
 
-    let detailData = { user: user._id };
+    let detailData: Partial<UpdateMommyDto> = {};
     mommyDetailKeys.map(key => {
       if (updateDto[key]) {
         detailData = { ...detailData, [key]: updateDto[key] };
       }
     });
-
-    const updatedUser: IUser = await this.profileService.updateUser(
-      user._id,
-      userData as UpdateUserDto,
-    );
-
+    detailData.user = user._id;
     // check lists
-    await this.profileService.isCheckListsExists(updateDto.checkLists);
+    if (updateDto.checkLists && updateDto.checkLists.length > 0) {
+      await this.profileService.isCheckListsExists(updateDto.checkLists);
+    }
+    // questions
+    if (updateDto.questions && updateDto.questions.length > 0) {
+      await this.profileService.isQuestionsExists(updateDto.questions);
+      const level = await this.profileService.getLevelFromIds(
+        updateDto.questions,
+      );
+      detailData.currentQuestionLevel = level;
+    }
 
-    const updatedDetail = await this.profileService.updateDetail(
-      detailData as UpdateMommyDto,
-    );
+    const updatedDetail = await this.profileService.updateDetail(detailData);
 
     return apiUpdated(this.modelName, {
       ...updatedUser.toJSON(),

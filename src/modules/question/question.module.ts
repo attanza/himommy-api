@@ -11,5 +11,6 @@ import { QuestionService } from './question.service';
   ],
   controllers: [QuestionController, MobileQuestionController],
   providers: [QuestionService],
+  exports: [QuestionService],
 })
 export class QuestionModule {}

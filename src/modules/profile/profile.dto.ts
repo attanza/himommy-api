@@ -82,4 +82,9 @@ export class ProfileUpdateDto {
   @IsArray()
   @IsMongoId({ each: true })
   checkLists: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  questions: string[];
 }

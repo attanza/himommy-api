@@ -19,6 +19,16 @@ export const MommyDetailSchema = new mongoose.Schema(
         ref: 'CheckList',
       },
     ],
+    currentQuestionLevel: {
+      type: Number,
+      default: 0,
+    },
+    questions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Question',
+      },
+    ],
   },
   { timestamps: true },
 );
@@ -31,7 +41,7 @@ MommyDetailSchema.methods.toJSON = function() {
     const days = Math.abs(
       moment(from, 'YYYY-MM-DD')
         .startOf('day')
-        .diff(moment(to, 'YYYY-MM-DD').startOf('day'), 'weeks'),
+        .diff(moment(to, 'YYYY-MM-DD').startOf('day'), 'days'),
     );
     obj.pregnancyAge = days;
   }
