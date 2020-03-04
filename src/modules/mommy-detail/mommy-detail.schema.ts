@@ -1,5 +1,5 @@
+import * as moment from 'moment';
 import * as mongoose from 'mongoose';
-
 export const MommyDetailSchema = new mongoose.Schema(
   {
     user: {
@@ -22,3 +22,18 @@ export const MommyDetailSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+MommyDetailSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  if (obj.hpht) {
+    const from = moment();
+    const to = moment(obj.hpht);
+    const days = Math.abs(
+      moment(from, 'YYYY-MM-DD')
+        .startOf('day')
+        .diff(moment(to, 'YYYY-MM-DD').startOf('day'), 'weeks'),
+    );
+    obj.pregnancyAge = days;
+  }
+  return obj;
+};
