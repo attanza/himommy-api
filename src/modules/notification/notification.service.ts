@@ -16,7 +16,7 @@ export class NotificationService extends DbService {
     super(model);
   }
 
-  async checkUser(userId: string): Promise<Boolean> {
+  async checkUser(userId: string): Promise<boolean> {
     const user: IUser = await this.userService.getByKey('_id', userId);
     if (user) {
       return true;

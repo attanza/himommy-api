@@ -110,7 +110,9 @@ export class MobileProfileController {
       const level = await this.profileService.getLevelFromIds(
         updateDto.questions,
       );
-      detailData.currentQuestionLevel = level;
+      if (updateDto.questions.length > 6) {
+        detailData.currentQuestionLevel = level;
+      }
     }
 
     const updatedDetail = await this.profileService.updateDetail(detailData);

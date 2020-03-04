@@ -177,17 +177,27 @@ export class SeederService {
     Logger.log('Seeding Tocologist ...');
     await this.tocologistModel.deleteMany({});
 
-    const generateService = () => ({
-      name:
-        mainServices[
-          this.faker.integer({ min: 0, max: mainServices.length - 1 })
-        ],
-      price: this.faker.integer({ min: 100000, max: 1000000 }),
-    });
+    const generateService = () => {
+      // {
+      //   name:
+      //     mainServices[
+      //       this.faker.integer({ min: 0, max: mainServices.length - 1 })
+      //     ],
+      //   price: this.faker.integer({ min: 100000, max: 1000000 }),
+      // }
+      const services = [];
+      mainServices.map(s =>
+        services.push({
+          name: s,
+          price: this.faker.integer({ min: 100000, max: 1000000 }),
+        }),
+      );
+      return services;
+    };
 
     const tocologistData = [];
     for (let i = 0; i < 25; i++) {
-      const services = [generateService(), generateService()];
+      const services = generateService();
       tocologistData.push({
         name: this.faker.company(),
         email: this.faker.email(),
@@ -307,26 +317,28 @@ export class SeederService {
 
     const questionData = [];
 
-    for (let i = 0; i < 50; i++) {
-      const question = {
-        question: this.faker.sentence(),
-        level: this.faker.integer({ min: 1, max: 10 }),
-        description: '',
-        answers: [],
-      };
-      const answers = [];
-      for (let j = 0; j < 3; j++) {
+    for (let i = 1; i < 11; i++) {
+      for (let k = 0; k < 10; k++) {
+        const question = {
+          question: this.faker.sentence(),
+          level: i,
+          description: '',
+          answers: [],
+        };
+        const answers = [];
+        for (let j = 0; j < 3; j++) {
+          answers.push({
+            answer: this.faker.sentence(),
+            isCorrectAnswer: false,
+          });
+        }
         answers.push({
           answer: this.faker.sentence(),
-          isCorrectAnswer: false,
+          isCorrectAnswer: true,
         });
+        question.answers = answers;
+        questionData.push(question);
       }
-      answers.push({
-        answer: this.faker.sentence(),
-        isCorrectAnswer: true,
-      });
-      question.answers = answers;
-      questionData.push(question);
     }
     await this.questionModel.insertMany(questionData);
     Logger.log('Seeding Question Finish');

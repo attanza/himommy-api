@@ -5,8 +5,8 @@ export interface IAuditTrail extends Document {
   auditableId: string;
   auditableType: string;
   action: EAuditTrailAction;
-  dataBefore: String;
-  dataAfter: String;
+  dataBefore: string;
+  dataAfter: string;
   detail: string;
   ip: string;
   browser: string;

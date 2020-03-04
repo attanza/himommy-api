@@ -1,9 +1,9 @@
+import { Logger } from '@nestjs/common';
 import * as admin from 'firebase-admin';
-
-const serviceAccount = require('../../../himommy-firebase.json');
 
 class PushNotification {
   constructor() {
+    const serviceAccount = require('../../../himommy-firebase.json');
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       databaseURL: 'https://langsungjalan-213303.firebaseio.com',
@@ -26,16 +26,15 @@ class PushNotification {
         clickAction: 'FLUTTER_NOTIFICATION_CLICK',
       },
     };
-    console.log('message', message);
+    Logger.log(message, 'FCM');
     admin
       .messaging()
       .send(message)
       .then(response => {
-        // Response is a message ID string.
-        console.log('FCM Success Response : ', response); //eslint-disable-line
+        Logger.log(response, 'FCM Response');
       })
       .catch(error => {
-        console.log('FCM Error Response : ', error); //eslint-disable-line
+        Logger.log(error, 'FCM Error');
       });
   }
 }

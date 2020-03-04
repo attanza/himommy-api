@@ -168,6 +168,7 @@ export class UpdateTocologistDto {
   @IsIn(allowedHoliday, { each: true })
   holiday: IHoliday[];
 
+  @IsOptional()
   @IsArray()
   @IsNotEmpty({ each: true })
   @IsMongoId({ each: true })
