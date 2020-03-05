@@ -5,17 +5,18 @@ import {
   IsOptional,
   IsString,
   Length,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(50)
   firstName: string;
 
   @IsOptional()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(50)
   lastName: string;
 
   @IsNotEmpty()
@@ -40,12 +41,12 @@ export class CreateUserDto {
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(50)
   firstName?: string;
 
   @IsOptional()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(50)
   lastName?: string;
 
   @IsOptional()

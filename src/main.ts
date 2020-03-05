@@ -14,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   MqttHandler.connect();
+  app.enableCors();
   app.useGlobalFilters(new AllExceptionsFilter());
 
   app.useStaticAssets(join(__dirname, '..', 'public'));

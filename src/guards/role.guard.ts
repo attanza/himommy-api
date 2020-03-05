@@ -15,6 +15,9 @@ export class RoleGuard implements CanActivate {
     if (!userRole) {
       return false;
     }
+    if (role instanceof Array) {
+      return role.includes(userRole);
+    }
     return userRole === role;
   }
 }

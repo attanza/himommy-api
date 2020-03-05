@@ -41,6 +41,7 @@ export class UserController {
       query,
       regexSearchable,
       keyValueSearchable,
+      relations: this.relations,
     });
   }
 

@@ -17,4 +17,12 @@ export class RoleService extends DbService {
   async checkPermissions(permissions): Promise<void> {
     return await this.permissionService.checkPermissionArray(permissions);
   }
+
+  async getForCombo() {
+    return this.model
+      .find()
+      .select('name')
+      .limit(100)
+      .lean();
+  }
 }

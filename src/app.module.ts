@@ -2,6 +2,7 @@ import { AppVersionModule } from '@modules/app-version/app-version.module';
 import { ArticleModule } from '@modules/article/article.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { CheckListModule } from '@modules/check-list/check-list.module';
+import { ComboDataModule } from '@modules/combo-data/combo-data.module';
 import { NotificationModule } from '@modules/notification/notification.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { ProfileModule } from '@modules/profile/profile.module';
@@ -27,6 +28,7 @@ const MONGO_DB_OPTIONS = {
   imports: [
     MongooseModule.forRoot(`mongodb://localhost/${DB_NAME}`, MONGO_DB_OPTIONS),
     SeederModule,
+    ComboDataModule,
     AuthModule,
     ProfileModule,
     PermissionModule,
