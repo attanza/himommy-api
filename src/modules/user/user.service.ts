@@ -2,14 +2,15 @@ import mqttHandler from '@modules/helpers/mqttHandler';
 import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { ChangePasswordDto } from '@modules/profile/profile.dto';
+import { IRole } from '@modules/role/role.interface';
 import { RoleService } from '@modules/role/role.service';
 import { DbService } from '@modules/shared/services/db.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcrypt';
+import { Validator } from 'class-validator';
 import { Model } from 'mongoose';
 import { IUser } from './user.interface';
-
 @Injectable()
 export class UserService extends DbService {
   constructor(
@@ -79,5 +80,16 @@ export class UserService extends DbService {
       `profile/${user._id}/avatar`,
       `${process.env.APP_URL}${userData.avatar}`,
     );
+  }
+
+  async getRoleFromIdOrSlug(idOrSlug: string): Promise<IRole> {
+    const validator = new Validator();
+    if (validator.isMongoId(idOrSlug)) {
+      console.log("get by id")
+      return this.roleService.getByKey('_id', idOrSlug)
+    } else {
+      console.log("get by slug")
+      return this.roleService.getByKey('slug', idOrSlug)
+    }
   }
 }
