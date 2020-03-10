@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@nestjs/testing": "^6.0.0",
+    "@types/axios": "^0.14.0",
     "@types/bcrypt": "^3.0.0",
     "@types/chance": "^1.0.8",
     "@types/change-case": "^2.3.1",

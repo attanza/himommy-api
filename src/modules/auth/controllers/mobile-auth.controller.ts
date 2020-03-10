@@ -1,5 +1,6 @@
 import { apiItem, apiSucceed } from '@modules/helpers/responseParser';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import { IUserFromSocialLogin } from '@modules/shared/interfaces/userFromSocialAuth.interface';
 import { IUser } from '@modules/user/user.interface';
 import {
   Body,
@@ -8,13 +9,16 @@ import {
   HttpCode,
   Param,
   Post,
+  Query,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import axios from 'axios';
 import { GetUser } from '../../shared/decorators/get-user.decorator';
 import { RegisterDto } from '../auth.dto';
 import { LoginDto, LoginOutput, RefreshTokenDto } from '../auth.interface';
@@ -35,7 +39,7 @@ export class MobileAuthController {
   async register(@Body() registerDto: RegisterDto): Promise<IApiItem> {
     const confirmationLink = await this.authService.register(
       registerDto,
-      'mommy',
+      'mommy'
     );
     return apiSucceed('Please confirm your email', confirmationLink);
   }
@@ -62,7 +66,7 @@ export class MobileAuthController {
   async refreshToken(
     @Res() res,
     @GetUser() user: IUser,
-    @Body() refreshTokenDto: RefreshTokenDto,
+    @Body() refreshTokenDto: RefreshTokenDto
   ): Promise<LoginOutput> {
     const data = await this.authService.refreshToken(user, refreshTokenDto);
     return res.status(200).send(data);
@@ -79,5 +83,45 @@ export class MobileAuthController {
       },
       data,
     };
+  }
+
+  @Get('google')
+  async getTokenAfterGoogleSignIn(
+    @Query('access_token') access_token: string
+  ): Promise<LoginOutput> {
+    console.log('google login');
+    try {
+      const resp = await axios({
+        url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }).then(res => res.data);
+      if (!resp.email) {
+        throw new UnauthorizedException('Login failed');
+      }
+      const userData: IUserFromSocialLogin = {
+        firstName: resp.given_name,
+        lastName: resp.family_name,
+        email: resp.email,
+        avatar: resp.picture,
+        password: resp.id,
+        authProvider: 'google',
+        isActive: true,
+      };
+      const user = await this.authService.getOrCreateUser(userData);
+      const data = await this.authService.generateToken(user);
+      return {
+        meta: {
+          status: 200,
+          message: 'Login succeed',
+        },
+        data,
+      };
+    } catch (e) {
+      console.log('e', e);
+      throw new UnauthorizedException('Login failed');
+    }
   }
 }

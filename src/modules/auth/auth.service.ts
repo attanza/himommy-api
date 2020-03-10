@@ -1,5 +1,6 @@
 import { IRole } from '@modules/role/role.interface';
 import { RoleService } from '@modules/role/role.service';
+import { IUserFromSocialLogin } from '@modules/shared/interfaces/userFromSocialAuth.interface';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { UserService } from '@modules/user/user.service';
@@ -32,12 +33,12 @@ export class AuthService {
     private userService: UserService,
     private roleService: RoleService,
     private jwtService: JwtService,
-    private tocologistService: TocologistService,
+    private tocologistService: TocologistService
   ) {}
 
   async register(
     registerDto: RegisterDto,
-    role: string = 'mommy',
+    role: string = 'mommy'
   ): Promise<string> {
     // Find role id
     const roleData: IRole = await this.roleService.getByKey('slug', role);
@@ -99,7 +100,7 @@ export class AuthService {
     }
     const tocologist: ITocologist = await this.tocologistService.getByKey(
       'user',
-      user._id,
+      user._id
     );
     if (!tocologist) {
       Logger.log('No Tocologist Attached', 'Auth');
@@ -144,7 +145,7 @@ export class AuthService {
 
   async refreshToken(
     user: IUser,
-    refreshTokenDto: RefreshTokenDto,
+    refreshTokenDto: RefreshTokenDto
   ): Promise<LoginOutput> {
     const { refreshToken } = refreshTokenDto;
     const { uid } = this.jwtService.verify(refreshToken);
@@ -172,6 +173,17 @@ export class AuthService {
     });
 
     return { token, refreshToken };
+  }
+
+  async getOrCreateUser(userData: IUserFromSocialLogin): Promise<IUser> {
+    let user: IUser;
+    user = await this.userService.getByKey('email', userData.email);
+    if (!user) {
+      const mommyRole: IRole = await this.roleService.getByKey('slug', 'mommy');
+      userData.role = mommyRole._id;
+      user = await this.userService.dbStore('User', userData);
+    }
+    return user;
   }
 
   private throwError() {

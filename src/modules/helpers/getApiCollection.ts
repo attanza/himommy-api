@@ -1,10 +1,7 @@
 import { IPaginated } from '@modules/shared/interfaces/paginated.inteface';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { Logger } from '@nestjs/common';
-import {
-  IApiCollection,
-  IMeta,
-} from '../shared/interfaces/response-parser.interface';
+import { IApiCollection, IMeta } from '../shared/interfaces/response-parser.interface';
 import { Redis } from './redis';
 
 export default async ({

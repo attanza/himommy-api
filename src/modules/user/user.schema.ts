@@ -11,10 +11,7 @@ export const UserSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    phone: {
-      type: String,
-      unique: true,
-    },
+    phone: String,
     password: String,
     refreshToken: String,
     isActive: {
@@ -28,8 +25,10 @@ export const UserSchema = new mongoose.Schema(
     },
     avatar: String,
   },
-  { timestamps: true },
+  { timestamps: true }
 );
+
+UserSchema.index({ phone: 1 });
 
 UserSchema.pre<IUser>('save', async function(next: mongoose.HookNextFunction) {
   try {

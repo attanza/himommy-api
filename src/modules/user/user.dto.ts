@@ -61,4 +61,8 @@ export class UpdateUserDto {
   @IsOptional()
   @IsMongoId()
   role?: string;
+
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 }

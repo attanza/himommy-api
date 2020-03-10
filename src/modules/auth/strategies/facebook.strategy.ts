@@ -10,7 +10,7 @@ import * as FacebookTokenStrategy from 'passport-facebook-token';
 export class FacebookStrategy {
   constructor(
     private roleService: RoleService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     this.init();
   }
@@ -26,15 +26,18 @@ export class FacebookStrategy {
           accessToken: string,
           refreshToken: string,
           profile: any,
-          done: any,
+          done: any
         ) => {
           const { id, first_name, last_name, email } = profile._json;
+          if (!email || email === '') {
+            return done(null);
+          }
           let user: IUser;
           user = await this.userService.getByKey('email', email);
           if (!user) {
             const mommyRole: IRole = await this.roleService.getByKey(
               'slug',
-              'mommy',
+              'mommy'
             );
             const userData = {
               firstName: first_name || '',
@@ -49,29 +52,8 @@ export class FacebookStrategy {
             user = await this.userService.dbStore('User', userData);
           }
           return done(null, user);
-        },
-      ),
+        }
+      )
     );
   }
 }
-
-// {
-//   provider: 'facebook',
-//   id: '166776008086912',
-//   displayName: 'Ajeng Rahmawati',
-//   name: { familyName: 'Rahmawati', givenName: 'Ajeng', middleName: '' },
-//   gender: '',
-//   emails: [ { value: '' } ],
-//   photos: [
-//     {
-//       value: 'https://graph.facebook.com/v3.0/166776008086912/picture?type=large'
-//     }
-//   ],
-//   _raw: '{"id":"166776008086912","name":"Ajeng Rahmawati","last_name":"Rahmawati","first_name":"Ajeng"}',
-//   _json: {
-//     id: '166776008086912',
-//     name: 'Ajeng Rahmawati',
-//     last_name: 'Rahmawati',
-//     first_name: 'Ajeng'
-//   }
-// }

@@ -95,7 +95,7 @@ export class DbService {
   }
 
   async getByKey<T>(key: string, value: any): Promise<T> {
-    return await this.Model.findOne({ [key]: value });
+    return this.Model.findOne({ [key]: value });
   }
 
   /**
@@ -119,7 +119,7 @@ export class DbService {
     if (relations && relations.length > 0) {
       output = apiCreated(
         modelName,
-        await this.getById({ id: newData._id, relations }),
+        await this.getById({ id: newData._id, relations })
       );
     } else {
       output = apiCreated(modelName, newData);
