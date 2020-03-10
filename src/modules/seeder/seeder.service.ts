@@ -52,7 +52,7 @@ export class SeederService {
     @InjectModel('Reason')
     private reasonModel: Model<IReason>,
     @InjectModel('Notification')
-    private notificationModel: Model<INotification>,
+    private notificationModel: Model<INotification>
   ) {}
 
   /**
@@ -108,6 +108,7 @@ export class SeederService {
       'Question',
       'Reason',
       'Notification',
+      'GeoReverse',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -116,7 +117,7 @@ export class SeederService {
         permissionsData.push({
           name: `${a} ${r}`,
           slug: paramCase(`${a} ${r}`),
-        }),
+        })
       );
     });
     await this.permissionModel.insertMany(permissionsData);
@@ -190,7 +191,7 @@ export class SeederService {
         services.push({
           name: s,
           price: this.faker.integer({ min: 100000, max: 1000000 }),
-        }),
+        })
       );
       return services;
     };
