@@ -120,7 +120,6 @@ export class MobileAuthController {
         data,
       };
     } catch (e) {
-      console.log('e', e);
       throw new UnauthorizedException('Login failed');
     }
   }

@@ -17,14 +17,14 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   IApiCollection,
   IApiItem,
-} from '../shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
+} from '../../shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '../../shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '../../shared/pipes/resource-pagination.pipe';
 import {
   CreateTocologistServiceDto,
   UpdateTocologistServiceDto,
-} from './tocologist-services.dto';
-import { TocologistServicesService } from './tocologist-services.service';
+} from '../tocologist-services.dto';
+import { TocologistServicesService } from '../tocologist-services.service';
 
 @Controller('admin/tocologist-services')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -57,7 +57,7 @@ export class TocologistServicesController {
   @Post()
   @Permission('create-tocologist-service')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateTocologistServiceDto,
+    @Body(new ValidationPipe()) createDto: CreateTocologistServiceDto
   ): Promise<IApiItem> {
     return await this.dbService.store({
       modelName: this.modelName,
@@ -71,7 +71,7 @@ export class TocologistServicesController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateTocologistServiceDto,
+    @Body() updateDto: UpdateTocologistServiceDto
   ): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.update({
