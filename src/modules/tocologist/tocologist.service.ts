@@ -17,7 +17,7 @@ export class TocologistService extends DbService {
   tocologistModel: Model<ITocologist>;
   constructor(
     @InjectModel('Tocologist') private model: Model<ITocologist>,
-    private tocologistServicesService: TocologistServicesService,
+    private tocologistServicesService: TocologistServicesService
   ) {
     super(model);
     this.tocologistModel = model;
@@ -37,18 +37,32 @@ export class TocologistService extends DbService {
       'village',
       'postCode',
     ];
+    let address = {};
     addressKeys.map(key => {
       if (tocologistData[key]) {
-        data[key] = tocologistData[key];
+        address[key] = tocologistData[key];
+        delete data[key];
       }
     });
-    data.location = {
-      coordinates: [tocologistData.longitude, tocologistData.latitude],
-    };
-    data.operationTime = {
-      open: tocologistData.open,
-      close: tocologistData.close,
-    };
+    if (Object.keys(address).length > 0) {
+      data.address = address;
+    }
+    if (tocologistData.latitude && tocologistData.longitude) {
+      data.location = {
+        type: 'Point',
+        coordinates: [tocologistData.longitude, tocologistData.latitude],
+      };
+    }
+    delete data['longitude'];
+    delete data['latitude'];
+    if (tocologistData.open && tocologistData.close) {
+      data.operationTime = {
+        open: tocologistData.open,
+        close: tocologistData.close,
+      };
+      delete data['open'];
+      delete data['close'];
+    }
     return data;
   }
 
@@ -57,7 +71,7 @@ export class TocologistService extends DbService {
    * @param servicesData
    */
   async checkServices(
-    servicesData: AttachTocologistServicesDto,
+    servicesData: AttachTocologistServicesDto
   ): Promise<void> {
     const services: string[] = [];
     if (
@@ -104,7 +118,7 @@ export class TocologistService extends DbService {
       ]);
       mqttHandler.sendMessage(
         `tocologist/${id}/image`,
-        `${process.env.APP_URL}${imageString}`,
+        `${process.env.APP_URL}${imageString}`
       );
     }
   }

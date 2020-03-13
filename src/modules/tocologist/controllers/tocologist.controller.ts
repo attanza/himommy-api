@@ -21,7 +21,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed, apiUpdated } from '../../helpers/responseParser';
+import { apiSucceed } from '../../helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -71,7 +71,7 @@ export class TocologistController {
   @Post()
   @Permission('create-tocologist')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateTocologistDto,
+    @Body(new ValidationPipe()) createDto: CreateTocologistDto
   ): Promise<IApiItem> {
     const tocologistData = this.dbService.prepareTocologistData(createDto);
     return await this.dbService.store({
@@ -86,20 +86,25 @@ export class TocologistController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateTocologistDto,
+    @Body() updateDto: UpdateTocologistDto
   ): Promise<IApiItem> {
-    const { id } = param;
-    const output = await this.dbService.update({
-      modelName: this.modelName,
-      id,
-      updateDto,
-      uniques: this.uniques,
-      relations: this.relations,
-    });
-    if (output.data.user && output.data.user.length > 0) {
-      output.data.user.map(user => Redis.del(`User_${user}`));
+    try {
+      const { id } = param;
+      const tocologistData = this.dbService.prepareTocologistData(updateDto);
+      const output = await this.dbService.update({
+        modelName: this.modelName,
+        id,
+        updateDto: tocologistData,
+        uniques: this.uniques,
+        relations: this.relations,
+      });
+      if (output.data.user && output.data.user.length > 0) {
+        output.data.user.map(user => Redis.del(`User_${user}`));
+      }
+      return output;
+    } catch (error) {
+      console.log('error', error);
     }
-    return output;
   }
 
   @Delete(':id')
@@ -120,12 +125,11 @@ export class TocologistController {
   @UsePipes(ValidationPipe)
   async attachServices(
     @Param() param: MongoIdPipe,
-    @Body() serviceDto: AttachTocologistServicesDto,
+    @Body() serviceDto: AttachTocologistServicesDto
   ): Promise<IApiItem> {
     await this.dbService.checkServices(serviceDto);
     const { id } = param;
-    const data = await this.dbService.attachServices(id, serviceDto);
-    return apiUpdated(this.modelName, data);
+    return this.dbService.attachServices(id, serviceDto);
   }
 
   /**
@@ -139,7 +143,7 @@ export class TocologistController {
   uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
     if (!image) {
       throw new BadRequestException(
-        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
       );
     }
 

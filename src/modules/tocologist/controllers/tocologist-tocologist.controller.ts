@@ -21,7 +21,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed, apiUpdated } from '../../helpers/responseParser';
+import { apiSucceed } from '../../helpers/responseParser';
 import { IApiItem } from '../../shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '../../shared/pipes/mongoId.pipe';
 import {
@@ -44,16 +44,18 @@ export class TocologistTocologistController {
   async update(
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateTocologistDto,
+    @Body() updateDto: UpdateTocologistDto
   ): Promise<IApiItem> {
     const { id } = param;
     if (!user.tocologist || user.tocologist._id.toString() !== id) {
       throw new ForbiddenException('Action is forbidden');
     }
+    const tocologistData = this.dbService.prepareTocologistData(updateDto);
+
     const output = await this.dbService.update({
       modelName: this.modelName,
       id,
-      updateDto,
+      updateDto: tocologistData,
       uniques: this.uniques,
       relations: this.relations,
     });
@@ -73,7 +75,7 @@ export class TocologistTocologistController {
   async attachServices(
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
-    @Body() serviceDto: AttachTocologistServicesDto,
+    @Body() serviceDto: AttachTocologistServicesDto
   ): Promise<IApiItem> {
     const { id } = param;
 
@@ -81,8 +83,7 @@ export class TocologistTocologistController {
       throw new ForbiddenException('Action is forbidden');
     }
     await this.dbService.checkServices(serviceDto);
-    const data = await this.dbService.attachServices(id, serviceDto);
-    return apiUpdated(this.modelName, data);
+    return this.dbService.attachServices(id, serviceDto);
   }
 
   /**
@@ -96,7 +97,7 @@ export class TocologistTocologistController {
   uploadFile(
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
-    @UploadedFile() image,
+    @UploadedFile() image
   ) {
     const { id } = param;
 
@@ -105,7 +106,7 @@ export class TocologistTocologistController {
     }
     if (!image) {
       throw new BadRequestException(
-        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
       );
     }
 

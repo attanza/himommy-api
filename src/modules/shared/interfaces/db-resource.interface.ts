@@ -15,7 +15,7 @@ export interface IResourceStore {
 export interface IResourceUpdate {
   modelName: string;
   id: string;
-  updateDto;
+  updateDto: any;
   uniques?: string[];
   relations?: string[];
   topic?: string;
