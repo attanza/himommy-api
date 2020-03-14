@@ -7,7 +7,7 @@ export interface IGeoReverseAddress {
   state: string;
   postcode: string;
   country: string;
-  country_code: string;
+  countryCode: string;
 }
 
 export interface IGeoReverse extends Document {

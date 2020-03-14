@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DbService } from '../shared/services/db.service';
-import { IAppVersion } from './app-version.interface';
+import { EPlatform, IAppVersion } from './app-version.interface';
 
 @Injectable()
 export class AppVersionService extends DbService {
@@ -10,7 +10,7 @@ export class AppVersionService extends DbService {
     super(model);
   }
 
-  async getByPlatform(platform: string) {
+  async getByPlatform(platform: EPlatform) {
     return await this.model.findOne({ platform });
   }
 }

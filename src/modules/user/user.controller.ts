@@ -1,8 +1,23 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { IApiCollection, IApiItem } from '../shared/interfaces/response-parser.interface';
+import {
+  IApiCollection,
+  IApiItem,
+} from '../shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '../shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '../shared/pipes/resource-pagination.pipe';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
@@ -14,22 +29,22 @@ export class UserController {
   modelName = 'User';
   uniques = ['phone', 'email'];
   relations = ['role'];
-  constructor(private dbService: UserService) { }
+  constructor(private dbService: UserService) {}
 
   @Get()
   @Permission('read-user')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'phone', 'email'];
     const keyValueSearchable = ['role'];
-    const { fieldKey, fieldValue } = query
-    let customOptions = {}
+    const { fieldKey, fieldValue } = query;
+    let customOptions = {};
     if (fieldKey && fieldKey === 'role' && fieldValue && fieldValue !== '') {
-      const role = await this.dbService.getRoleFromIdOrSlug(fieldValue)
+      const role = await this.dbService.getRoleFromIdOrSlug(fieldValue);
       if (role) {
-        customOptions = { role: role._id }
+        customOptions = { role: role._id };
       }
-      delete query['fieldKey']
-      delete query['fieldValue']
+      delete query.fieldKey;
+      delete query.fieldValue;
     }
     return this.dbService.getPaginated({
       modelName: this.modelName,
@@ -37,7 +52,7 @@ export class UserController {
       regexSearchable,
       keyValueSearchable,
       relations: this.relations,
-      customOptions
+      customOptions,
     });
   }
 
@@ -56,7 +71,7 @@ export class UserController {
   @Post()
   @Permission('create-user')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateUserDto,
+    @Body(new ValidationPipe()) createDto: CreateUserDto
   ): Promise<IApiItem> {
     await this.dbService.checkRole(createDto.role);
 
@@ -73,7 +88,7 @@ export class UserController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateUserDto,
+    @Body() updateDto: UpdateUserDto
   ): Promise<IApiItem> {
     await this.dbService.checkRole(updateDto.role);
 

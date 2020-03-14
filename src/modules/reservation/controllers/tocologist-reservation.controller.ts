@@ -37,14 +37,14 @@ export class TocologistReservationController {
   relations = ['tocologist', 'user'];
   constructor(
     private reservationService: ReservationService,
-    private tocologistService: TocologistService,
+    private tocologistService: TocologistService
   ) {}
 
   @Get()
   @Role('tocologist')
   async all(
     @GetUser() user: IUser,
-    @Query() query: ResourcePaginationPipe,
+    @Query() query: ResourcePaginationPipe
   ): Promise<IApiCollection> {
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist', 'status'];
@@ -66,16 +66,16 @@ export class TocologistReservationController {
   @UsePipes(ValidationPipe)
   async show(
     @GetUser() user: IUser,
-    @Param() param: MongoIdPipe,
+    @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
     const tocologist: ITocologist = await this.tocologistService.getByKey(
       'user',
-      user._id,
+      user._id
     );
     const { id } = param;
     const data = await this.reservationService.getMyReservationByTocologistId(
       tocologist._id,
-      id,
+      id
     );
     return apiItem(this.modelName, data);
   }
@@ -85,7 +85,7 @@ export class TocologistReservationController {
   async update(
     @Param() param: MongoIdPipe,
     @Body() updateDto: UpdateTocologistReservationDto,
-    @GetUser() user: IUser,
+    @GetUser() user: IUser
   ) {
     let updateData: any;
 
@@ -156,16 +156,16 @@ export class TocologistReservationController {
     if (updateData.services && updateData.services.length > 0) {
       await this.reservationService.checkServices(
         user.tocologist._id,
-        updateData.services,
+        updateData.services
       );
     }
-
+    const userData = data.user as IUser;
     const updateResult = await this.reservationService.update({
       modelName: this.modelName,
       id,
       updateDto: updateData,
       relations: this.relations,
-      topic: `reservations/${data.user._id}/${updateData.status}`,
+      topic: `reservations/${userData._id}/${updateData.status}`,
     });
 
     const fcmData = {
@@ -176,9 +176,9 @@ export class TocologistReservationController {
       title: `HiMommy-Perubahan Reservasi #${updateResult.data.code}`,
     };
     fcm.sendToMobile(
-      `reservations-${data.user._id}-${updateData.status}`,
+      `reservations-${userData._id}-${updateData.status}`,
       fcmData,
-      fcmNotification,
+      fcmNotification
     );
     return updateResult;
   }

@@ -4,7 +4,7 @@ import { IUser } from '@modules/user/user.interface';
 import { Document } from 'mongoose';
 
 export interface IMommyDetail extends Document {
-  user: IUser;
+  user: string | IUser;
   dob: Date;
   height: number;
   weight: number;

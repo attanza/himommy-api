@@ -87,15 +87,14 @@ export class MobileAuthController {
 
   @Get('google')
   async getTokenAfterGoogleSignIn(
-    @Query('access_token') access_token: string
+    @Query('access_token') accessToken: string
   ): Promise<LoginOutput> {
-    console.log('google login');
     try {
       const resp = await axios({
         url: 'https://www.googleapis.com/oauth2/v2/userinfo',
         method: 'get',
         headers: {
-          Authorization: `Bearer ${access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }).then(res => res.data);
       if (!resp.email) {

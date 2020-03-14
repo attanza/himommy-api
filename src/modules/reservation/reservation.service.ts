@@ -11,14 +11,14 @@ import { IReservation } from './reservation.interface';
 export class ReservationService extends DbService {
   constructor(
     @InjectModel('Reservation') private model: Model<IReservation>,
-    private tocologistService: TocologistService,
+    private tocologistService: TocologistService
   ) {
     super(model);
   }
 
   async checkServices(
     id: string,
-    requestedServices: TServiceDto[],
+    requestedServices: TServiceDto[]
   ): Promise<void> {
     const data: ITocologist = await this.tocologistService.getById({
       modelName: 'Tocologist',
@@ -37,7 +37,7 @@ export class ReservationService extends DbService {
       requestedServices.map(s => {
         if (!tocologistServices.includes(s.name)) {
           throw new BadRequestException(
-            'One or more services is not available at the chosen Tocologist',
+            'One or more services is not available at the chosen Tocologist'
           );
         }
       });
@@ -46,9 +46,9 @@ export class ReservationService extends DbService {
 
   async getMyReservationById(
     userId: string,
-    id: string,
+    id: string
   ): Promise<IReservation> {
-    const found = await this.model
+    const found: IReservation = await this.model
       .findOne({ user: userId, _id: id })
       .populate('tocologist')
       .lean();
@@ -61,7 +61,7 @@ export class ReservationService extends DbService {
 
   async getMyReservationByTocologistId(
     tocologistId: string,
-    id: string,
+    id: string
   ): Promise<IReservation> {
     const found = await this.model
       .findOne({ tocologist: tocologistId, _id: id })

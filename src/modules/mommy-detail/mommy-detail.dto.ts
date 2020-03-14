@@ -1,3 +1,4 @@
+import { IUser } from '@modules/user/user.interface';
 import {
   IsArray,
   IsDateString,
@@ -54,7 +55,7 @@ export class CreateMommyDto {
 export class UpdateMommyDto {
   @IsNotEmpty()
   @IsMongoId()
-  user: string;
+  user: IUser;
 
   @IsOptional()
   @IsDateString()

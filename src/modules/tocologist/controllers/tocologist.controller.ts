@@ -9,6 +9,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Logger,
   Param,
   Post,
   Put,
@@ -103,7 +104,7 @@ export class TocologistController {
       }
       return output;
     } catch (error) {
-      console.log('error', error);
+      Logger.log(JSON.stringify(error));
     }
   }
 

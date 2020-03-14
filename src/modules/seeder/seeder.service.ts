@@ -73,14 +73,14 @@ export class SeederService {
       'Tocologist',
     ];
 
-    for (let i = 0; i < roles.length; i++) {
+    for (const role of roles) {
       const newRole = await this.roleModel.create({
-        name: roles[i],
-        slug: paramCase(roles[i]),
+        name: role,
+        slug: paramCase(role),
       });
       await this.userModel.create({
-        firstName: roles[i],
-        email: `${snakeCase(roles[i])}@himommy.org`,
+        firstName: role,
+        email: `${snakeCase(role)}@himommy.org`,
         password: 'password',
         phone: this.faker.phone(),
         role: newRole._id,
@@ -237,7 +237,7 @@ export class SeederService {
     Redis.flushall();
 
     const tocologist = await this.tocologistModel.findOne();
-    const user = await this.userModel
+    const user: IUser = await this.userModel
       .findOne({ email: 'tocologist@himommy.org' })
       .lean();
     tocologist.user = user;

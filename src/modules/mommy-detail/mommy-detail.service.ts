@@ -14,7 +14,7 @@ export class MommyDetailService extends DbService {
 
   async createOrUpdateDetail(updateDto: Partial<UpdateMommyDto>) {
     const { user } = updateDto;
-    let data: IMommyDetail;
+    let data;
     data = await this.model.findOne({ user });
     if (!data) {
       data = await this.model.create(updateDto);

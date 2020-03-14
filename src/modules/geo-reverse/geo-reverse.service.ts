@@ -22,7 +22,7 @@ export class GeoReverseService extends DbService {
       }
 
       // Check From DB
-      const data = await this.model.findOne({ lat, lon }).lean();
+      const data: IGeoReverse = await this.model.findOne({ lat, lon }).lean();
       if (data) {
         Redis.set(redisKey, JSON.stringify(data));
         Logger.log('Get GeoReverse from DB');
@@ -39,7 +39,7 @@ export class GeoReverseService extends DbService {
           lat: resp.lat,
           lon: resp.lon,
           displayName: resp.display_name,
-          address: resp.address,
+          address: { ...resp.address, countryCode: resp.address.country_code },
         };
         const newGeoReverse: IGeoReverse = await this.dbStore(
           'GeoReverse',
@@ -52,7 +52,7 @@ export class GeoReverseService extends DbService {
       }
       return null;
     } catch (e) {
-      console.log('e', e);
+      Logger.log(JSON.stringify(e));
       return null;
     }
   }

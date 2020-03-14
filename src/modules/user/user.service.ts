@@ -15,7 +15,7 @@ import { IUser } from './user.interface';
 export class UserService extends DbService {
   constructor(
     @InjectModel('User') private model: Model<IUser>,
-    private roleService: RoleService,
+    private roleService: RoleService
   ) {
     super(model);
   }
@@ -55,7 +55,7 @@ export class UserService extends DbService {
 
   async changePassword(
     user: IUser,
-    changePasswordDto: ChangePasswordDto,
+    changePasswordDto: ChangePasswordDto
   ): Promise<string> {
     const { oldPassword, password } = changePasswordDto;
     const userData = await this.model.findById(user._id);
@@ -78,18 +78,16 @@ export class UserService extends DbService {
     ]);
     mqttHandler.sendMessage(
       `profile/${user._id}/avatar`,
-      `${process.env.APP_URL}${userData.avatar}`,
+      `${process.env.APP_URL}${userData.avatar}`
     );
   }
 
   async getRoleFromIdOrSlug(idOrSlug: string): Promise<IRole> {
     const validator = new Validator();
     if (validator.isMongoId(idOrSlug)) {
-      console.log("get by id")
-      return this.roleService.getByKey('_id', idOrSlug)
+      return this.roleService.getByKey('_id', idOrSlug);
     } else {
-      console.log("get by slug")
-      return this.roleService.getByKey('slug', idOrSlug)
+      return this.roleService.getByKey('slug', idOrSlug);
     }
   }
 }

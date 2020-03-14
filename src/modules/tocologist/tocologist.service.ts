@@ -37,7 +37,7 @@ export class TocologistService extends DbService {
       'village',
       'postCode',
     ];
-    let address = {};
+    const address = {};
     addressKeys.map(key => {
       if (tocologistData[key]) {
         address[key] = tocologistData[key];
@@ -53,15 +53,15 @@ export class TocologistService extends DbService {
         coordinates: [tocologistData.longitude, tocologistData.latitude],
       };
     }
-    delete data['longitude'];
-    delete data['latitude'];
+    delete data.longitude;
+    delete data.latitude;
     if (tocologistData.open && tocologistData.close) {
       data.operationTime = {
         open: tocologistData.open,
         close: tocologistData.close,
       };
-      delete data['open'];
-      delete data['close'];
+      delete data.open;
+      delete data.close;
     }
     return data;
   }

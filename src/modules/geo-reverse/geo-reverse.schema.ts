@@ -11,7 +11,7 @@ export const GeoReverseSchema = new mongoose.Schema(
       state: String,
       postcode: String,
       country: String,
-      country_code: String,
+      countryCode: String,
     },
   },
   { timestamps: true }

@@ -1,12 +1,11 @@
-import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Document } from 'mongoose';
-import { ITServices } from '../tocologist/tocologist.interface';
+import { ITocologist, ITServices } from '../tocologist/tocologist.interface';
 
 export interface IReservation extends Document {
   code: string;
-  tocologist: ITocologist;
-  user: IUser;
+  tocologist: ITocologist | string;
+  user: IUser | string;
   services: ITServices[];
   date: Date;
   status: EStatus;

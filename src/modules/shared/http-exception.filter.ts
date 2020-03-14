@@ -1,5 +1,12 @@
 // tslint:disable:no-console
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 import { Meta2 } from './interfaces/response-parser.interface';
 
 @Catch()
@@ -16,12 +23,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const NODE_ENV = process.env.NODE_ENV;
     if (NODE_ENV === 'development') {
-      console.log(JSON.stringify(exception));
+      Logger.log(JSON.stringify(exception));
     }
 
-    let message =
+    let message: string =
       status !== HttpStatus.INTERNAL_SERVER_ERROR
-        ? exception.message.message || exception.message || null
+        ? exception.message || exception.message || null
         : 'Internal Server Error';
 
     if (status === 401) {

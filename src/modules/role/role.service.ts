@@ -9,7 +9,7 @@ import { IRole } from './role.interface';
 export class RoleService extends DbService {
   constructor(
     @InjectModel('Role') private model: Model<IRole>,
-    private permissionService: PermissionService,
+    private permissionService: PermissionService
   ) {
     super(model);
   }
@@ -18,7 +18,7 @@ export class RoleService extends DbService {
     return await this.permissionService.checkPermissionArray(permissions);
   }
 
-  async getForCombo() {
+  async getForCombo(): Promise<IRole[]> {
     return this.model
       .find()
       .select('name')

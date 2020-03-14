@@ -45,7 +45,7 @@ export class CreateGeoReverseDto {
 
   @IsOptional()
   @IsString()
-  country_code: string;
+  countryCode: string;
 }
 
 export class UpdateGeoReverseDto {
@@ -87,5 +87,5 @@ export class UpdateGeoReverseDto {
 
   @IsOptional()
   @IsString()
-  country_code: string;
+  countryCode: string;
 }
