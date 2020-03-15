@@ -2,6 +2,7 @@ import { AppVersionSchema } from '@modules/app-version/app-version.schema';
 import { ArticleSchema } from '@modules/article/article.schema';
 import { CheckListSchema } from '@modules/check-list/check-list.schema';
 import { MommyDetailSchema } from '@modules/mommy-detail/mommy-detail.schema';
+import { MythFactSchema } from '@modules/myth-fact/myth-fact.schema';
 import { NotificationSchema } from '@modules/notification/notification.schema';
 import { QuestionSchema } from '@modules/question/question.schema';
 import { ReasonSchema } from '@modules/reason/reason.schema';
@@ -42,6 +43,7 @@ import { SeederService } from './seeder.service';
       { name: 'Question', schema: QuestionSchema },
       { name: 'Reason', schema: ReasonSchema },
       { name: 'Notification', schema: NotificationSchema },
+      { name: 'MythFact', schema: MythFactSchema, collection: 'myth_facts' },
     ]),
   ],
   controllers: [SeederController],

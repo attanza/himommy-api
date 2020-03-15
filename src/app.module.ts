@@ -4,6 +4,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { CheckListModule } from '@modules/check-list/check-list.module';
 import { ComboDataModule } from '@modules/combo-data/combo-data.module';
 import { GeoReverseModule } from '@modules/geo-reverse/geo-reverse.module';
+import { MythFactModule } from '@modules/myth-fact/myth-fact.module';
 import { NotificationModule } from '@modules/notification/notification.module';
 import { PermissionModule } from '@modules/permission/permission.module';
 import { ProfileModule } from '@modules/profile/profile.module';
@@ -45,6 +46,7 @@ const MONGO_DB_OPTIONS = {
     ReasonModule,
     NotificationModule,
     GeoReverseModule,
+    MythFactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

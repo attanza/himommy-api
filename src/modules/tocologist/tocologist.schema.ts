@@ -48,8 +48,12 @@ export const TocologistSchema = new mongoose.Schema(
       },
     ],
     user: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    ratting: {
+      type: Number,
+      default: 3,
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 TocologistSchema.index({ location: '2dsphere' });

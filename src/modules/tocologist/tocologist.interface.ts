@@ -12,6 +12,7 @@ export interface ITocologist extends Document {
   operationTime: IOperationTime;
   holiday: IHoliday[];
   services: ITServices[];
+  ratting: number;
   user: IUser;
   createdAt: Date;
   updatedAt: Date;

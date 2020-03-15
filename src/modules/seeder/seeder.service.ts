@@ -2,6 +2,7 @@ import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IArticle } from '@modules/article/article.interface';
 import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
+import { IMythFact } from '@modules/myth-fact/myth-fact.interface';
 import { INotification } from '@modules/notification/notification.interface';
 import { IPermission } from '@modules/permission/permission.interface';
 import { IQuestion } from '@modules/question/question.interface';
@@ -52,7 +53,9 @@ export class SeederService {
     @InjectModel('Reason')
     private reasonModel: Model<IReason>,
     @InjectModel('Notification')
-    private notificationModel: Model<INotification>
+    private notificationModel: Model<INotification>,
+    @InjectModel('MythFact')
+    private mythFactModel: Model<IMythFact>
   ) {}
 
   /**
@@ -109,6 +112,7 @@ export class SeederService {
       'Reason',
       'Notification',
       'GeoReverse',
+      'MythFact',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -404,5 +408,29 @@ export class SeederService {
 
     await this.notificationModel.insertMany(notifications);
     Logger.log('Seeding Notification Finish');
+  }
+
+  /**
+   * Myth Fact Seeder
+   */
+  async seedMythFact() {
+    Logger.log('Seeding Myth Fact ...');
+    await this.mythFactModel.deleteMany({});
+
+    const mythFacts = [];
+    for (let i = 0; i < 25; i++) {
+      mythFacts.push({
+        title: this.faker.sentence(),
+        subtitle: this.faker.sentence(),
+        description: this.faker.sentence(),
+        myth: this.faker.paragraph(),
+        fact: this.faker.paragraph(),
+        image: 'https://picsum.photos/400/200',
+        isPublish: true,
+      });
+    }
+
+    await this.mythFactModel.insertMany(mythFacts);
+    Logger.log('Seeding Myth Fact Finish');
   }
 }

@@ -1,7 +1,10 @@
 import { IPaginated } from '@modules/shared/interfaces/paginated.inteface';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { Logger } from '@nestjs/common';
-import { IApiCollection, IMeta } from '../shared/interfaces/response-parser.interface';
+import {
+  IApiCollection,
+  IMeta,
+} from '../shared/interfaces/response-parser.interface';
 import { Redis } from './redis';
 
 export default async ({
@@ -17,7 +20,7 @@ export default async ({
   const redisKey = `${modelName}_${generateRedisKey(
     query,
     relations,
-    customOptions,
+    customOptions
   )}`;
   // Cache
   const cache = await Redis.get(redisKey);
@@ -179,7 +182,7 @@ const normalizeQuery = query => {
 const generateRedisKey = (
   query: ResourcePaginationPipe,
   relations: string[],
-  customOptions: any,
+  customOptions: any
 ) => {
   const redisQuery = [
     ...Object.values(customOptions),
