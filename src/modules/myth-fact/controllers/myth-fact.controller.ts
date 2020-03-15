@@ -1,5 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
+import { apiUpdated } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -7,21 +8,27 @@ import {
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMythFactDto, UpdateMythFactDto } from '../myth-fact.dto';
 import { MythFactService } from '../myth-fact.service';
+import mythFactInterceptor from '../mythFactInterceptor';
 
 @Controller('admin/myth-facts')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -82,5 +89,25 @@ export class MythFactController {
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.destroy({ modelName: this.modelName, id });
+  }
+
+  /**
+   * Image Upload
+   */
+
+  @Post('/:id/image-upload')
+  @Permission('update-myth-fact')
+  @HttpCode(200)
+  @UseInterceptors(FileInterceptor('image', mythFactInterceptor))
+  async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
+    if (!image) {
+      throw new BadRequestException(
+        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
+      );
+    }
+
+    const { id } = param;
+    const updated = await this.dbService.saveImage(id, image);
+    return apiUpdated('Myth Fact', updated);
   }
 }

@@ -1,5 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
+import { apiUpdated } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -7,24 +8,30 @@ import {
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   CreatePregnancyAgesDto,
   UpdatePregnancyAgesDto,
 } from '../pregnancy-ages.dto';
 import { PregnancyAgesService } from '../pregnancy-ages.service';
+import pregnancyAgesInterceptor from '../pregnancyAgesInterceptor';
 
 @Controller('admin/pregnancy-ages')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -85,5 +92,25 @@ export class PregnancyAgesController {
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.destroy({ modelName: this.modelName, id });
+  }
+
+  /**
+   * Image Upload
+   */
+
+  @Post('/:id/image-upload')
+  @Permission('update-pregnancy-age')
+  @HttpCode(200)
+  @UseInterceptors(FileInterceptor('image', pregnancyAgesInterceptor))
+  async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
+    if (!image) {
+      throw new BadRequestException(
+        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
+      );
+    }
+
+    const { id } = param;
+    const updated = await this.dbService.saveImage(id, image);
+    return apiUpdated('Pregnancy Ages', updated);
   }
 }
