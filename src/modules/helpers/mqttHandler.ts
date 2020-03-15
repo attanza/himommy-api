@@ -49,7 +49,7 @@ class MqttHandler {
     });
   }
 
-  // Sends a mqtt message to topic: mytopic
+  // Sends a mqtt message to topic: myopic
   sendMessage(topic: string, message: string) {
     try {
       this.mqttClient.publish(topic, message);

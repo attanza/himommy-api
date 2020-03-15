@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private userService: UserService,
     private tocologistService: TocologistService,
-    private mommyDetailService: MommyDetailService,
+    private mommyDetailService: MommyDetailService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -47,7 +47,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   private async getMommyDetail(): Promise<IMommyDetail> {
     const data: IMommyDetail = await this.mommyDetailService.getByKey(
       'user',
-      this.uid,
+      this.uid
     );
     return data;
   }

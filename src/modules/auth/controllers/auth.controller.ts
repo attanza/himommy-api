@@ -37,7 +37,7 @@ export class AuthController {
   async refreshToken(
     @Res() res,
     @GetUser() user: IUser,
-    @Body() refreshTokenDto: RefreshTokenDto,
+    @Body() refreshTokenDto: RefreshTokenDto
   ): Promise<LoginOutput> {
     const data = await this.authService.refreshToken(user, refreshTokenDto);
     return res.status(200).send(data);

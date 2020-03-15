@@ -1,8 +1,5 @@
-import { IUser } from '@modules/user/user.interface';
 import { createParamDecorator } from '@nestjs/common';
-
-export const GetUser = createParamDecorator(
-  (_, req): IUser => {
-    return req.user;
-  },
-);
+import { Request } from 'express';
+export const GetUser = createParamDecorator((_, req: Request) => {
+  return req.user;
+});
