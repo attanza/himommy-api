@@ -7,6 +7,7 @@ import { GeoReverseModule } from '@modules/geo-reverse/geo-reverse.module';
 import { MythFactModule } from '@modules/myth-fact/myth-fact.module';
 import { NotificationModule } from '@modules/notification/notification.module';
 import { PermissionModule } from '@modules/permission/permission.module';
+import { PregnancyAgesModule } from '@modules/pregnancy-ages/pregnancy-ages.module';
 import { ProfileModule } from '@modules/profile/profile.module';
 import { QuestionModule } from '@modules/question/question.module';
 import { ReasonModule } from '@modules/reason/reason.module';
@@ -47,6 +48,7 @@ const MONGO_DB_OPTIONS = {
     NotificationModule,
     GeoReverseModule,
     MythFactModule,
+    PregnancyAgesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

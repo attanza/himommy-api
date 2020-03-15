@@ -5,6 +5,7 @@ import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IMythFact } from '@modules/myth-fact/myth-fact.interface';
 import { INotification } from '@modules/notification/notification.interface';
 import { IPermission } from '@modules/permission/permission.interface';
+import { IPregnancyAges } from '@modules/pregnancy-ages/pregnancy-ages.interface';
 import { IQuestion } from '@modules/question/question.interface';
 import { EReasonCategory, IReason } from '@modules/reason/reason.interface';
 import { IRole } from '@modules/role/role.interface';
@@ -55,7 +56,9 @@ export class SeederService {
     @InjectModel('Notification')
     private notificationModel: Model<INotification>,
     @InjectModel('MythFact')
-    private mythFactModel: Model<IMythFact>
+    private mythFactModel: Model<IMythFact>,
+    @InjectModel('PregnancyAges')
+    private pregnancyAgesModel: Model<IPregnancyAges>
   ) {}
 
   /**
@@ -113,6 +116,7 @@ export class SeederService {
       'Notification',
       'GeoReverse',
       'MythFact',
+      'PregnancyAge',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -432,5 +436,28 @@ export class SeederService {
 
     await this.mythFactModel.insertMany(mythFacts);
     Logger.log('Seeding Myth Fact Finish');
+  }
+  /**
+   * Pregnancy Ages Seeder
+   */
+  async seedPregnancyAges() {
+    Logger.log('Seeding Pregnancy Ages ...');
+    await this.pregnancyAgesModel.deleteMany({});
+
+    const data = [];
+    for (let i = 0; i < 51; i++) {
+      data.push({
+        week: i,
+        title: this.faker.sentence(),
+        subtitle: this.faker.sentence(),
+        description: this.faker.sentence(),
+        content: this.faker.paragraph(),
+        image: 'https://picsum.photos/400/200',
+        isPublish: true,
+      });
+    }
+
+    await this.pregnancyAgesModel.insertMany(data);
+    Logger.log('Seeding Pregnancy Ages Finish');
   }
 }

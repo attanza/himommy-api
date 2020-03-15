@@ -4,6 +4,7 @@ import { CheckListSchema } from '@modules/check-list/check-list.schema';
 import { MommyDetailSchema } from '@modules/mommy-detail/mommy-detail.schema';
 import { MythFactSchema } from '@modules/myth-fact/myth-fact.schema';
 import { NotificationSchema } from '@modules/notification/notification.schema';
+import { PregnancyAgesSchema } from '@modules/pregnancy-ages/pregnancy-ages.schema';
 import { QuestionSchema } from '@modules/question/question.schema';
 import { ReasonSchema } from '@modules/reason/reason.schema';
 import { TocologistServiceSchema } from '@modules/tocologist-services/tocologist-services.schema';
@@ -44,6 +45,11 @@ import { SeederService } from './seeder.service';
       { name: 'Reason', schema: ReasonSchema },
       { name: 'Notification', schema: NotificationSchema },
       { name: 'MythFact', schema: MythFactSchema, collection: 'myth_facts' },
+      {
+        name: 'PregnancyAges',
+        schema: PregnancyAgesSchema,
+        collection: 'pregnancy_ages',
+      },
     ]),
   ],
   controllers: [SeederController],

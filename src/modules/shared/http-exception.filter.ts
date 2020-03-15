@@ -28,7 +28,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     let message: string =
       status !== HttpStatus.INTERNAL_SERVER_ERROR
-        ? exception.message || exception.message || null
+        ? exception.message.message || exception.message || null
         : 'Internal Server Error';
 
     if (status === 401) {
