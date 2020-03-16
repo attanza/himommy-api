@@ -19,6 +19,7 @@ export class SeederController {
       this.seederService.seedReasons(),
       this.seederService.seedMythFact(),
       this.seederService.seedPregnancyAges(),
+      this.seederService.seedImmunization(),
     ]);
     res.status(200).send({ message: 'Seed Succeed' });
   }

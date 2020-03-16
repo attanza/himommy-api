@@ -1,0 +1,15 @@
+export const immunizationData = [
+  'Vaksin hepatitis B (HB)',
+  'Vaksin polio',
+  'Vaksin BCG',
+  'Vaksin DTP',
+  'Vaksin pneumokokus (PCV)',
+  'Vaksin rotavirus',
+  'Vaksin influenza',
+  'Vaksin campak',
+  'Vaksin MMR/MR',
+  'Vaksin varisela',
+  'Vaksin human papilloma virus (HPV)',
+  'Vaksin Japanese encephalitis (JE)',
+  'Vaksin dengue',
+];

@@ -1,6 +1,7 @@
 import { IAppVersion } from '@modules/app-version/app-version.interface';
 import { IArticle } from '@modules/article/article.interface';
 import { ICheckList } from '@modules/check-list/check-list.interface';
+import { IImmunization } from '@modules/immunization/immunization.interface';
 import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
 import { IMythFact } from '@modules/myth-fact/myth-fact.interface';
 import { INotification } from '@modules/notification/notification.interface';
@@ -18,6 +19,8 @@ import * as Chance from 'chance';
 import { paramCase, snakeCase } from 'change-case';
 import { Model } from 'mongoose';
 import { Redis } from '../helpers/redis';
+import { immunizationData } from './data/immunizationData';
+
 const mainServices = [
   'Pertolongan Persalinan',
   'Pemeriksaan kehamilan',
@@ -58,7 +61,9 @@ export class SeederService {
     @InjectModel('MythFact')
     private mythFactModel: Model<IMythFact>,
     @InjectModel('PregnancyAges')
-    private pregnancyAgesModel: Model<IPregnancyAges>
+    private pregnancyAgesModel: Model<IPregnancyAges>,
+    @InjectModel('Immunization')
+    private immunizationModel: Model<IImmunization>
   ) {}
 
   /**
@@ -118,6 +123,7 @@ export class SeederService {
       'MythFact',
       'PregnancyAge',
       'Baby',
+      'Immunization',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
@@ -460,5 +466,24 @@ export class SeederService {
 
     await this.pregnancyAgesModel.insertMany(data);
     Logger.log('Seeding Pregnancy Ages Finish');
+  }
+
+  /**
+   * Immunization Seeder
+   */
+  async seedImmunization() {
+    Logger.log('Seeding Immunization ...');
+    await this.immunizationModel.deleteMany({});
+
+    const data = [];
+    immunizationData.map(im =>
+      data.push({
+        name: im,
+        age: this.faker.integer({ min: 0, max: 24 }),
+      })
+    );
+
+    await this.immunizationModel.insertMany(data);
+    Logger.log('Seeding Immunization Finish');
   }
 }

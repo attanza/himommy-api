@@ -1,6 +1,7 @@
 import { AppVersionSchema } from '@modules/app-version/app-version.schema';
 import { ArticleSchema } from '@modules/article/article.schema';
 import { CheckListSchema } from '@modules/check-list/check-list.schema';
+import { ImmunizationSchema } from '@modules/immunization/immunization.schema';
 import { MommyDetailSchema } from '@modules/mommy-detail/mommy-detail.schema';
 import { MythFactSchema } from '@modules/myth-fact/myth-fact.schema';
 import { NotificationSchema } from '@modules/notification/notification.schema';
@@ -49,6 +50,11 @@ import { SeederService } from './seeder.service';
         name: 'PregnancyAges',
         schema: PregnancyAgesSchema,
         collection: 'pregnancy_ages',
+      },
+      {
+        name: 'Immunization',
+        schema: ImmunizationSchema,
+        collection: 'immunizations',
       },
     ]),
   ],
