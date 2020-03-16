@@ -8,32 +8,6 @@ class Mailer {
     this.setTransporter();
   }
 
-  setTransporter() {
-    const { username, password, host, port } = this.getConfig();
-    this.transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: username, // generated ethereal user
-        pass: password, // generated ethereal password
-      },
-    });
-
-    const handlebarOptions = {
-      viewEngine: {
-        extName: '.hbs',
-        partialsDir: 'views/emails',
-        layoutsDir: 'views/emails',
-        defaultLayout: 'master.hbs',
-      },
-      viewPath: 'views',
-      extName: '.hbs',
-    };
-
-    this.transporter.use('compile', hbs(handlebarOptions));
-  }
-
   getConfig() {
     const NODE_ENV = process.env.NODE_ENV;
     let username: string;
@@ -58,11 +32,39 @@ class Mailer {
     return { username, password, from, host, port };
   }
 
+  setTransporter() {
+    const NODE_ENV = process.env.NODE_ENV;
+    const isProd = NODE_ENV === 'production';
+    const { username, password, host, port } = this.getConfig();
+    this.transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: isProd, // true for 465, false for other ports
+      auth: {
+        user: username, // generated ethereal user
+        pass: password, // generated ethereal password
+      },
+    });
+
+    const handlebarOptions = {
+      viewEngine: {
+        extName: '.hbs',
+        partialsDir: 'views/emails',
+        layoutsDir: 'views/emails',
+        defaultLayout: 'master.hbs',
+      },
+      viewPath: 'views',
+      extName: '.hbs',
+    };
+
+    this.transporter.use('compile', hbs(handlebarOptions));
+  }
+
   async sendMail(
     to: string,
     subject: string,
     template: string,
-    context: any = {},
+    context: any = {}
   ) {
     try {
       const { from } = this.getConfig();

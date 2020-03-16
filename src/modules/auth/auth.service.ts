@@ -58,11 +58,9 @@ export class AuthService {
 
     await Redis.set(confirmationToken, user._id, 60 * 60 * 24); // expires in one day
     // send verification mail
-    const confirmationLink = `${
-      process.env.APP_URL
-    }/api/confirm/${confirmationToken}`;
+    const confirmationLink = `${process.env.APP_URL}/mobile/confirm/${confirmationToken}`;
 
-    mail.sendMail(user.email, 'Account Activation', 'confirmEmail', {
+    await mail.sendMail(user.email, 'Account Activation', 'confirmEmail', {
       confirmationLink,
     });
     return confirmationToken;

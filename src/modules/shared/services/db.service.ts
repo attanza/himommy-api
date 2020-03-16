@@ -170,13 +170,9 @@ export class DbService {
   }
 
   async dbUpdate(modelName: string, id: string, updateDto: any) {
-    try {
-      await Redis.deletePattern(modelName);
+    Redis.deletePattern(modelName);
 
-      return await this.Model.updateOne({ _id: id }, updateDto);
-    } catch (error) {
-      console.log('error', error);
-    }
+    return this.Model.updateOne({ _id: id }, updateDto);
   }
 
   /**
@@ -208,7 +204,6 @@ export class DbService {
     const data = await this.Model.findById(id).lean();
     if (data && data[imageKey] && data[imageKey] !== '') {
       const filePath = 'public' + data[imageKey];
-      console.log('filePath', filePath);
       try {
         if (await fs.promises.stat(filePath)) {
           await fs.promises.unlink(filePath);
