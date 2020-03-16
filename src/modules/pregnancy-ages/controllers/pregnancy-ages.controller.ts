@@ -1,5 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
+import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
 import { apiUpdated } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
@@ -31,7 +32,6 @@ import {
   UpdatePregnancyAgesDto,
 } from '../pregnancy-ages.dto';
 import { PregnancyAgesService } from '../pregnancy-ages.service';
-import pregnancyAgesInterceptor from '../pregnancyAgesInterceptor';
 
 @Controller('admin/pregnancy-ages')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -105,7 +105,9 @@ export class PregnancyAgesController {
   @Post('/:id/image-upload')
   @Permission('update-pregnancy-age')
   @HttpCode(200)
-  @UseInterceptors(FileInterceptor('image', pregnancyAgesInterceptor))
+  @UseInterceptors(
+    FileInterceptor('image', imageDownloadInterceptor('./public/pregnancyAges'))
+  )
   async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
     if (!image) {
       throw new BadRequestException(

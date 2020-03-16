@@ -208,6 +208,7 @@ export class DbService {
     const data = await this.Model.findById(id).lean();
     if (data && data[imageKey] && data[imageKey] !== '') {
       const filePath = 'public' + data[imageKey];
+      console.log('filePath', filePath);
       try {
         if (fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);

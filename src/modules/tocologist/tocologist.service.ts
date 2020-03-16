@@ -1,4 +1,5 @@
 import mqttHandler from '@modules/helpers/mqttHandler';
+import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { DbService } from '@modules/shared/services/db.service';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
@@ -107,14 +108,17 @@ export class TocologistService extends DbService {
   async saveImage(id: string, image: any): Promise<boolean> {
     const imageString = image.path.split('public')[1];
 
-    const found = await this.getById({ id });
+    const found: ITocologist = await this.getById({ id });
     if (!found) {
       fs.unlinkSync(image);
       return false;
     } else {
+      this.unlinkImage(id, 'image');
+      found.image = imageString;
       Promise.all([
-        this.dbUpdate('Tocologist', id, { image: imageString }),
         resizeImage([image.path], 400),
+        found.save(),
+        Redis.deletePattern('Tocologist_'),
       ]);
       mqttHandler.sendMessage(
         `tocologist/${id}/image`,

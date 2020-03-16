@@ -1,3 +1,4 @@
+import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { DbService } from '@modules/shared/services/db.service';
 import { Injectable } from '@nestjs/common';
@@ -19,18 +20,21 @@ export class PregnancyAgesService extends DbService {
    * @param id
    * @param image
    */
-  async saveImage(id: string, image: any): Promise<string> {
+  async saveImage(id: string, image: any): Promise<IPregnancyAges> {
     const imageString = image.path.split('public')[1];
 
-    const found = await this.getById({ id });
+    const found: IPregnancyAges = await this.getById({ id });
     if (!found) {
       fs.unlinkSync(image);
     } else {
+      this.unlinkImage(id, 'image');
+      found.image = imageString;
       Promise.all([
-        this.dbUpdate('PregnancyAges', id, { image: imageString }),
         resizeImage([image.path], 400),
+        found.save(),
+        Redis.deletePattern('PregnancyAges_'),
       ]);
     }
-    return this.getById({ id });
+    return found;
   }
 }

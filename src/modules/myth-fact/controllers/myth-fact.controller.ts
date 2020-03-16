@@ -103,7 +103,7 @@ export class MythFactController {
   @Permission('update-myth-fact')
   @HttpCode(200)
   @UseInterceptors(
-    FileInterceptor('image', imageDownloadInterceptor('./public/tocologists'))
+    FileInterceptor('image', imageDownloadInterceptor('./public/mythFacts'))
   )
   async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
     if (!image) {
