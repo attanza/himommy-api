@@ -1,5 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
+import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
 import { apiUpdated } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
@@ -28,7 +29,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMythFactDto, UpdateMythFactDto } from '../myth-fact.dto';
 import { MythFactService } from '../myth-fact.service';
-import mythFactInterceptor from '../mythFactInterceptor';
 
 @Controller('admin/myth-facts')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -88,7 +88,11 @@ export class MythFactController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    return await this.dbService.destroy({ modelName: this.modelName, id });
+    return await this.dbService.destroy({
+      modelName: this.modelName,
+      id,
+      imageKey: 'image',
+    });
   }
 
   /**
@@ -98,7 +102,9 @@ export class MythFactController {
   @Post('/:id/image-upload')
   @Permission('update-myth-fact')
   @HttpCode(200)
-  @UseInterceptors(FileInterceptor('image', mythFactInterceptor))
+  @UseInterceptors(
+    FileInterceptor('image', imageDownloadInterceptor('./public/tocologists'))
+  )
   async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
     if (!image) {
       throw new BadRequestException(

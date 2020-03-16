@@ -1,8 +1,8 @@
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-export default {
+export const imageDownloadInterceptor = (destination: string) => ({
   storage: diskStorage({
-    destination: './public/mythFacts',
+    destination,
     filename: (req, file, cb) => {
       const randomName = Math.floor(Date.now() / 1000).toString();
       return cb(null, `${randomName}${extname(file.originalname)}`);
@@ -22,4 +22,4 @@ export default {
       cb(null, false);
     }
   },
-};
+});

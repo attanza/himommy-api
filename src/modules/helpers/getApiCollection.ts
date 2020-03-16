@@ -143,6 +143,8 @@ export default async ({
       .limit(Number(limit));
   }
 
+  const nextPage = totalPages > page ? page + 1 : null;
+
   meta = {
     status: 200,
     message: `${modelName} Collection`,
@@ -150,7 +152,7 @@ export default async ({
     limit: Number(limit),
     page: Number(page),
     totalPages: Number(totalPages),
-    nextPage: totalPages > page ? page + 1 : null,
+    nextPage: Number(nextPage),
     prevPage: page > 1 ? page - 1 : null,
   };
   output = { meta, data };

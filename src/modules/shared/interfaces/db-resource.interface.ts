@@ -25,6 +25,7 @@ export interface IResourceDestroy {
   modelName?: string;
   id: string;
   topic?: string;
+  imageKey?: string;
 }
 
 export interface IResourceByKey {

@@ -14,6 +14,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
+import * as fs from 'fs';
 import {
   IResourceDestroy,
   IResourceShow,
@@ -169,9 +170,13 @@ export class DbService {
   }
 
   async dbUpdate(modelName: string, id: string, updateDto: any) {
-    Redis.deletePattern(modelName);
+    try {
+      await Redis.deletePattern(modelName);
 
-    return await this.Model.updateOne({ _id: id }, updateDto);
+      return await this.Model.updateOne({ _id: id }, updateDto);
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   /**
@@ -180,9 +185,13 @@ export class DbService {
    * @param id
    */
   async destroy(resourceDestroy: IResourceDestroy): Promise<IApiItem> {
-    const { modelName, id, topic } = resourceDestroy;
-    await this.dbDestroy(id);
-    Redis.deletePattern(modelName);
+    const { modelName, id, topic, imageKey } = resourceDestroy;
+
+    Promise.all([
+      this.dbDestroy(id),
+      this.unlinkImage(id, imageKey),
+      Redis.deletePattern(modelName),
+    ]);
 
     const output = apiDeleted(modelName);
     if (topic) {
@@ -193,6 +202,21 @@ export class DbService {
 
   async dbDestroy(id: string) {
     return await this.Model.deleteOne({ _id: id });
+  }
+
+  async unlinkImage(id: string, imageKey: string) {
+    const data = await this.Model.findById(id).lean();
+    if (data && data[imageKey] && data[imageKey] !== '') {
+      const filePath = 'public' + data[imageKey];
+      try {
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          Logger.log(`${filePath} unlink`, 'Node FS');
+        }
+      } catch (e) {
+        Logger.log(JSON.stringify(e), 'Node FS');
+      }
+    }
   }
 
   async isUnique(key: string, value: any, id?: string): Promise<boolean> {

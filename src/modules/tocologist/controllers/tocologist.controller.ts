@@ -113,8 +113,11 @@ export class TocologistController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    // TODO: Delete redis key User_userId
-    return await this.dbService.destroy({ modelName: this.modelName, id });
+    return await this.dbService.destroy({
+      modelName: this.modelName,
+      id,
+      imageKey: 'image',
+    });
   }
 
   /**
