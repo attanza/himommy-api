@@ -148,3 +148,4 @@ Temporary Items
 .history
 himommy-firebase.json
 # End of https://www.gitignore.io/api/osx,node,visualstudiocode
+yarn.lock

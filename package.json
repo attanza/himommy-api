@@ -1,8 +1,8 @@
 {
-  "name": "api3",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "himommy-api",
+  "version": "1.0.0",
+  "description": "Hi Mommy Back End API",
+  "author": "Dani Lesmiadi / dani.lesmiadi@gmail.com",
   "license": "MIT",
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
