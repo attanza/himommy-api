@@ -117,6 +117,7 @@ export class SeederService {
       'GeoReverse',
       'MythFact',
       'PregnancyAge',
+      'Baby',
     ];
     const actions = ['Read', 'Create', 'Update', 'Delete'];
     const permissionsData = [];
