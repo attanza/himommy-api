@@ -3,7 +3,11 @@ import resizeImage from '@modules/helpers/resizeImage';
 import { DbService } from '@modules/shared/services/db.service';
 import { IUser } from '@modules/user/user.interface';
 import { UserService } from '@modules/user/user.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as fs from 'fs';
 import { Model } from 'mongoose';
@@ -40,6 +44,21 @@ export class BabyService extends DbService {
     const user: IUser = await this.userService.getByKey('_id', userId);
     if (!user) {
       throw new BadRequestException('parent not exists');
+    }
+  }
+
+  async checkIsMyBaby(id: string, parent: string): Promise<void> {
+    const baby: IBaby = await this.getByKey('_id', id);
+    if (baby) {
+      if (typeof baby.parent === 'object') {
+        if (baby.parent._id.toString() !== parent.toString()) {
+          throw new ForbiddenException('Access is forbidden');
+        }
+      } else {
+        if (baby.parent.toString() !== parent.toString()) {
+          throw new ForbiddenException('Access is forbidden');
+        }
+      }
     }
   }
 }

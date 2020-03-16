@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BabySchema } from './baby.schema';
 import { BabyService } from './baby.service';
 import { BabyController } from './controllers/baby.controller';
+import { MobileBabyController } from './controllers/mobile-baby.controller';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { BabyController } from './controllers/baby.controller';
     UserModule,
   ],
   providers: [BabyService],
-  controllers: [BabyController],
+  controllers: [BabyController, MobileBabyController],
 })
 export class BabyModule {}
