@@ -60,7 +60,7 @@ export class AuthService {
     // send verification mail
     const confirmationLink = `${process.env.APP_URL}/mobile/confirm/${confirmationToken}`;
 
-    await mail.sendMail(user.email, 'Account Activation', 'confirmEmail', {
+    mail.sendMail(user.email, 'Account Activation', 'confirmEmail', {
       confirmationLink,
     });
     return confirmationToken;
