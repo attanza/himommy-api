@@ -210,8 +210,8 @@ export class DbService {
       const filePath = 'public' + data[imageKey];
       console.log('filePath', filePath);
       try {
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
+        if (await fs.promises.stat(filePath)) {
+          await fs.promises.unlink(filePath);
           Logger.log(`${filePath} unlink`, 'Node FS');
         }
       } catch (e) {

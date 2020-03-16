@@ -7,8 +7,6 @@ export const MommyDetailSchema = new mongoose.Schema(
       ref: 'User',
     },
     dob: Date,
-    height: Number,
-    weight: Number,
     occupation: String,
     education: String,
     husbandName: String,
@@ -29,8 +27,12 @@ export const MommyDetailSchema = new mongoose.Schema(
         ref: 'Question',
       },
     ],
+    healthTrack: {
+      height: Number,
+      weight: Number,
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 MommyDetailSchema.methods.toJSON = function() {
@@ -41,7 +43,7 @@ MommyDetailSchema.methods.toJSON = function() {
     const days = Math.abs(
       moment(from, 'YYYY-MM-DD')
         .startOf('day')
-        .diff(moment(to, 'YYYY-MM-DD').startOf('day'), 'days'),
+        .diff(moment(to, 'YYYY-MM-DD').startOf('day'), 'days')
     );
     obj.pregnancyAge = days;
   }

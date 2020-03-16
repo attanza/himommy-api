@@ -38,7 +38,7 @@ export class MobileProfileController {
   @UsePipes(ValidationPipe)
   async changePassword(
     @GetUser() user: IUser,
-    @Body() changePasswordDto: ChangePasswordDto,
+    @Body() changePasswordDto: ChangePasswordDto
   ): Promise<IApiItem> {
     await this.profileService.changePassword(user, changePasswordDto);
     return apiUpdated('Password', null);
@@ -51,7 +51,7 @@ export class MobileProfileController {
   uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
     if (!avatar) {
       throw new BadRequestException(
-        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
       );
     }
 
@@ -64,7 +64,7 @@ export class MobileProfileController {
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,
-    @Body() updateDto: ProfileUpdateDto,
+    @Body() updateDto: ProfileUpdateDto
   ): Promise<IApiItem> {
     // User Basic Info
     const userKeys = ['firstName', 'lastName', 'email', 'phone'];
@@ -77,7 +77,7 @@ export class MobileProfileController {
 
     const updatedUser: IUser = await this.profileService.updateUser(
       user._id,
-      userData,
+      userData
     );
 
     // Mommy Detail
@@ -91,6 +91,7 @@ export class MobileProfileController {
       'hpht',
       'checkLists',
       'questions',
+      'healthTrack',
     ];
 
     let detailData: Partial<UpdateMommyDto> = {};
@@ -108,7 +109,7 @@ export class MobileProfileController {
     if (updateDto.questions && updateDto.questions.length > 0) {
       await this.profileService.isQuestionsExists(updateDto.questions);
       const level = await this.profileService.getLevelFromIds(
-        updateDto.questions,
+        updateDto.questions
       );
       if (updateDto.questions.length > 6) {
         detailData.currentQuestionLevel = level;

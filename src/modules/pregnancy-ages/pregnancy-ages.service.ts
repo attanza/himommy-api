@@ -25,7 +25,7 @@ export class PregnancyAgesService extends DbService {
 
     const found: IPregnancyAges = await this.getById({ id });
     if (!found) {
-      fs.unlinkSync(image);
+      fs.promises.unlink(image);
     } else {
       this.unlinkImage(id, 'image');
       found.image = imageString;

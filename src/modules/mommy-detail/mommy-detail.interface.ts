@@ -6,8 +6,6 @@ import { Document } from 'mongoose';
 export interface IMommyDetail extends Document {
   user: string | IUser;
   dob: Date;
-  height: number;
-  weight: number;
   occupation: string;
   education: string;
   husbandName: string;
@@ -16,6 +14,12 @@ export interface IMommyDetail extends Document {
   checkLists: ICheckList[];
   currentQuestionLevel: number;
   questions: IQuestion[];
+  healthTrack: IHealthTrack;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IHealthTrack {
+  height: number;
+  weight: number;
 }

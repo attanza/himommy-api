@@ -8,13 +8,10 @@ import {
   IsOptional,
   IsString,
   Length,
+  ValidateNested,
 } from 'class-validator';
 
-export class CreateMommyDto {
-  @IsNotEmpty()
-  @IsMongoId()
-  user: string;
-
+class TServiceDto {
   @IsOptional()
   @IsDateString()
   dob: Date;
@@ -22,6 +19,15 @@ export class CreateMommyDto {
   @IsOptional()
   @IsInt()
   height: number;
+}
+
+export class CreateMommyDto {
+  @IsNotEmpty()
+  @IsMongoId()
+  user: string;
+
+  @ValidateNested()
+  healthTrack: TServiceDto;
 
   @IsOptional()
   @IsInt()
@@ -61,13 +67,8 @@ export class UpdateMommyDto {
   @IsDateString()
   dob: Date;
 
-  @IsOptional()
-  @IsInt()
-  height: number;
-
-  @IsOptional()
-  @IsInt()
-  weight: number;
+  @ValidateNested()
+  healthTrack: TServiceDto;
 
   @IsOptional()
   @IsString()
