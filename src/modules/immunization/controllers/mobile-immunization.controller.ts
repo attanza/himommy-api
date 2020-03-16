@@ -16,7 +16,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ImmunizationService } from '../Immunization.service';
+import { ImmunizationService } from '../immunization.service';
 
 @Controller('mobile/immunizations')
 @UseGuards(AuthGuard('jwt'), RoleGuard)

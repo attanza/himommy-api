@@ -23,8 +23,8 @@ import { AuthGuard } from '@nestjs/passport';
 import {
   CreateImmunizationDto,
   UpdateImmunizationDto,
-} from '../Immunization.dto';
-import { ImmunizationService } from '../Immunization.service';
+} from '../immunization.dto';
+import { ImmunizationService } from '../immunization.service';
 
 @Controller('admin/immunizations')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
