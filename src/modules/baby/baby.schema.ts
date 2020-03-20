@@ -11,7 +11,45 @@ export const BabySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
-    image: String,
+    photos: [
+      {
+        photo: String,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
+    heights: [
+      {
+        height: Number,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
+    weights: [
+      {
+        weight: Number,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
+    immunizations: [
+      {
+        immunization: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

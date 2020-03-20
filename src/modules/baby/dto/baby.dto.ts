@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ESex } from './baby.interface';
+import { ESex } from '../baby.interface';
 
 export class CreateBabyDto {
   @IsNotEmpty()

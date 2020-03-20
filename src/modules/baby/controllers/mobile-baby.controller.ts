@@ -30,7 +30,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateBabyDto, UpdateBabyDto } from '../baby.dto';
+import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
 import { BabyService } from '../baby.service';
 
 @Controller('mobile/babies')

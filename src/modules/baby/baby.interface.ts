@@ -6,12 +6,41 @@ export enum ESex {
   FEMALE = 'FEMALE',
 }
 
+export enum EBabyDetailData {
+  photos = 'photos',
+  weights = 'weights',
+  heights = 'heights',
+  immunizations = 'immunizations',
+}
+
+export interface IBabyPhoto {
+  photo: string;
+  date: Date;
+}
+
+export interface IBabyHeight {
+  height: number;
+  date: Date;
+}
+
+export interface IBabyWeight {
+  weight: number;
+  date: Date;
+}
+
+export interface IBabyImmunization {
+  immunization: string;
+  date: Date;
+}
 export interface IBaby extends Document {
   name: string;
   dob: Date;
   sex: ESex;
   parent: IUser | string;
-  image: string;
+  photos: IBabyPhoto[];
+  heights: IBabyHeight[];
+  weights: IBabyWeight[];
+  immunizations: IBabyImmunization[];
   createdAt: Date;
   updatedAt: Date;
 }

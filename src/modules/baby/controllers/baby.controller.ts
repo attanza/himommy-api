@@ -6,6 +6,7 @@ import {
   IApiCollection,
   IApiItem,
 } from '@modules/shared/interfaces/response-parser.interface';
+import { BabyDetailDataPipe } from '@modules/shared/pipes/mongo-babyDetail.pipe';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import {
@@ -19,6 +20,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -27,8 +29,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateBabyDto, UpdateBabyDto } from '../baby.dto';
+import { Request } from 'express';
 import { BabyService } from '../baby.service';
+import { ValidateBabyDetail } from '../dto/baby-baby-detail.dto';
+import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
 
 @Controller('admin/babies')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -100,9 +104,8 @@ export class BabyController {
   /**
    * Image Upload
    */
-
   @Post('/:id/image-upload')
-  @Permission('update-myth-fact')
+  @Permission('update-baby')
   @HttpCode(200)
   @UseInterceptors(
     FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
@@ -117,5 +120,21 @@ export class BabyController {
     const { id } = param;
     const updated = await this.dbService.saveImage(id, image);
     return apiUpdated('Baby', updated);
+  }
+
+  /**
+   * Insert Photo, Height, Weight, Immunization
+   */
+  @Post('/:id/:babyDetailData')
+  @Permission('update-baby')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  async storeBabyDetailData(
+    @Param() param: BabyDetailDataPipe,
+    @Req() request: Request
+  ) {
+    const { babyDetailData } = param;
+    await ValidateBabyDetail(babyDetailData, request);
+    return this.dbService.saveBabyDetail(request);
   }
 }

@@ -17,5 +17,6 @@ import { ImmunizationService } from './immunization.service';
   ],
   providers: [ImmunizationService],
   controllers: [ImmunizationController, MobileImmunizationController],
+  exports: [ImmunizationService],
 })
 export class ImmunizationModule {}
