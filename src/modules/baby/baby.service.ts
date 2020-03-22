@@ -1,5 +1,4 @@
 import { Redis } from '@modules/helpers/redis';
-import resizeImage from '@modules/helpers/resizeImage';
 import { ImmunizationService } from '@modules/immunization/immunization.service';
 import { QueueService } from '@modules/queue/queue.service';
 import { DbService } from '@modules/shared/services/db.service';
@@ -57,7 +56,7 @@ export class BabyService extends DbService {
     }
   }
 
-  checkDuplicate(arrayToCheck: any[], dataToCheck: any) {
+  async checkDuplicate(arrayToCheck: any[], dataToCheck: any) {
     console.log('check duplicate');
     const monthToCheck = moment(dataToCheck.date)
       .format('YYYY-M')
@@ -73,6 +72,13 @@ export class BabyService extends DbService {
     });
 
     for (let i = indexes.length - 1; i >= 0; --i) {
+      try {
+        if (arrayToCheck[i].photo) {
+          await fs.promises.unlink('public' + arrayToCheck[i].photo);
+        }
+      } catch (e) {
+        console.log('e', e);
+      }
       arrayToCheck.splice(i, 1);
     }
     return arrayToCheck;
@@ -83,6 +89,7 @@ export class BabyService extends DbService {
     const data: IBaby = await this.getById({ id });
 
     if (!data) {
+      await this.deletePhoto(photo);
       throw new BadRequestException('Baby not found');
     }
 
@@ -92,7 +99,7 @@ export class BabyService extends DbService {
         height: request.body.height,
         date: new Date(),
       };
-      data.heights = this.checkDuplicate(data.heights, heightData);
+      data.heights = await this.checkDuplicate(data.heights, heightData);
       data.heights.push(heightData);
       await this.deletePhoto(photo);
     }
@@ -103,7 +110,7 @@ export class BabyService extends DbService {
         weight: request.body.weight,
         date: new Date(),
       };
-      data.weights = this.checkDuplicate(data.weights, weightData);
+      data.weights = await this.checkDuplicate(data.weights, weightData);
       data.weights.push(weightData);
       await this.deletePhoto(photo);
     }
@@ -114,14 +121,14 @@ export class BabyService extends DbService {
         throw new BadRequestException('photo is required');
       }
       const imageString = photo.path.split('public')[1];
-      await this.deletePhoto(photo);
+      await this.queueService.resizeImage(photo);
 
       // const imageString = this.saveImage(photo);
       const photoData: IBabyPhoto = {
         photo: imageString,
         date: new Date(),
       };
-      data.photos = this.checkDuplicate(data.photos, photoData);
+      data.photos = await this.checkDuplicate(data.photos, photoData);
       data.photos.push(photoData);
     }
 
@@ -138,7 +145,7 @@ export class BabyService extends DbService {
         immunization: request.body.immunization,
         date: new Date(),
       };
-      data.immunizations = this.checkDuplicate(
+      data.immunizations = await this.checkDuplicate(
         data.immunizations,
         immunizationData
       );
@@ -152,12 +159,6 @@ export class BabyService extends DbService {
       modelName: 'Baby',
       id,
     });
-  }
-
-  saveImage(image: any): string {
-    const imageString = image.path.split('public')[1];
-    resizeImage([image.path], 400);
-    return imageString;
   }
 
   async deletePhoto(photo: any): Promise<void> {

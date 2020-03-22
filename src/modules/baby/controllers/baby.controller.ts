@@ -1,6 +1,7 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
 import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
+import { QueueService } from '@modules/queue/queue.service';
 import {
   IApiCollection,
   IApiItem,
@@ -28,6 +29,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
+import { IBaby } from '../baby.interface';
 import { BabyService } from '../baby.service';
 import { ValidateBabyDetail } from '../dto/baby-baby-detail.dto';
 import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
@@ -36,7 +38,10 @@ import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
 export class BabyController {
   modelName = 'Baby';
-  constructor(private dbService: BabyService) {}
+  constructor(
+    private dbService: BabyService,
+    private readonly queueService: QueueService
+  ) {}
 
   @Get()
   @Permission('read-baby')
@@ -92,6 +97,8 @@ export class BabyController {
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
+    const baby: IBaby = await this.dbService.getById({ id });
+    await this.queueService.deleteBabyPhotos(baby);
     return await this.dbService.destroy({
       modelName: this.modelName,
       id,
