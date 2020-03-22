@@ -8,6 +8,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
@@ -57,7 +58,6 @@ export class BabyService extends DbService {
   }
 
   async checkDuplicate(arrayToCheck: any[], dataToCheck: any) {
-    console.log('check duplicate');
     const monthToCheck = moment(dataToCheck.date)
       .format('YYYY-M')
       .toString();
@@ -77,7 +77,7 @@ export class BabyService extends DbService {
           await fs.promises.unlink('public' + arrayToCheck[i].photo);
         }
       } catch (e) {
-        console.log('e', e);
+        Logger.debug(arrayToCheck[i].photo + 'not found');
       }
       arrayToCheck.splice(i, 1);
     }

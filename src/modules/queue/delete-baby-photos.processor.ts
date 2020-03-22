@@ -12,12 +12,12 @@ export class DeleteBabyPhotosProcessor {
     this.logger.debug('handleDeleteBabyPhotos starts at ' + new Date());
     const { photos } = job.data.baby;
     if (photos && photos.length > 0) {
-      for (let i = 0; i < photos.length; i++) {
+      for (const photo of photos) {
         try {
-          const photo = photos[i].photo.split('babies')[1];
-          await fs.promises.unlink('public/babies' + photo);
+          const splitPhoto = photo.photo.split('babies')[1];
+          await fs.promises.unlink('public/babies' + splitPhoto);
         } catch (e) {
-          console.log('e', e);
+          this.logger.debug(photo.photo + ' failed to delete');
         }
       }
     }

@@ -31,19 +31,17 @@ export const ValidateBabyDetail = async (
 };
 
 const validateHeight = body => {
-  console.log('validateHeight');
   const { height } = body;
   if (!height || height === '') {
     throw new BadRequestException('height is required');
   }
-  // const validInt = validator.isInt(height);
-  // if (!validInt) {
-  //   throw new BadRequestException('height should be an integer');
-  // }
+  const validInt = validator.isInt(height);
+  if (!validInt) {
+    throw new BadRequestException('height should be an integer');
+  }
 };
 
 const validateWeight = body => {
-  console.log('validateWeight');
   const { weight } = body;
   if (!weight || weight === '') {
     throw new BadRequestException('weight is required');
@@ -55,7 +53,6 @@ const validateWeight = body => {
 };
 
 const validateImmunization = body => {
-  console.log('validateImmunization');
   const { immunization } = body;
   if (!immunization || immunization === '') {
     throw new BadRequestException('immunization is required');

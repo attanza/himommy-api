@@ -2,7 +2,7 @@ import { Redis } from '@modules/helpers/redis';
 import { QueueService } from '@modules/queue/queue.service';
 import { DbService } from '@modules/shared/services/db.service';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as fs from 'fs';
 import { Model } from 'mongoose';
@@ -119,8 +119,8 @@ export class TocologistService extends DbService {
         this.queueService.resizeImage(image),
         Redis.deletePattern(`Tocologist_${id}`),
       ]);
-    } catch (error) {
-      console.log('error', error);
+    } catch (e) {
+      Logger.debug(oldImage + ' not exists');
     }
     return found;
   }

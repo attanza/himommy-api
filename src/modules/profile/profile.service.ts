@@ -10,7 +10,7 @@ import { TocologistService } from '@modules/tocologist/tocologist.service';
 import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
 import { UserService } from '@modules/user/user.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import { ChangePasswordDto } from './profile.dto';
 
@@ -40,8 +40,8 @@ export class ProfileService {
         this.queueService.resizeImage(avatar),
         Redis.deletePattern(`User_${userId}`),
       ]);
-    } catch (error) {
-      console.log('error', error);
+    } catch (e) {
+      Logger.debug(oldAvatar + ' not exists');
     }
     return user;
   }

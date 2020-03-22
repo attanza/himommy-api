@@ -11,7 +11,7 @@ import { ESex } from '../baby.interface';
 export class CreateBabyDto {
   @IsNotEmpty()
   @IsString()
-  name: String;
+  name: string;
 
   @IsNotEmpty()
   @IsDateString()
@@ -29,7 +29,7 @@ export class CreateBabyDto {
 export class UpdateBabyDto {
   @IsOptional()
   @IsString()
-  name: String;
+  name: string;
 
   @IsOptional()
   @IsDateString()
