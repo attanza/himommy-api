@@ -31,8 +31,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { IBaby } from '../baby.interface';
 import { BabyService } from '../baby.service';
-import { ValidateBabyDetail } from '../dto/baby-baby-detail.dto';
+import { ValidateBabyDetail } from '../dto/baby-detail.dto';
 import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
+import { ValidateUpdateBabyDetail } from '../dto/update-baby-detail.dto';
 
 @Controller('admin/babies')
 @UseGuards(AuthGuard('jwt'), PermissionGuard)
@@ -124,5 +125,24 @@ export class BabyController {
     const { babyDetailData } = param;
     await ValidateBabyDetail(babyDetailData, request);
     return this.dbService.saveBabyDetail(request, photo);
+  }
+
+  /**
+   * Update Photo, Height, Weight, Immunization
+   */
+  @Put('/:id/:babyDetailData')
+  @Permission('update-baby')
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(
+    FileInterceptor('photo', imageDownloadInterceptor('./public/babies'))
+  )
+  async updateBabyDetailData(
+    @Param() param: BabyDetailDataPipe,
+    @Req() request: Request,
+    @UploadedFile() photo
+  ) {
+    const { babyDetailData } = param;
+    await ValidateUpdateBabyDetail(babyDetailData, request);
+    return this.dbService.updateBabyDetail(request, photo);
   }
 }

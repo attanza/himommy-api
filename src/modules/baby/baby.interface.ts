@@ -14,21 +14,25 @@ export enum EBabyDetailData {
 }
 
 export interface IBabyPhoto {
+  _id?: string;
   photo: string;
   date: Date;
 }
 
 export interface IBabyHeight {
+  _id?: string;
   height: number;
   date: Date;
 }
 
 export interface IBabyWeight {
+  _id?: string;
   weight: number;
   date: Date;
 }
 
 export interface IBabyImmunization {
+  _id?: string;
   immunization: string;
   date: Date;
 }

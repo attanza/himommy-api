@@ -161,6 +161,112 @@ export class BabyService extends DbService {
     });
   }
 
+  async updateBabyDetail(request: Request, photo: any) {
+    const { id, babyDetailData } = request.params;
+    const data: IBaby = await this.getById({ id });
+
+    if (!data) {
+      await this.deletePhoto(photo);
+      throw new BadRequestException('Baby not found');
+    }
+
+    // HEIGHT
+    if (babyDetailData === EBabyDetailData.heights) {
+      const { heightId, height } = request.body;
+      if (height && heightId) {
+        const heightIndex = data.heights.findIndex(
+          h => h._id.toString() === heightId
+        );
+
+        if (heightIndex === -1) {
+          throw new BadRequestException('heightId not found');
+        }
+
+        data.heights[heightIndex].height = height;
+        await this.deletePhoto(photo);
+      }
+    }
+
+    // WEIGHT
+    if (babyDetailData === EBabyDetailData.weights) {
+      const { weightId, weight } = request.body;
+      if (weight && weightId) {
+        const weightIndex = data.weights.findIndex(
+          w => w._id.toString() === weightId
+        );
+
+        if (weightIndex === -1) {
+          throw new BadRequestException('weightId not found');
+        }
+
+        data.weights[weightIndex].weight = weight;
+        await this.deletePhoto(photo);
+      }
+    }
+
+    // PHOTO
+    if (babyDetailData === EBabyDetailData.photos) {
+      const { photoId } = request.body;
+      if (photo && photoId) {
+        const photoIndex = data.photos.findIndex(
+          p => p._id.toString() === photoId
+        );
+
+        if (photoIndex === -1) {
+          throw new BadRequestException('photoId not found');
+        }
+
+        if (!photo) {
+          throw new BadRequestException('photo is required');
+        }
+
+        const imageString = photo.path.split('public')[1];
+        const oldPhoto = data.photos[photoIndex].photo;
+        console.log('oldPhoto', oldPhoto);
+        data.photos[photoIndex].photo = imageString;
+        try {
+          await Promise.all([
+            fs.promises.unlink('public' + oldPhoto),
+            this.queueService.resizeImage(photo),
+          ]);
+        } catch (e) {
+          Logger.debug(oldPhoto + ' not found');
+        }
+      }
+    }
+
+    // IMMUNIZATION
+
+    if (babyDetailData === EBabyDetailData.immunizations) {
+      const { immunizationId, immunization } = request.body;
+      if (immunization && immunizationId) {
+        const immunizationIndex = data.immunizations.findIndex(
+          i => i._id.toString() === immunizationId
+        );
+
+        if (immunizationIndex === -1) {
+          throw new BadRequestException('immunizationId not found');
+        }
+
+        const exists = await this.immunizationService.getById({
+          id: immunization,
+        });
+        if (!exists) {
+          throw new BadRequestException('immunization not exists');
+        }
+
+        data.immunizations[immunizationIndex].immunization = immunization;
+        await this.deletePhoto(photo);
+      }
+    }
+    await data.save();
+    await Redis.del(`Baby_${id}`);
+    return this.show({
+      modelName: 'Baby',
+      id,
+    });
+  }
+
   async deletePhoto(photo: any): Promise<void> {
     if (photo) {
       await fs.promises.unlink(photo.path);
