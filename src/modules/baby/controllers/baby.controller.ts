@@ -100,27 +100,6 @@ export class BabyController {
   }
 
   /**
-   * Image Upload
-   */
-  // @Post('/:id/image-upload')
-  // @Permission('update-baby')
-  // @HttpCode(200)
-  // @UseInterceptors(
-  //   FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
-  // )
-  // async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
-  //   if (!image) {
-  //     throw new BadRequestException(
-  //       'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
-  //     );
-  //   }
-
-  //   const { id } = param;
-  //   const updated = await this.dbService.saveImage(id, image);
-  //   return apiUpdated('Baby', updated);
-  // }
-
-  /**
    * Insert Photo, Height, Weight, Immunization
    */
   @Post('/:id/:babyDetailData')

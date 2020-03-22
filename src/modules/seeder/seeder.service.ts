@@ -93,7 +93,7 @@ export class SeederService {
         firstName: role,
         email: `${snakeCase(role)}@himommy.org`,
         password: 'password',
-        phone: this.faker.phone(),
+        phone: `+6281${this.faker.integer({ min: 22000000, max: 710000000 })}`,
         role: newRole._id,
         isActive: true,
         authProvider: 'local',

@@ -22,7 +22,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed } from '../../helpers/responseParser';
+import { apiUpdated } from '../../helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -152,11 +152,7 @@ export class TocologistController {
     }
 
     const { id } = param;
-    const found = await this.dbService.getById({ id });
-    if (!found) {
-      throw new BadRequestException('Tocologist not found');
-    }
-    await this.dbService.saveImage(id, image);
-    return apiSucceed('Image Uploaded, actual result will be sent via socket');
+    const updated = await this.dbService.saveImage(id, image);
+    return apiUpdated('Tocologist Updated', updated);
   }
 }

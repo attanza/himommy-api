@@ -21,7 +21,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed, apiUpdated } from '../../helpers/responseParser';
+import { apiUpdated } from '../../helpers/responseParser';
 import { ChangePasswordDto, ProfileUpdateDto } from '../profile.dto';
 import { ProfileService } from '../profile.service';
 
@@ -54,8 +54,8 @@ export class MobileProfileController {
       );
     }
 
-    await this.profileService.saveAvatar(avatar, user._id);
-    return apiSucceed('Avatar Uploaded, actual result will be sent via socket');
+    const updated = await this.profileService.saveAvatar(avatar, user._id);
+    return apiUpdated('Profile Updated', updated);
   }
 
   @Put('')

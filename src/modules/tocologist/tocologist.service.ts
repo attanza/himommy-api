@@ -1,8 +1,10 @@
+import { Redis } from '@modules/helpers/redis';
 import { QueueService } from '@modules/queue/queue.service';
 import { DbService } from '@modules/shared/services/db.service';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import * as fs from 'fs';
 import { Model } from 'mongoose';
 import {
   AttachTocologistServicesDto,
@@ -101,14 +103,25 @@ export class TocologistService extends DbService {
    * @param id
    * @param image
    */
-  async saveImage(id: string, image: any): Promise<void> {
-    await this.queueService.imageUpload({
-      image,
-      modelName: 'Tocologist',
-      modelId: id,
-      imageKey: 'image',
-      redisKey: 'Tocologist_*',
-      mqttTopic: `tocologist/${id}/image`,
-    });
+  async saveImage(id: string, image: any): Promise<ITocologist> {
+    const found: ITocologist = await this.getById({ id });
+    if (!found) {
+      await fs.promises.unlink(image.path);
+      throw new BadRequestException('Tocologist not found');
+    }
+    const imageString = image.path.split('public')[1];
+    const oldImage = 'public' + found.image;
+    found.image = imageString;
+    try {
+      await Promise.all([
+        found.save(),
+        fs.promises.unlink(oldImage),
+        this.queueService.resizeImage(image),
+        Redis.deletePattern(`Tocologist_${id}`),
+      ]);
+    } catch (error) {
+      console.log('error', error);
+    }
+    return found;
   }
 }

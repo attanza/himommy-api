@@ -1,6 +1,7 @@
 import { Redis } from '@modules/helpers/redis';
 import resizeImage from '@modules/helpers/resizeImage';
 import { ImmunizationService } from '@modules/immunization/immunization.service';
+import { QueueService } from '@modules/queue/queue.service';
 import { DbService } from '@modules/shared/services/db.service';
 import { IUser } from '@modules/user/user.interface';
 import { UserService } from '@modules/user/user.service';
@@ -11,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
+import * as fs from 'fs';
 import * as moment from 'moment';
 import { Model } from 'mongoose';
 import {
@@ -21,12 +23,14 @@ import {
   IBabyPhoto,
   IBabyWeight,
 } from './baby.interface';
+
 @Injectable()
 export class BabyService extends DbService {
   constructor(
     @InjectModel('Baby') private model: Model<IBaby>,
     private userService: UserService,
-    private immunizationService: ImmunizationService
+    private immunizationService: ImmunizationService,
+    private queueService: QueueService
   ) {
     super(model);
   }
@@ -90,6 +94,7 @@ export class BabyService extends DbService {
       };
       data.heights = this.checkDuplicate(data.heights, heightData);
       data.heights.push(heightData);
+      await this.deletePhoto(photo);
     }
 
     // WEIGHT
@@ -100,15 +105,18 @@ export class BabyService extends DbService {
       };
       data.weights = this.checkDuplicate(data.weights, weightData);
       data.weights.push(weightData);
+      await this.deletePhoto(photo);
     }
 
     // PHOTO
     if (babyDetailData === EBabyDetailData.photos) {
-      console.log('photo', photo);
       if (!photo) {
         throw new BadRequestException('photo is required');
       }
-      const imageString = this.saveImage(photo);
+      const imageString = photo.path.split('public')[1];
+      await this.deletePhoto(photo);
+
+      // const imageString = this.saveImage(photo);
       const photoData: IBabyPhoto = {
         photo: imageString,
         date: new Date(),
@@ -136,6 +144,7 @@ export class BabyService extends DbService {
       );
 
       data.immunizations.push(immunizationData);
+      await this.deletePhoto(photo);
     }
     await data.save();
     await Redis.del(`Baby_${id}`);
@@ -149,5 +158,11 @@ export class BabyService extends DbService {
     const imageString = image.path.split('public')[1];
     resizeImage([image.path], 400);
     return imageString;
+  }
+
+  async deletePhoto(photo: any): Promise<void> {
+    if (photo) {
+      await fs.promises.unlink(photo.path);
+    }
   }
 }

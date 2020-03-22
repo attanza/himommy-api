@@ -68,8 +68,10 @@ BabySchema.methods.toJSON = function() {
     obj.age = days;
   }
 
-  if (obj.image && obj.image !== '') {
-    obj.image = generateImageLink(obj.image);
+  if (obj.photos && obj.photos.length > 0) {
+    const photos = [...obj.photos];
+    photos.map(p => (p.photo = generateImageLink(p.photo)));
+    obj.photos = photos;
   }
 
   return obj;

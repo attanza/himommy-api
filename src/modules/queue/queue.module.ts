@@ -1,9 +1,7 @@
-import { TocologistModule } from '@modules/tocologist/tocologist.module';
-import { UserModule } from '@modules/user/user.module';
 import { BullModule } from '@nestjs/bull';
-import { forwardRef, Module } from '@nestjs/common';
-import { ImageUploadProcessor } from './image-upload.processor';
+import { Module } from '@nestjs/common';
 import { QueueService } from './queue.service';
+import { ResizeImageProcessor } from './resize-image.processor';
 
 const REDIS_CONN = {
   host: 'localhost',
@@ -13,13 +11,11 @@ const REDIS_CONN = {
 @Module({
   imports: [
     BullModule.registerQueue({
-      name: 'imageUpload',
+      name: 'resizeImage',
       redis: REDIS_CONN,
     }),
-    forwardRef(() => UserModule),
-    forwardRef(() => TocologistModule),
   ],
-  providers: [QueueService, ImageUploadProcessor],
+  providers: [QueueService, ResizeImageProcessor],
   exports: [QueueService],
 })
 export class QueueModule {}

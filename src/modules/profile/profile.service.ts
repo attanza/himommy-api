@@ -1,4 +1,5 @@
 import { CheckListService } from '@modules/check-list/check-list.service';
+import { Redis } from '@modules/helpers/redis';
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { QuestionService } from '@modules/question/question.service';
@@ -10,7 +11,9 @@ import { UpdateUserDto } from '@modules/user/user.dto';
 import { IUser } from '@modules/user/user.interface';
 import { UserService } from '@modules/user/user.service';
 import { Injectable } from '@nestjs/common';
+import * as fs from 'fs';
 import { ChangePasswordDto } from './profile.dto';
+
 @Injectable()
 export class ProfileService {
   constructor(
@@ -25,15 +28,22 @@ export class ProfileService {
     return this.userService.changePassword(user, changePasswordDto);
   }
 
-  async saveAvatar(avatar: any, userId: string): Promise<void> {
-    await this.queueService.imageUpload({
-      image: avatar,
-      modelName: 'User',
-      modelId: userId,
-      imageKey: 'avatar',
-      redisKey: 'User_*',
-      mqttTopic: `profile/${userId}/avatar`,
-    });
+  async saveAvatar(avatar: any, userId: string): Promise<IUser> {
+    const user: IUser = await this.userService.getById({ id: userId });
+    const imageString = avatar.path.split('public')[1];
+    const oldAvatar = 'public' + user.avatar;
+    user.avatar = imageString;
+    try {
+      await Promise.all([
+        user.save(),
+        fs.promises.unlink(oldAvatar),
+        this.queueService.resizeImage(avatar),
+        Redis.deletePattern(`User_${userId}`),
+      ]);
+    } catch (error) {
+      console.log('error', error);
+    }
+    return user;
   }
 
   async updateUser(id: string, updateDto: UpdateUserDto) {

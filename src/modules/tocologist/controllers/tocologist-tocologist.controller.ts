@@ -1,11 +1,11 @@
 import { Role } from '@guards/role.decorator';
 import { RoleGuard } from '@guards/role.guard';
 import { Redis } from '@modules/helpers/redis';
+import { apiUpdated } from '@modules/helpers/responseParser';
 import tocologistImageInterceptor from '@modules/helpers/tocologistImageInterceptor';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import { IUser } from '@modules/user/user.interface';
 import {
-  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
@@ -21,7 +21,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { apiSucceed } from '../../helpers/responseParser';
 import { IApiItem } from '../../shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '../../shared/pipes/mongoId.pipe';
 import {
@@ -104,13 +103,8 @@ export class TocologistTocologistController {
     if (!user.tocologist || user.tocologist._id.toString() !== id) {
       throw new ForbiddenException('Action is forbidden');
     }
-    if (!image) {
-      throw new BadRequestException(
-        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
-      );
-    }
 
-    await this.dbService.saveImage(id, image);
-    return apiSucceed('Image Uploaded, actual result will be sent via socket');
+    const updated = await this.dbService.saveImage(id, image);
+    return apiUpdated('Tocologist Updated', updated);
   }
 }

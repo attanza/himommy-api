@@ -1,4 +1,5 @@
 import { ImmunizationModule } from '@modules/immunization/immunization.module';
+import { QueueModule } from '@modules/queue/queue.module';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,6 +15,7 @@ import { MobileBabyController } from './controllers/mobile-baby.controller';
     ]),
     UserModule,
     ImmunizationModule,
+    QueueModule,
   ],
   providers: [BabyService],
   controllers: [BabyController, MobileBabyController],
