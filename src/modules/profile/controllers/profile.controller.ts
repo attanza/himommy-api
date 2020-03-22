@@ -34,7 +34,7 @@ export class ProfileController {
   @UsePipes(ValidationPipe)
   async changePassword(
     @GetUser() user: IUser,
-    @Body() changePasswordDto: ChangePasswordDto,
+    @Body() changePasswordDto: ChangePasswordDto
   ): Promise<IApiItem> {
     await this.profileService.changePassword(user, changePasswordDto);
     return apiUpdated('Password', null);
@@ -44,14 +44,14 @@ export class ProfileController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
-  uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
+  async uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
     if (!avatar) {
       throw new BadRequestException(
-        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
       );
     }
 
-    this.profileService.saveAvatar(avatar, user);
+    await this.profileService.saveAvatar(avatar, user._id);
     return apiSucceed('Avatar Uploaded, actual result will be sent via socket');
   }
 
@@ -60,7 +60,7 @@ export class ProfileController {
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,
-    @Body() updateDto: ProfileUpdateDto,
+    @Body() updateDto: ProfileUpdateDto
   ): Promise<IApiItem> {
     const userKeys = ['firstName', 'lastName', 'email', 'phone'];
     let userData: UpdateUserDto = {};

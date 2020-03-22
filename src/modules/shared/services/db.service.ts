@@ -183,7 +183,7 @@ export class DbService {
   async destroy(resourceDestroy: IResourceDestroy): Promise<IApiItem> {
     const { modelName, id, topic, imageKey } = resourceDestroy;
 
-    Promise.all([
+    await Promise.all([
       this.dbDestroy(id),
       this.unlinkImage(id, imageKey),
       Redis.deletePattern(modelName),

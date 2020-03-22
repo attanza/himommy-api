@@ -1,7 +1,6 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
 import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
-import { apiUpdated } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -10,7 +9,6 @@ import { BabyDetailDataPipe } from '@modules/shared/pipes/mongo-babyDetail.pipe'
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -104,23 +102,23 @@ export class BabyController {
   /**
    * Image Upload
    */
-  @Post('/:id/image-upload')
-  @Permission('update-baby')
-  @HttpCode(200)
-  @UseInterceptors(
-    FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
-  )
-  async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
-    if (!image) {
-      throw new BadRequestException(
-        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
-      );
-    }
+  // @Post('/:id/image-upload')
+  // @Permission('update-baby')
+  // @HttpCode(200)
+  // @UseInterceptors(
+  //   FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
+  // )
+  // async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
+  //   if (!image) {
+  //     throw new BadRequestException(
+  //       'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
+  //     );
+  //   }
 
-    const { id } = param;
-    const updated = await this.dbService.saveImage(id, image);
-    return apiUpdated('Baby', updated);
-  }
+  //   const { id } = param;
+  //   const updated = await this.dbService.saveImage(id, image);
+  //   return apiUpdated('Baby', updated);
+  // }
 
   /**
    * Insert Photo, Height, Weight, Immunization
@@ -129,12 +127,16 @@ export class BabyController {
   @Permission('update-baby')
   @HttpCode(200)
   @UsePipes(ValidationPipe)
+  @UseInterceptors(
+    FileInterceptor('photo', imageDownloadInterceptor('./public/babies'))
+  )
   async storeBabyDetailData(
     @Param() param: BabyDetailDataPipe,
-    @Req() request: Request
+    @Req() request: Request,
+    @UploadedFile() photo
   ) {
     const { babyDetailData } = param;
     await ValidateBabyDetail(babyDetailData, request);
-    return this.dbService.saveBabyDetail(request);
+    return this.dbService.saveBabyDetail(request, photo);
   }
 }

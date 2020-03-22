@@ -22,6 +22,9 @@ export const ValidateBabyDetail = async (
       validateImmunization(request.body);
       break;
 
+    case EBabyDetailData.photos:
+      break;
+
     default:
       throw new BadRequestException('Unknown babyDetailParam');
   }

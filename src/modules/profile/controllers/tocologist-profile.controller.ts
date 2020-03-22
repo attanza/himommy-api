@@ -39,7 +39,7 @@ export class TocologistProfileController {
   @UsePipes(ValidationPipe)
   async changePassword(
     @GetUser() user: IUser,
-    @Body() changePasswordDto: ChangePasswordDto,
+    @Body() changePasswordDto: ChangePasswordDto
   ): Promise<IApiItem> {
     await this.profileService.changePassword(user, changePasswordDto);
     return apiUpdated('Password', null);
@@ -49,14 +49,15 @@ export class TocologistProfileController {
   @Role('tocologist')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
-  uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
+  async uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
     if (!avatar) {
       throw new BadRequestException(
-        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB',
+        'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
       );
     }
 
-    this.profileService.saveAvatar(avatar, user);
+    await this.profileService.saveAvatar(avatar, user._id);
+
     return apiSucceed('Avatar Uploaded, actual result will be sent via socket');
   }
 
@@ -65,7 +66,7 @@ export class TocologistProfileController {
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,
-    @Body() updateDto: UpdateUserDto,
+    @Body() updateDto: UpdateUserDto
   ): Promise<IApiItem> {
     // User Basic Info
     const userKeys = ['firstName', 'lastName', 'email', 'phone'];
@@ -78,7 +79,7 @@ export class TocologistProfileController {
 
     const updatedUser: IUser = await this.profileService.updateUser(
       user._id,
-      userData as UpdateUserDto,
+      userData as UpdateUserDto
     );
 
     let updatedTocologist: ITocologist;
@@ -87,7 +88,7 @@ export class TocologistProfileController {
     if (user.tocologist) {
       updatedTocologist = await this.profileService.updateTocologistDetail(
         user.tocologist._id,
-        detailData as UpdateTocologistDto,
+        detailData as UpdateTocologistDto
       );
     }
 

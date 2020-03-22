@@ -94,7 +94,7 @@ export class TocologistTocologistController {
   @Role('tocologist')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('image', tocologistImageInterceptor))
-  uploadFile(
+  async uploadFile(
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
     @UploadedFile() image
@@ -110,7 +110,7 @@ export class TocologistTocologistController {
       );
     }
 
-    this.dbService.saveImage(id, image);
+    await this.dbService.saveImage(id, image);
     return apiSucceed('Image Uploaded, actual result will be sent via socket');
   }
 }

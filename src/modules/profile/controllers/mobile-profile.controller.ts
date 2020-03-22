@@ -31,7 +31,6 @@ export class MobileProfileController {
   modelName = 'Profile';
 
   constructor(private profileService: ProfileService) {}
-
   @Post('change-password')
   @Role('mommy')
   @HttpCode(200)
@@ -48,14 +47,14 @@ export class MobileProfileController {
   @Role('mommy')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
-  uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
+  async uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
     if (!avatar) {
       throw new BadRequestException(
         'Avatar should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
       );
     }
 
-    this.profileService.saveAvatar(avatar, user);
+    await this.profileService.saveAvatar(avatar, user._id);
     return apiSucceed('Avatar Uploaded, actual result will be sent via socket');
   }
 

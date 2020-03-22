@@ -1,11 +1,8 @@
-import mqttHandler from '@modules/helpers/mqttHandler';
-import { Redis } from '@modules/helpers/redis';
-import resizeImage from '@modules/helpers/resizeImage';
+import { QueueService } from '@modules/queue/queue.service';
 import { DbService } from '@modules/shared/services/db.service';
 import { TocologistServicesService } from '@modules/tocologist-services/tocologist-services.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as fs from 'fs';
 import { Model } from 'mongoose';
 import {
   AttachTocologistServicesDto,
@@ -15,13 +12,12 @@ import { ITocologist } from './tocologist.interface';
 
 @Injectable()
 export class TocologistService extends DbService {
-  tocologistModel: Model<ITocologist>;
   constructor(
     @InjectModel('Tocologist') private model: Model<ITocologist>,
-    private tocologistServicesService: TocologistServicesService
+    private tocologistServicesService: TocologistServicesService,
+    private queueService: QueueService
   ) {
     super(model);
-    this.tocologistModel = model;
   }
 
   /**
@@ -105,25 +101,14 @@ export class TocologistService extends DbService {
    * @param id
    * @param image
    */
-  async saveImage(id: string, image: any): Promise<boolean> {
-    const imageString = image.path.split('public')[1];
-
-    const found: ITocologist = await this.getById({ id });
-    if (!found) {
-      fs.unlinkSync(image);
-      return false;
-    } else {
-      this.unlinkImage(id, 'image');
-      found.image = imageString;
-      Promise.all([
-        resizeImage([image.path], 400),
-        found.save(),
-        Redis.deletePattern('Tocologist_'),
-      ]);
-      mqttHandler.sendMessage(
-        `tocologist/${id}/image`,
-        `${process.env.APP_URL}${imageString}`
-      );
-    }
+  async saveImage(id: string, image: any): Promise<void> {
+    await this.queueService.imageUpload({
+      image,
+      modelName: 'Tocologist',
+      modelId: id,
+      imageKey: 'image',
+      redisKey: 'Tocologist_*',
+      mqttTopic: `tocologist/${id}/image`,
+    });
   }
 }

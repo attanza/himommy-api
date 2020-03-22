@@ -144,7 +144,7 @@ export class TocologistController {
   @Permission('update-tocologist')
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('image', tocologistImageInterceptor))
-  uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
+  async uploadFile(@Param() param: MongoIdPipe, @UploadedFile() image) {
     if (!image) {
       throw new BadRequestException(
         'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
@@ -152,7 +152,11 @@ export class TocologistController {
     }
 
     const { id } = param;
-    this.dbService.saveImage(id, image);
+    const found = await this.dbService.getById({ id });
+    if (!found) {
+      throw new BadRequestException('Tocologist not found');
+    }
+    await this.dbService.saveImage(id, image);
     return apiSucceed('Image Uploaded, actual result will be sent via socket');
   }
 }

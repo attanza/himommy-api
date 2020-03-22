@@ -2,6 +2,7 @@ import { CheckListService } from '@modules/check-list/check-list.service';
 import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
 import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { QuestionService } from '@modules/question/question.service';
+import { QueueService } from '@modules/queue/queue.service';
 import { UpdateTocologistDto } from '@modules/tocologist/tocologist.dto';
 import { ITocologist } from '@modules/tocologist/tocologist.interface';
 import { TocologistService } from '@modules/tocologist/tocologist.service';
@@ -14,17 +15,25 @@ import { ChangePasswordDto } from './profile.dto';
 export class ProfileService {
   constructor(
     private userService: UserService,
+    private queueService: QueueService,
     private mommyService: MommyDetailService,
     private tocologistService: TocologistService,
     private checkListService: CheckListService,
-    private questionService: QuestionService,
+    private questionService: QuestionService
   ) {}
   async changePassword(user: IUser, changePasswordDto: ChangePasswordDto) {
     return this.userService.changePassword(user, changePasswordDto);
   }
 
-  async saveAvatar(avatar: any, user: IUser) {
-    return await this.userService.saveAvatar(avatar, user);
+  async saveAvatar(avatar: any, userId: string): Promise<void> {
+    await this.queueService.imageUpload({
+      image: avatar,
+      modelName: 'User',
+      modelId: userId,
+      imageKey: 'avatar',
+      redisKey: 'User_*',
+      mqttTopic: `profile/${userId}/avatar`,
+    });
   }
 
   async updateUser(id: string, updateDto: UpdateUserDto) {
@@ -44,7 +53,7 @@ export class ProfileService {
 
   async updateTocologistDetail(
     id: string,
-    updateDto: UpdateTocologistDto,
+    updateDto: UpdateTocologistDto
   ): Promise<ITocologist> {
     await this.tocologistService.dbUpdate('Tocologist', id, updateDto);
     return await this.tocologistService.getById({ id });

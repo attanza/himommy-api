@@ -12,6 +12,7 @@ import { PermissionModule } from '@modules/permission/permission.module';
 import { PregnancyAgesModule } from '@modules/pregnancy-ages/pregnancy-ages.module';
 import { ProfileModule } from '@modules/profile/profile.module';
 import { QuestionModule } from '@modules/question/question.module';
+import { QueueModule } from '@modules/queue/queue.module';
 import { ReasonModule } from '@modules/reason/reason.module';
 import { ReservationModule } from '@modules/reservation/reservation.module';
 import { RoleModule } from '@modules/role/role.module';
@@ -32,6 +33,7 @@ const MONGO_DB_OPTIONS = {
 @Module({
   imports: [
     MongooseModule.forRoot(`mongodb://localhost/${DB_NAME}`, MONGO_DB_OPTIONS),
+    QueueModule,
     SeederModule,
     ComboDataModule,
     AuthModule,

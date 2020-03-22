@@ -1,6 +1,7 @@
 import { CheckListModule } from '@modules/check-list/check-list.module';
 import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
 import { QuestionModule } from '@modules/question/question.module';
+import { QueueModule } from '@modules/queue/queue.module';
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
@@ -16,6 +17,7 @@ import { ProfileService } from './profile.service';
     TocologistModule,
     CheckListModule,
     QuestionModule,
+    QueueModule,
   ],
   controllers: [
     ProfileController,

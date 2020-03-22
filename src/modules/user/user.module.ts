@@ -1,7 +1,7 @@
 import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
 import { RoleModule } from '@modules/role/role.module';
 import { TocologistModule } from '@modules/tocologist/tocologist.module';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoleSchema } from '../role/role.schema';
 import { UserController } from './user.controller';
@@ -16,7 +16,7 @@ import { UserService } from './user.service';
     ]),
     RoleModule,
     MommyDetailModule,
-    TocologistModule,
+    forwardRef(() => TocologistModule),
   ],
   controllers: [UserController],
   providers: [UserService],

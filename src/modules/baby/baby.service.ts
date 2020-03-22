@@ -1,4 +1,5 @@
 import { Redis } from '@modules/helpers/redis';
+import resizeImage from '@modules/helpers/resizeImage';
 import { ImmunizationService } from '@modules/immunization/immunization.service';
 import { DbService } from '@modules/shared/services/db.service';
 import { IUser } from '@modules/user/user.interface';
@@ -17,6 +18,7 @@ import {
   IBaby,
   IBabyHeight,
   IBabyImmunization,
+  IBabyPhoto,
   IBabyWeight,
 } from './baby.interface';
 @Injectable()
@@ -27,24 +29,6 @@ export class BabyService extends DbService {
     private immunizationService: ImmunizationService
   ) {
     super(model);
-  }
-
-  async saveImage(id: string, image: any): Promise<IBaby> {
-    const imageString = image.path.split('public')[1];
-
-    const found: IBaby = await this.getById({ id });
-    // if (!found) {
-    //   fs.unlinkSync(image);
-    // } else {
-    //   this.unlinkImage(id, 'image');
-    //   found.image = imageString;
-    //   Promise.all([
-    //     resizeImage([image.path], 400),
-    //     found.save(),
-    //     Redis.deletePattern('Baby_'),
-    //   ]);
-    // }
-    return found;
   }
 
   async checkUser(userId: string): Promise<void> {
@@ -90,7 +74,7 @@ export class BabyService extends DbService {
     return arrayToCheck;
   }
 
-  async saveBabyDetail(request: Request) {
+  async saveBabyDetail(request: Request, photo: any) {
     const { id, babyDetailData } = request.params;
     const data: IBaby = await this.getById({ id });
 
@@ -110,15 +94,31 @@ export class BabyService extends DbService {
 
     // WEIGHT
     if (babyDetailData === EBabyDetailData.weights) {
-      const wightData: IBabyWeight = {
+      const weightData: IBabyWeight = {
         weight: request.body.weight,
         date: new Date(),
       };
-      data.weights = this.checkDuplicate(data.weights, wightData);
-      data.weights.push(wightData);
+      data.weights = this.checkDuplicate(data.weights, weightData);
+      data.weights.push(weightData);
+    }
+
+    // PHOTO
+    if (babyDetailData === EBabyDetailData.photos) {
+      console.log('photo', photo);
+      if (!photo) {
+        throw new BadRequestException('photo is required');
+      }
+      const imageString = this.saveImage(photo);
+      const photoData: IBabyPhoto = {
+        photo: imageString,
+        date: new Date(),
+      };
+      data.photos = this.checkDuplicate(data.photos, photoData);
+      data.photos.push(photoData);
     }
 
     // IMMUNIZATION
+
     if (babyDetailData === EBabyDetailData.immunizations) {
       const exists = await this.immunizationService.getById({
         id: request.body.immunization,
@@ -130,6 +130,11 @@ export class BabyService extends DbService {
         immunization: request.body.immunization,
         date: new Date(),
       };
+      data.immunizations = this.checkDuplicate(
+        data.immunizations,
+        immunizationData
+      );
+
       data.immunizations.push(immunizationData);
     }
     await data.save();
@@ -138,5 +143,11 @@ export class BabyService extends DbService {
       modelName: 'Baby',
       id,
     });
+  }
+
+  saveImage(image: any): string {
+    const imageString = image.path.split('public')[1];
+    resizeImage([image.path], 400);
+    return imageString;
   }
 }

@@ -1,8 +1,5 @@
-import { Permission } from '@guards/permission.decorator';
 import { Role } from '@guards/role.decorator';
 import { RoleGuard } from '@guards/role.guard';
-import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
-import { apiUpdated } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
@@ -12,26 +9,21 @@ import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { IUser } from '@modules/user/user.interface';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   Post,
   Put,
   Query,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
 import { BabyService } from '../baby.service';
+import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
 
 @Controller('mobile/babies')
 @UseGuards(AuthGuard('jwt'), RoleGuard)
@@ -122,27 +114,27 @@ export class MobileBabyController {
    * Image Upload
    */
 
-  @Post('/:id/image-upload')
-  @Permission('update-myth-fact')
-  @HttpCode(200)
-  @UseInterceptors(
-    FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
-  )
-  async uploadFile(
-    @GetUser() user: IUser,
-    @Param() param: MongoIdPipe,
-    @UploadedFile() image
-  ) {
-    if (!image) {
-      throw new BadRequestException(
-        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
-      );
-    }
+  // @Post('/:id/image-upload')
+  // @Permission('update-myth-fact')
+  // @HttpCode(200)
+  // @UseInterceptors(
+  //   FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
+  // )
+  // async uploadFile(
+  //   @GetUser() user: IUser,
+  //   @Param() param: MongoIdPipe,
+  //   @UploadedFile() image
+  // ) {
+  //   if (!image) {
+  //     throw new BadRequestException(
+  //       'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
+  //     );
+  //   }
 
-    const { id } = param;
-    await this.dbService.checkIsMyBaby(id, user._id);
+  //   const { id } = param;
+  //   await this.dbService.checkIsMyBaby(id, user._id);
 
-    const updated = await this.dbService.saveImage(id, image);
-    return apiUpdated('Baby', updated);
-  }
+  //   const updated = await this.dbService.saveImage(id, image);
+  //   return apiUpdated('Baby', updated);
+  // }
 }
