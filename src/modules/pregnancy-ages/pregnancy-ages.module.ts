@@ -1,3 +1,4 @@
+import { QueueModule } from '@modules/queue/queue.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MobilePregnancyAgesController } from './controllers/mobile-pregnancy-ages.controller';
@@ -14,6 +15,7 @@ import { PregnancyAgesService } from './pregnancy-ages.service';
         collection: 'pregnancy_ages',
       },
     ]),
+    QueueModule,
   ],
   controllers: [PregnancyAgesController, MobilePregnancyAgesController],
   providers: [PregnancyAgesService],

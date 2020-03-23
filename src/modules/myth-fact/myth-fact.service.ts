@@ -1,7 +1,7 @@
 import { Redis } from '@modules/helpers/redis';
 import { QueueService } from '@modules/queue/queue.service';
 import { DbService } from '@modules/shared/services/db.service';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as fs from 'fs';
 import { Model } from 'mongoose';
@@ -23,6 +23,10 @@ export class MythFactService extends DbService {
    */
   async saveImage(id: string, image: any): Promise<IMythFact> {
     const data: IMythFact = await this.getById({ id });
+    if (!data) {
+      await fs.promises.unlink(image.path);
+      throw new BadRequestException('myth fact not found');
+    }
     const imageString = image.path.split('public')[1];
     const oldImage = 'public' + data.image;
     data.image = imageString;
