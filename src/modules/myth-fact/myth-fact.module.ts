@@ -1,3 +1,4 @@
+import { QueueModule } from '@modules/queue/queue.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MobileMythFactController } from './controllers/mobile-myth-fact.controller';
@@ -10,6 +11,7 @@ import { MythFactService } from './myth-fact.service';
     MongooseModule.forFeature([
       { name: 'MythFact', schema: MythFactSchema, collection: 'myth_facts' },
     ]),
+    QueueModule,
   ],
   providers: [MythFactService],
   controllers: [MythFactController, MobileMythFactController],
