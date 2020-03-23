@@ -1,3 +1,4 @@
+import { generateImageLink } from '@modules/helpers/generateImageLink';
 import { paramCase } from 'change-case';
 import * as mongoose from 'mongoose';
 import { IArticle } from './article.interface';
@@ -21,7 +22,7 @@ export const ArticleSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 ArticleSchema.index({ age: 1, category: 1, slug: 1 });
@@ -36,3 +37,11 @@ ArticleSchema.pre<IArticle>('save', function(next: mongoose.HookNextFunction) {
     return next(e);
   }
 });
+
+ArticleSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  if (obj.image && obj.image !== '') {
+    obj.image = generateImageLink(obj.image);
+  }
+  return obj;
+};

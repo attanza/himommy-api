@@ -1,3 +1,4 @@
+import { QueueModule } from '@modules/queue/queue.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ArticleSchema } from './article.schema';
@@ -8,6 +9,7 @@ import { MobileArticleController } from './controllers/mobile-article.controller
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Article', schema: ArticleSchema }]),
+    QueueModule,
   ],
   providers: [ArticleService],
   controllers: [ArticleController, MobileArticleController],

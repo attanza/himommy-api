@@ -1,5 +1,7 @@
 import { Permission } from '@guards/permission.decorator';
 import { PermissionGuard } from '@guards/permission.guard';
+import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
+import { apiUpdated } from '@modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -7,19 +9,24 @@ import {
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateArticleDto, UpdateArticleDto } from '../article.dto';
 import { ArticleService } from '../article.service';
 
@@ -53,7 +60,7 @@ export class ArticleController {
   @Post()
   @Permission('create-article')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateArticleDto,
+    @Body(new ValidationPipe()) createDto: CreateArticleDto
   ): Promise<IApiItem> {
     return await this.dbService.store({ modelName: this.modelName, createDto });
   }
@@ -63,7 +70,7 @@ export class ArticleController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateArticleDto,
+    @Body() updateDto: UpdateArticleDto
   ): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.update({
@@ -73,11 +80,33 @@ export class ArticleController {
     });
   }
 
+  @Post('/:id/image-upload')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(200)
+  @UseInterceptors(
+    FileInterceptor('image', imageDownloadInterceptor('public/articles'))
+  )
+  async uploadFile(@UploadedFile() image, @Param() param: MongoIdPipe) {
+    if (!image) {
+      throw new BadRequestException(
+        'Image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
+      );
+    }
+    const { id } = param;
+
+    const updated = await this.dbService.saveImage(image, id);
+    return apiUpdated('Article image updated', updated);
+  }
+
   @Delete(':id')
   @Permission('delete-article')
   @UsePipes(ValidationPipe)
   async destroy(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    return await this.dbService.destroy({ modelName: this.modelName, id });
+    return await this.dbService.destroy({
+      modelName: this.modelName,
+      id,
+      imageKey: 'image',
+    });
   }
 }
