@@ -1,5 +1,6 @@
 import {
   IsIn,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -24,6 +25,10 @@ export class CreateCheckListDto {
   category: string;
 
   @IsOptional()
+  @IsInt()
+  age: number;
+
+  @IsOptional()
   @IsString()
   @MaxLength(250)
   description: string;
@@ -44,6 +49,10 @@ export class UpdateCheckListDto {
     ECheckListCategory.PREGNANCY_SIGNS,
   ])
   category: string;
+
+  @IsOptional()
+  @IsInt()
+  age: number;
 
   @IsOptional()
   @IsString()

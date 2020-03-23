@@ -304,6 +304,7 @@ export class SeederService {
       'HEALTH',
       'PREGNANCY_PREPARATION',
       'PREGNANCY_SIGNS',
+      'BABY',
     ];
 
     const checkListData = [];

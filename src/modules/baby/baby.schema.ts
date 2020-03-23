@@ -50,6 +50,12 @@ export const BabySchema = new mongoose.Schema(
         },
       },
     ],
+    checkLists: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CheckList',
+      },
+    ],
   },
   { timestamps: true }
 );

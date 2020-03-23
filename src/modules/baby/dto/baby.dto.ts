@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsIn,
   IsMongoId,
@@ -20,6 +21,11 @@ class BaseCreateBabyDto {
   @IsNotEmpty()
   @IsIn([ESex.MALE, ESex.FEMALE])
   sex: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  checkLists: string[];
 }
 
 export class CreateBabyDto extends BaseCreateBabyDto {
@@ -50,4 +56,9 @@ export class UpdateBabyDto {
   @IsOptional()
   @IsMongoId()
   parent: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  checkLists: string[];
 }

@@ -1,3 +1,4 @@
+import { CheckListModule } from '@modules/check-list/check-list.module';
 import { ImmunizationModule } from '@modules/immunization/immunization.module';
 import { QueueModule } from '@modules/queue/queue.module';
 import { UserModule } from '@modules/user/user.module';
@@ -16,6 +17,7 @@ import { MobileBabyController } from './controllers/mobile-baby.controller';
     UserModule,
     ImmunizationModule,
     QueueModule,
+    CheckListModule,
   ],
   providers: [BabyService],
   controllers: [BabyController, MobileBabyController],

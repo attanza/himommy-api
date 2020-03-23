@@ -70,6 +70,7 @@ export class BabyController {
   async store(
     @Body(new ValidationPipe()) createDto: CreateBabyDto
   ): Promise<IApiItem> {
+    await this.dbService.isCheckListsExists(createDto.checkLists);
     await this.dbService.checkUser(createDto.parent);
     return await this.dbService.store({ modelName: this.modelName, createDto });
   }
@@ -81,6 +82,8 @@ export class BabyController {
     @Param() param: MongoIdPipe,
     @Body() updateDto: UpdateBabyDto
   ): Promise<IApiItem> {
+    await this.dbService.isCheckListsExists(updateDto.checkLists);
+
     const { id } = param;
     if (updateDto.parent) {
       await this.dbService.checkUser(updateDto.parent);

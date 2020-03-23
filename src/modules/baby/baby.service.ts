@@ -1,3 +1,4 @@
+import { CheckListService } from '@modules/check-list/check-list.service';
 import { Redis } from '@modules/helpers/redis';
 import { ImmunizationService } from '@modules/immunization/immunization.service';
 import { QueueService } from '@modules/queue/queue.service';
@@ -30,7 +31,8 @@ export class BabyService extends DbService {
     @InjectModel('Baby') private model: Model<IBaby>,
     private userService: UserService,
     private immunizationService: ImmunizationService,
-    private queueService: QueueService
+    private queueService: QueueService,
+    private checkListService: CheckListService
   ) {
     super(model);
   }
@@ -82,6 +84,10 @@ export class BabyService extends DbService {
       arrayToCheck.splice(i, 1);
     }
     return arrayToCheck;
+  }
+
+  async isCheckListsExists(checkList: string[]): Promise<void> {
+    await this.checkListService.isCheckListsExists(checkList);
   }
 
   async saveBabyDetail(request: Request, photo: any) {
