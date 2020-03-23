@@ -145,4 +145,19 @@ export class BabyController {
     await ValidateUpdateBabyDetail(babyDetailData, request);
     return this.dbService.updateBabyDetail(request, photo);
   }
+
+  /**
+   * Update Photo, Height, Weight, Immunization
+   */
+  @Delete('/:id/:babyDetailData')
+  @Permission('update-baby')
+  @UsePipes(ValidationPipe)
+  async deleteBabyDetailData(
+    @Param() param: BabyDetailDataPipe,
+    @Req() request: Request
+  ) {
+    const { babyDetailData } = param;
+    await ValidateUpdateBabyDetail(babyDetailData, request);
+    return this.dbService.deleteBabyDetail(request);
+  }
 }

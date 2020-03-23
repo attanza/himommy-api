@@ -267,6 +267,93 @@ export class BabyService extends DbService {
     });
   }
 
+  async deleteBabyDetail(request: Request) {
+    const { id, babyDetailData } = request.params;
+    const data: IBaby = await this.getById({ id });
+
+    if (!data) {
+      throw new BadRequestException('Baby not found');
+    }
+
+    // HEIGHT
+    if (babyDetailData === EBabyDetailData.heights) {
+      const { heightId } = request.body;
+      if (heightId) {
+        const heightIndex = data.heights.findIndex(
+          h => h._id.toString() === heightId
+        );
+
+        if (heightIndex === -1) {
+          throw new BadRequestException('heightId not found');
+        }
+
+        data.heights.splice(heightIndex, 1);
+      }
+    }
+
+    // WEIGHT
+    if (babyDetailData === EBabyDetailData.weights) {
+      const { weightId } = request.body;
+      if (weightId) {
+        const weightIndex = data.weights.findIndex(
+          w => w._id.toString() === weightId
+        );
+
+        if (weightIndex === -1) {
+          throw new BadRequestException('weightId not found');
+        }
+
+        data.weights.splice(weightIndex, 1);
+      }
+    }
+
+    // PHOTO
+    if (babyDetailData === EBabyDetailData.photos) {
+      const { photoId } = request.body;
+      console.log('photoId', photoId);
+      if (photoId) {
+        const photoIndex = data.photos.findIndex(
+          p => p._id.toString() === photoId
+        );
+
+        if (photoIndex === -1) {
+          throw new BadRequestException('photoId not found');
+        }
+
+        const oldPhoto = data.photos[photoIndex].photo;
+        data.photos.splice(photoIndex, 1);
+
+        try {
+          await fs.promises.unlink('public' + oldPhoto);
+        } catch (e) {
+          Logger.debug(oldPhoto + ' not found');
+        }
+      }
+    }
+
+    // IMMUNIZATION
+
+    if (babyDetailData === EBabyDetailData.immunizations) {
+      const { immunizationId } = request.body;
+      if (immunizationId) {
+        const immunizationIndex = data.immunizations.findIndex(
+          i => i._id.toString() === immunizationId
+        );
+
+        if (immunizationIndex === -1) {
+          throw new BadRequestException('immunizationId not found');
+        }
+        data.immunizations.splice(immunizationIndex, 1);
+      }
+    }
+    await data.save();
+    await Redis.del(`Baby_${id}`);
+    return this.show({
+      modelName: 'Baby',
+      id,
+    });
+  }
+
   async deletePhoto(photo: any): Promise<void> {
     if (photo) {
       await fs.promises.unlink(photo.path);
