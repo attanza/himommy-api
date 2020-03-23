@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { ESex } from '../baby.interface';
 
-export class CreateBabyDto {
+class BaseCreateBabyDto {
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -20,8 +20,16 @@ export class CreateBabyDto {
   @IsNotEmpty()
   @IsIn([ESex.MALE, ESex.FEMALE])
   sex: string;
+}
 
+export class CreateBabyDto extends BaseCreateBabyDto {
   @IsNotEmpty()
+  @IsMongoId()
+  parent: string;
+}
+
+export class MobileCreateBabyDto extends BaseCreateBabyDto {
+  @IsOptional()
   @IsMongoId()
   parent: string;
 }

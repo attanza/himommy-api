@@ -1,10 +1,12 @@
 import { Role } from '@guards/role.decorator';
 import { RoleGuard } from '@guards/role.guard';
+import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
   IApiItem,
 } from '@modules/shared/interfaces/response-parser.interface';
+import { BabyDetailDataPipe } from '@modules/shared/pipes/mongo-babyDetail.pipe';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
 import { IUser } from '@modules/user/user.interface';
@@ -13,17 +15,25 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
   Query,
+  Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { BabyService } from '../baby.service';
-import { CreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
+import { ValidateBabyDetail } from '../dto/baby-detail.dto';
+import { MobileCreateBabyDto, UpdateBabyDto } from '../dto/baby.dto';
+import { ValidateUpdateBabyDetail } from '../dto/update-baby-detail.dto';
 
 @Controller('mobile/babies')
 @UseGuards(AuthGuard('jwt'), RoleGuard)
@@ -65,7 +75,7 @@ export class MobileBabyController {
   @Role('mommy')
   async store(
     @GetUser() user: IUser,
-    @Body(new ValidationPipe()) createDto: CreateBabyDto
+    @Body(new ValidationPipe()) createDto: MobileCreateBabyDto
   ): Promise<IApiItem> {
     createDto.parent = user._id;
     return await this.dbService.store({ modelName: this.modelName, createDto });
@@ -100,7 +110,6 @@ export class MobileBabyController {
     @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
     const { id } = param;
-
     await this.dbService.checkIsMyBaby(id, user._id);
 
     return await this.dbService.destroy({
@@ -111,30 +120,62 @@ export class MobileBabyController {
   }
 
   /**
-   * Image Upload
+   * Insert Photo, Height, Weight, Immunization
    */
+  @Post('/:id/:babyDetailData')
+  @Role('mommy')
+  @HttpCode(200)
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(
+    FileInterceptor('photo', imageDownloadInterceptor('./public/babies'))
+  )
+  async storeBabyDetailData(
+    @Param() param: BabyDetailDataPipe,
+    @Req() request: Request,
+    @GetUser() user: IUser,
+    @UploadedFile() photo
+  ) {
+    const { babyDetailData, id } = param;
+    await this.dbService.checkIsMyBaby(id, user._id);
+    await ValidateBabyDetail(babyDetailData, request);
+    return this.dbService.saveBabyDetail(request, photo);
+  }
 
-  // @Post('/:id/image-upload')
-  // @Permission('update-myth-fact')
-  // @HttpCode(200)
-  // @UseInterceptors(
-  //   FileInterceptor('image', imageDownloadInterceptor('./public/babies'))
-  // )
-  // async uploadFile(
-  //   @GetUser() user: IUser,
-  //   @Param() param: MongoIdPipe,
-  //   @UploadedFile() image
-  // ) {
-  //   if (!image) {
-  //     throw new BadRequestException(
-  //       'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
-  //     );
-  //   }
+  /**
+   * Update Photo, Height, Weight, Immunization
+   */
+  @Put('/:id/:babyDetailData')
+  @Role('mommy')
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(
+    FileInterceptor('photo', imageDownloadInterceptor('./public/babies'))
+  )
+  async updateBabyDetailData(
+    @Param() param: BabyDetailDataPipe,
+    @Req() request: Request,
+    @UploadedFile() photo,
+    @GetUser() user: IUser
+  ) {
+    const { babyDetailData, id } = param;
+    await this.dbService.checkIsMyBaby(id, user._id);
+    await ValidateUpdateBabyDetail(babyDetailData, request);
+    return this.dbService.updateBabyDetail(request, photo);
+  }
 
-  //   const { id } = param;
-  //   await this.dbService.checkIsMyBaby(id, user._id);
-
-  //   const updated = await this.dbService.saveImage(id, image);
-  //   return apiUpdated('Baby', updated);
-  // }
+  /**
+   * Update Photo, Height, Weight, Immunization
+   */
+  @Delete('/:id/:babyDetailData')
+  @Role('mommy')
+  @UsePipes(ValidationPipe)
+  async deleteBabyDetailData(
+    @Param() param: BabyDetailDataPipe,
+    @Req() request: Request,
+    @GetUser() user: IUser
+  ) {
+    const { babyDetailData, id } = param;
+    await this.dbService.checkIsMyBaby(id, user._id);
+    await ValidateUpdateBabyDetail(babyDetailData, request);
+    return this.dbService.deleteBabyDetail(request);
+  }
 }
