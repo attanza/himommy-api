@@ -99,6 +99,10 @@ export class DbService {
     return this.Model.findOne({ [key]: value });
   }
 
+  async getByArray<T>(key: string, values: any[]): Promise<T> {
+    return this.Model.find({ [key]: { $in: values } }).lean();
+  }
+
   /**
    * STORE NEW DOCUMENT
    * @param modelName
@@ -183,11 +187,11 @@ export class DbService {
   async destroy(resourceDestroy: IResourceDestroy): Promise<IApiItem> {
     const { modelName, id, topic, imageKey } = resourceDestroy;
 
-    await Promise.all([
-      this.dbDestroy(id),
-      this.unlinkImage(id, imageKey),
-      Redis.deletePattern(modelName),
-    ]);
+    await Promise.all([this.dbDestroy(id), Redis.deletePattern(modelName)]);
+
+    if (imageKey) {
+      await this.unlinkImage(id, imageKey);
+    }
 
     const output = apiDeleted(modelName);
     if (topic) {
@@ -196,11 +200,15 @@ export class DbService {
     return output;
   }
 
-  async dbDestroy(id: string) {
-    return await this.Model.deleteOne({ _id: id });
+  async dbDestroy(id: string): Promise<void> {
+    await this.Model.deleteOne({ _id: id });
   }
 
-  async unlinkImage(id: string, imageKey: string) {
+  async bulkDestroy(ids: string[]): Promise<void> {
+    await this.Model.deleteMany({ _id: { $in: ids } });
+  }
+
+  async unlinkImage(id: string | string[], imageKey: string) {
     const data = await this.Model.findById(id).lean();
     if (data && data[imageKey] && data[imageKey] !== '') {
       const filePath = 'public' + data[imageKey];

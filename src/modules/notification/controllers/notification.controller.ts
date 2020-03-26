@@ -57,7 +57,7 @@ export class NotificationController {
   @Post()
   @Permission('create-notification')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateNotificationDto,
+    @Body(new ValidationPipe()) createDto: CreateNotificationDto
   ): Promise<IApiItem> {
     const { user } = createDto;
     const userExists = await this.dbService.checkUser(user);
@@ -72,7 +72,7 @@ export class NotificationController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateNotificationDto,
+    @Body() updateDto: UpdateNotificationDto
   ): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.update({

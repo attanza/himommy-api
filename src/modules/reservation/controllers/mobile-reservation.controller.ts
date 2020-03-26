@@ -1,3 +1,5 @@
+import { Role } from '@guards/role.decorator';
+import { RoleGuard } from '@guards/role.guard';
 import { fcm } from '@modules/helpers/fcmHelper';
 import { apiItem } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
@@ -31,7 +33,7 @@ import { EStatus, IReservation } from '../reservation.interface';
 import { ReservationService } from '../reservation.service';
 
 @Controller('mobile/reservations')
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 export class MobileReservationController {
   modelName = 'Reservation';
   relations = ['user', 'tocologist'];
@@ -39,9 +41,10 @@ export class MobileReservationController {
 
   @Post()
   @UsePipes(ValidationPipe)
+  @Role('mommy')
   async store(
     @GetUser() user: IUser,
-    @Body() createReservationDto: CreateReservationDto,
+    @Body() createReservationDto: CreateReservationDto
   ): Promise<IApiItem> {
     const { tocologist, services } = createReservationDto;
 
@@ -67,29 +70,31 @@ export class MobileReservationController {
     fcm.sendToMobile(
       `reservations-${tocologist}-${EStatus.NEW}`,
       fcmData,
-      fcmNotification,
+      fcmNotification
     );
     return data;
   }
 
   @Get(':id')
   @UsePipes(ValidationPipe)
+  @Role('mommy')
   async show(
     @GetUser() user: IUser,
-    @Param() param: MongoIdPipe,
+    @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
     const { id } = param;
     const data = await this.reservationService.getMyReservationById(
       user._id,
-      id,
+      id
     );
     return apiItem(this.modelName, data);
   }
 
   @Get()
+  @Role('mommy')
   async all(
     @GetUser() user: IUser,
-    @Query() query: ResourcePaginationPipe,
+    @Query() query: ResourcePaginationPipe
   ): Promise<IApiCollection> {
     const regexSearchable = ['code', 'services.name'];
     const keyValueSearchable = ['user', 'tocologist'];
@@ -107,11 +112,12 @@ export class MobileReservationController {
   }
 
   @Put(':id')
+  @Role('mommy')
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
     @Body() updateDto: UpdateReservationDto,
-    @GetUser() user: IUser,
+    @GetUser() user: IUser
   ) {
     let updateData: any;
 
@@ -162,7 +168,7 @@ export class MobileReservationController {
     if (status && status === EStatus.COMPLETED) {
       if (data.status !== EStatus.COMPLETE_CONFIRM) {
         throw new BadRequestException(
-          'This reservation has not been complete by the tocologist',
+          'This reservation has not been complete by the tocologist'
         );
       }
       updateData = {
@@ -188,7 +194,7 @@ export class MobileReservationController {
     fcm.sendToMobile(
       `reservations-${tocologistId}-${updateData.status}`,
       fcmData,
-      fcmNotification,
+      fcmNotification
     );
     return updateResult;
   }
