@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { WeightController } from './controllers/mommy-detail.controller';
 import { MommyDetailSchema } from './mommy-detail.schema';
 import { MommyDetailService } from './mommy-detail.service';
 
@@ -14,6 +15,7 @@ import { MommyDetailService } from './mommy-detail.service';
     ]),
   ],
   providers: [MommyDetailService],
+  controllers: [WeightController],
   exports: [MommyDetailService],
 })
 export class MommyDetailModule {}

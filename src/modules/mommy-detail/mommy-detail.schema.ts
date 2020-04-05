@@ -11,6 +11,7 @@ export const MommyDetailSchema = new mongoose.Schema(
     education: String,
     husbandName: String,
     hpht: Date,
+    height: Number,
     checkLists: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -27,10 +28,49 @@ export const MommyDetailSchema = new mongoose.Schema(
         ref: 'Question',
       },
     ],
-    healthTrack: {
-      height: Number,
-      weight: Number,
-    },
+    weights: [
+      {
+        weight: Number,
+        bmi: Number,
+        status: String,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
+    bloodPressures: [
+      {
+        systolic: Number,
+        diastolic: Number,
+        status: String,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
+    hemoglobins: [
+      {
+        hemoglobin: Number,
+        semester: Number,
+        status: String,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
+    urines: [
+      {
+        urine: String,
+        status: String,
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

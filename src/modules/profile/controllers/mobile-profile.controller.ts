@@ -1,7 +1,7 @@
 import { Role } from '@guards/role.decorator';
 import { RoleGuard } from '@guards/role.guard';
 import avatarInterceptor from '@modules/helpers/avatarInterceptor';
-import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
+import { UpdateMommyDto } from '@modules/mommy-detail/dto/mommy-detail.dto';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
 import { UpdateUserDto } from '@modules/user/user.dto';

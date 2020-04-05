@@ -1,6 +1,6 @@
 import { CheckListService } from '@modules/check-list/check-list.service';
 import { Redis } from '@modules/helpers/redis';
-import { UpdateMommyDto } from '@modules/mommy-detail/mommy-detail.dto';
+import { UpdateMommyDto } from '@modules/mommy-detail/dto/mommy-detail.dto';
 import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
 import { QuestionService } from '@modules/question/question.service';
 import { QueueService } from '@modules/queue/queue.service';
