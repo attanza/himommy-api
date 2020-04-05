@@ -3,18 +3,34 @@ import { IQuestion } from '@modules/question/question.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Document } from 'mongoose';
 
+export enum EMommyWeightStatus {
+  VERY_UNDERWEIGHT = 'Sangat Kurus',
+  UNDERWEIGHT = 'Kurus',
+  NORMAL = 'Normal',
+  OVERWEIGHT = 'Gemuk',
+  OBESITY = 'Sangat Gemuk',
+  UNKNOWN = 'Unknown',
+}
+
 export interface IMommyWeight {
   _id?: string;
   weight: number;
   bmi: number;
-  status: string;
+  status: EMommyWeightStatus;
   date: Date;
 }
 
+export enum EMommyBloodPressureStatus {
+  LOW = 'Darah Rendah',
+  NORMAL = 'Normal',
+  HYPERTENSION = 'Darah Tinggi',
+  UNKNOWN = 'Unknown',
+}
 export interface IMommyBloodPressure {
+  _id?: string;
   systolic: number;
   diastolic: number;
-  status: string;
+  status: EMommyBloodPressureStatus;
   date: Date;
 }
 export interface IMommyHemoglobin {

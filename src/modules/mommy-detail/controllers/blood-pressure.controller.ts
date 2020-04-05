@@ -25,19 +25,19 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CreateWeightDto } from '../dto/weight.dto';
-import { IMommyDetail, IMommyWeight } from '../mommy-detail.interface';
+import { CreateBloodPressureDto } from '../dto/blood-pressure.dto';
+import { IMommyBloodPressure, IMommyDetail } from '../mommy-detail.interface';
 import { MommyDetailService } from '../mommy-detail.service';
 
-@Controller('/mobile/weights')
+@Controller('/mobile/blood-pressures')
 @UseGuards(AuthGuard('jwt'), RoleGuard)
-export class WeightController {
+export class BloodPressureController {
   constructor(private dbService: MommyDetailService) {}
 
   @Get()
   @Role('mommy')
   async getWeights(@GetUser() user: IUser): Promise<IApiItem> {
-    return apiItem('Weight', user.detail.weights);
+    return apiItem('Blood Pressures', user.detail.bloodPressures);
   }
 
   @Post()
@@ -45,21 +45,16 @@ export class WeightController {
   @Role('mommy')
   async store(
     @GetUser() user: IUser,
-    @Body() createData: CreateWeightDto
+    @Body() createData: CreateBloodPressureDto
   ): Promise<IApiItem> {
-    // check if height is exists
-    if (!user.detail.height) {
-      throw new BadRequestException('Please set your height');
-    }
-
-    const { bmi, status } = this.dbService.getBmiAndStatus(
-      createData.weight,
-      user.detail.height
+    const status = this.dbService.getBloodPressureStatus(
+      createData.systolic,
+      createData.diastolic
     );
 
-    const weightData: IMommyWeight = {
-      weight: createData.weight,
-      bmi,
+    const bloodPressureData: IMommyBloodPressure = {
+      systolic: createData.systolic,
+      diastolic: createData.diastolic,
       status,
       date: new Date(),
     };
@@ -69,12 +64,15 @@ export class WeightController {
       user._id
     );
 
-    detail.weights = this.dbService.checkDuplicate(detail.weights, weightData);
-    detail.weights.push(weightData);
+    detail.bloodPressures = this.dbService.checkDuplicate(
+      detail.bloodPressures,
+      bloodPressureData
+    );
+    detail.bloodPressures.push(bloodPressureData);
 
     await detail.save();
     await Redis.deletePattern('MommyDetail_user_*');
-    return apiCreated('Weight', detail.weights);
+    return apiCreated('Blood Pressure', detail.bloodPressures);
   }
 
   @Get(':id')
@@ -85,11 +83,13 @@ export class WeightController {
     @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
     const { id } = param;
-    const index = user.detail.weights.findIndex(w => w._id.toString() === id);
+    const index = user.detail.bloodPressures.findIndex(
+      w => w._id.toString() === id
+    );
     if (index === -1) {
-      throw new BadRequestException('Weight not found');
+      throw new BadRequestException('Blood pressure reading not found');
     }
-    return apiItem('Weight', user.detail.weights[index]);
+    return apiItem('Blood Pressure', user.detail.bloodPressures[index]);
   }
 
   @Put(':id')
@@ -98,29 +98,40 @@ export class WeightController {
   async update(
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe,
-    @Body() updateData: Partial<CreateWeightDto>
+    @Body() updateData: Partial<CreateBloodPressureDto>
   ): Promise<IApiItem> {
-    // get weight by id
+    // get blood pressure by id
     const { id } = param;
-    const index = user.detail.weights.findIndex(w => w._id.toString() === id);
+    const index = user.detail.bloodPressures.findIndex(
+      w => w._id.toString() === id
+    );
     if (index === -1) {
-      throw new BadRequestException('Weight not found');
+      throw new BadRequestException('Blood pressure not found');
     }
 
-    // Edit weight
-    if (updateData.weight) {
-      const weight = user.detail.weights[index];
-      weight.weight = updateData.weight;
+    // Edit Blood Pressiure
+    if (updateData.systolic && updateData.diastolic) {
+      const bloodPressure = user.detail.bloodPressures[index];
+      const status = this.dbService.getBloodPressureStatus(
+        updateData.systolic,
+        updateData.diastolic
+      );
+      bloodPressure.systolic = updateData.systolic;
+      bloodPressure.diastolic = updateData.diastolic;
+      bloodPressure.status = status;
+
       const detail: IMommyDetail = await this.dbService.getByKey(
         'user',
         user._id
       );
 
-      detail.weights.splice(index, 1, weight);
+      detail.bloodPressures.splice(index, 1, bloodPressure);
+
       await detail.save();
       await Redis.deletePattern('MommyDetail_user_*');
+      return apiUpdated('Weight', detail.bloodPressures[index]);
     }
-    return apiUpdated('Weight', user.detail.weights[index]);
+    return apiUpdated('Weight', user.detail.bloodPressures[index]);
   }
 
   @Delete(':id')
@@ -128,12 +139,12 @@ export class WeightController {
   @Role('mommy')
   async destroy(
     @GetUser() user: IUser,
-    @Param() param: MongoIdPipe,
-    @Body() updateData: Partial<CreateWeightDto>
+    @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
-    // get weight by id
     const { id } = param;
-    const index = user.detail.weights.findIndex(w => w._id.toString() === id);
+    const index = user.detail.bloodPressures.findIndex(
+      w => w._id.toString() === id
+    );
     if (index === -1) {
       throw new BadRequestException('Weight not found');
     }
@@ -143,10 +154,10 @@ export class WeightController {
       user._id
     );
 
-    detail.weights.splice(index, 1);
+    detail.bloodPressures.splice(index, 1);
     await detail.save();
     await Redis.deletePattern('MommyDetail_user_*');
 
-    return apiDeleted('Weight');
+    return apiDeleted('Blood Pressure');
   }
 }

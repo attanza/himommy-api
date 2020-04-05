@@ -5,7 +5,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as moment from 'moment';
 import { Model } from 'mongoose';
 import { UpdateMommyDto } from './dto/mommy-detail.dto';
-import { IMommyDetail } from './mommy-detail.interface';
+import {
+  EMommyBloodPressureStatus,
+  EMommyWeightStatus,
+  IMommyDetail,
+} from './mommy-detail.interface';
 
 @Injectable()
 export class MommyDetailService extends DbService {
@@ -60,21 +64,41 @@ export class MommyDetailService extends DbService {
 
   getBmiAndStatus(weight: number, height: number) {
     const bmi = weight / Math.pow(height / 100, 2);
-    let status = '';
+    let status: EMommyWeightStatus;
     if (bmi < 17.0) {
-      status = 'Sangat Kurus';
-    } else if (bmi >= 17.0 && bmi <= 18.4) {
-      status = 'Kurus';
-    } else if (bmi >= 18.5 && bmi <= 25.0) {
-      status = 'Normal';
-    } else if (bmi >= 25.1 && bmi <= 27.0) {
-      status = 'Gemuk';
+      status = EMommyWeightStatus.VERY_UNDERWEIGHT;
+    } else if (bmi >= 17.0 || bmi <= 18.4) {
+      status = EMommyWeightStatus.UNDERWEIGHT;
+    } else if (bmi >= 18.5 || bmi <= 25.0) {
+      status = EMommyWeightStatus.NORMAL;
+    } else if (bmi >= 25.1 || bmi <= 27.0) {
+      status = EMommyWeightStatus.OVERWEIGHT;
     } else if (bmi > 27.0) {
-      status = 'Sangat Gemuk';
+      status = EMommyWeightStatus.OBESITY;
     } else {
-      status = 'Unknown';
+      status = EMommyWeightStatus.UNKNOWN;
     }
 
     return { bmi, status };
+  }
+
+  getBloodPressureStatus(systolic: number, diastolic: number) {
+    let status: EMommyBloodPressureStatus;
+    const pressure = systolic / diastolic;
+    const low = 90 / 60;
+    const normalStart = 91 / 60;
+    const normalEnd = 139 / 90;
+    const high = 140 / 90;
+    console.log({ pressure, low, normalStart, normalEnd, high });
+    if (pressure <= 90 / 60) {
+      status = EMommyBloodPressureStatus.LOW;
+    } else if (pressure > 91 / 60 || pressure < 139 / 90) {
+      status = EMommyBloodPressureStatus.NORMAL;
+    } else if (pressure >= 140 / 90) {
+      status = EMommyBloodPressureStatus.HYPERTENSION;
+    } else {
+      EMommyBloodPressureStatus.UNKNOWN;
+    }
+    return status;
   }
 }
