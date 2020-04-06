@@ -47,15 +47,15 @@ export class BloodPressureController {
     @GetUser() user: IUser,
     @Body() createData: CreateBloodPressureDto
   ): Promise<IApiItem> {
-    const status = this.dbService.getBloodPressureStatus(
-      createData.systolic,
-      createData.diastolic
-    );
+    // const status = this.dbService.getBloodPressureStatus(
+    //   createData.systolic,
+    //   createData.diastolic
+    // );
 
     const bloodPressureData: IMommyBloodPressure = {
       systolic: createData.systolic,
       diastolic: createData.diastolic,
-      status,
+      status: createData.status,
       date: new Date(),
     };
 
@@ -109,29 +109,21 @@ export class BloodPressureController {
       throw new BadRequestException('Blood pressure not found');
     }
 
-    // Edit Blood Pressiure
-    if (updateData.systolic && updateData.diastolic) {
-      const bloodPressure = user.detail.bloodPressures[index];
-      const status = this.dbService.getBloodPressureStatus(
-        updateData.systolic,
-        updateData.diastolic
-      );
-      bloodPressure.systolic = updateData.systolic;
-      bloodPressure.diastolic = updateData.diastolic;
-      bloodPressure.status = status;
+    const bloodPressure = user.detail.bloodPressures[index];
+    Object.keys(updateData).map(key => {
+      bloodPressure[key] = updateData[key];
+    });
 
-      const detail: IMommyDetail = await this.dbService.getByKey(
-        'user',
-        user._id
-      );
+    const detail: IMommyDetail = await this.dbService.getByKey(
+      'user',
+      user._id
+    );
 
-      detail.bloodPressures.splice(index, 1, bloodPressure);
+    detail.bloodPressures.splice(index, 1, bloodPressure);
 
-      await detail.save();
-      await Redis.deletePattern('MommyDetail_user_*');
-      return apiUpdated('Weight', detail.bloodPressures[index]);
-    }
-    return apiUpdated('Weight', user.detail.bloodPressures[index]);
+    await detail.save();
+    await Redis.deletePattern('MommyDetail_user_*');
+    return apiUpdated('Blood pressure', detail.bloodPressures[index]);
   }
 
   @Delete(':id')
@@ -146,7 +138,7 @@ export class BloodPressureController {
       w => w._id.toString() === id
     );
     if (index === -1) {
-      throw new BadRequestException('Weight not found');
+      throw new BadRequestException('Blood pressure not found');
     }
 
     const detail: IMommyDetail = await this.dbService.getByKey(

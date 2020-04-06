@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsIn, IsNotEmpty, IsNumber } from 'class-validator';
+import { EMommyBloodPressureStatus } from '../mommy-detail.enums';
 
 export class CreateBloodPressureDto {
   @IsNotEmpty()
@@ -8,4 +9,12 @@ export class CreateBloodPressureDto {
   @IsNotEmpty()
   @IsNumber()
   diastolic: number;
+
+  @IsNotEmpty()
+  @IsIn([
+    EMommyBloodPressureStatus.LOW,
+    EMommyBloodPressureStatus.NORMAL,
+    EMommyBloodPressureStatus.HYPERTENSION,
+  ])
+  status: EMommyBloodPressureStatus;
 }
