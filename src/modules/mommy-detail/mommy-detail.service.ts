@@ -8,8 +8,8 @@ import { UpdateMommyDto } from './dto/mommy-detail.dto';
 import {
   EMommyBloodPressureStatus,
   EMommyWeightStatus,
-  IMommyDetail,
-} from './mommy-detail.interface';
+} from './mommy-detail.enums';
+import { IMommyDetail } from './mommy-detail.interface';
 
 @Injectable()
 export class MommyDetailService extends DbService {
@@ -85,11 +85,11 @@ export class MommyDetailService extends DbService {
   getBloodPressureStatus(systolic: number, diastolic: number) {
     let status: EMommyBloodPressureStatus;
     const pressure = systolic / diastolic;
-    const low = 90 / 60;
-    const normalStart = 91 / 60;
-    const normalEnd = 139 / 90;
-    const high = 140 / 90;
-    console.log({ pressure, low, normalStart, normalEnd, high });
+    // const low = 90 / 60;
+    // const normalStart = 91 / 60;
+    // const normalEnd = 139 / 90;
+    // const high = 140 / 90;
+    // console.log({ pressure, low, normalStart, normalEnd, high });
     if (pressure <= 90 / 60) {
       status = EMommyBloodPressureStatus.LOW;
     } else if (pressure > 91 / 60 || pressure < 139 / 90) {
@@ -97,7 +97,7 @@ export class MommyDetailService extends DbService {
     } else if (pressure >= 140 / 90) {
       status = EMommyBloodPressureStatus.HYPERTENSION;
     } else {
-      EMommyBloodPressureStatus.UNKNOWN;
+      status = EMommyBloodPressureStatus.UNKNOWN;
     }
     return status;
   }

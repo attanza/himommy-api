@@ -2,15 +2,12 @@ import { ICheckList } from '@modules/check-list/check-list.interface';
 import { IQuestion } from '@modules/question/question.interface';
 import { IUser } from '@modules/user/user.interface';
 import { Document } from 'mongoose';
-
-export enum EMommyWeightStatus {
-  VERY_UNDERWEIGHT = 'Sangat Kurus',
-  UNDERWEIGHT = 'Kurus',
-  NORMAL = 'Normal',
-  OVERWEIGHT = 'Gemuk',
-  OBESITY = 'Sangat Gemuk',
-  UNKNOWN = 'Unknown',
-}
+import {
+  EMommyBloodPressureStatus,
+  EMommyHemoglobinStatus,
+  EMommyHemoglobinTrimester,
+  EMommyWeightStatus,
+} from './mommy-detail.enums';
 
 export interface IMommyWeight {
   _id?: string;
@@ -20,12 +17,6 @@ export interface IMommyWeight {
   date: Date;
 }
 
-export enum EMommyBloodPressureStatus {
-  LOW = 'Darah Rendah',
-  NORMAL = 'Normal',
-  HYPERTENSION = 'Darah Tinggi',
-  UNKNOWN = 'Unknown',
-}
 export interface IMommyBloodPressure {
   _id?: string;
   systolic: number;
@@ -34,9 +25,10 @@ export interface IMommyBloodPressure {
   date: Date;
 }
 export interface IMommyHemoglobin {
+  _id?: string;
   hemoglobin: number;
-  semester: number;
-  status: string;
+  trimester: EMommyHemoglobinTrimester;
+  status: EMommyHemoglobinStatus;
   date: Date;
 }
 

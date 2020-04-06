@@ -53,7 +53,7 @@ export const MommyDetailSchema = new mongoose.Schema(
     hemoglobins: [
       {
         hemoglobin: Number,
-        semester: Number,
+        trimester: String,
         status: String,
         date: {
           type: Date,

@@ -228,7 +228,6 @@ export class BabyService extends DbService {
 
         const imageString = photo.path.split('public')[1];
         const oldPhoto = data.photos[photoIndex].photo;
-        console.log('oldPhoto', oldPhoto);
         data.photos[photoIndex].photo = imageString;
         try {
           await Promise.all([
@@ -316,7 +315,6 @@ export class BabyService extends DbService {
     // PHOTO
     if (babyDetailData === EBabyDetailData.photos) {
       const { photoId } = request.body;
-      console.log('photoId', photoId);
       if (photoId) {
         const photoIndex = data.photos.findIndex(
           p => p._id.toString() === photoId
