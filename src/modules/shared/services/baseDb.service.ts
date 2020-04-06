@@ -1,5 +1,6 @@
 import { isUnique } from '@modules/helpers';
 import { BadRequestException } from '@nestjs/common';
+import { Model } from 'mongoose';
 import {
   IResourceDestroy,
   IResourceShow,
@@ -8,10 +9,10 @@ import {
 } from '../interfaces/db-resource.interface';
 import { IResourcePagination } from '../interfaces/resource-pagination.interface';
 import { IApiCollection, IMeta } from '../interfaces/response-parser.interface';
-export class BaseDbService {
-  private readonly Model: any;
-  constructor(model) {
-    this.Model = model;
+export abstract class BaseDbService {
+  private readonly dbModel: Model<any>;
+  constructor(dbModel) {
+    this.dbModel = dbModel;
   }
 
   /**
@@ -84,13 +85,14 @@ export class BaseDbService {
       coordinates.push(parseFloat(args.latitude.toString()));
     }
 
-    const total = await this.Model.countDocuments(options);
+    const total = await this.dbModel.countDocuments(options);
     const totalPages = Math.ceil(total / Number(args.limit));
     const page = Number(args.page) || 1;
     const limit = Number(args.limit) || 10;
     const sortBy = args.sortBy || 'createdAt';
     const sortMode = args.sortMode || -1;
-    const data = await this.Model.find(options)
+    const data = await this.dbModel
+      .find(options)
       .populate(args.relations)
       .sort({ [sortBy]: sortMode })
       .skip(Number(limit * page - limit))
@@ -115,7 +117,7 @@ export class BaseDbService {
    * @param args
    */
   async show<T>(args: IResourceShow): Promise<T> {
-    const data = await this.Model.findById(args.id).populate(args.relations);
+    const data = await this.dbModel.findById(args.id).populate(args.relations);
     if (!data) {
       throw new BadRequestException(`${args.modelName} not found`);
     }
@@ -130,23 +132,23 @@ export class BaseDbService {
   async store<T>(args: IResourceStore): Promise<T> {
     if (args.uniques && args.uniques.length > 0) {
       for (const key of args.uniques) {
-        await isUnique(this.Model, key, args.createDto[key]);
+        await isUnique(this.dbModel, key, args.createDto[key]);
       }
     }
-    return this.Model.create(args.createDto);
+    return this.dbModel.create(args.createDto);
   }
 
   /**
    * Update DB data by ID
    */
   async update<T>(args: IResourceUpdate): Promise<T> {
-    const data = await this.Model.findById(args.id);
+    const data = await this.dbModel.findById(args.id);
     if (!data) {
       throw new BadRequestException(`${args.modelName} not found`);
     }
     if (args.uniques && args.uniques.length > 0) {
       for (const key of args.uniques) {
-        await isUnique(this.Model, key, args.updateDto[key], args.id);
+        await isUnique(this.dbModel, key, args.updateDto[key], args.id);
       }
     }
     if (Object.keys(args.updateDto).length > 0) {
@@ -161,11 +163,11 @@ export class BaseDbService {
    * @param args
    */
   async destroy(args: IResourceDestroy): Promise<boolean> {
-    const data = await this.Model.findById(args.id);
+    const data = await this.dbModel.findById(args.id);
     if (!data) {
       throw new BadRequestException(`${args.modelName} not found`);
     }
-    await this.Model.deleteOne({ _id: args.id });
+    await this.dbModel.deleteOne({ _id: args.id });
     return true;
   }
 }
