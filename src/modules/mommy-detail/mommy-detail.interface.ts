@@ -6,6 +6,7 @@ import {
   EMommyBloodPressureStatus,
   EMommyHemoglobinStatus,
   EMommyHemoglobinTrimester,
+  EMommyUrine,
   EMommyWeightStatus,
 } from './mommy-detail.enums';
 
@@ -33,8 +34,8 @@ export interface IMommyHemoglobin {
 }
 
 export interface IMommyUrine {
-  urine: string;
-  status: string;
+  _id?: string;
+  urine: EMommyUrine;
   date: Date;
 }
 

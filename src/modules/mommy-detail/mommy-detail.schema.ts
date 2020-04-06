@@ -64,7 +64,6 @@ export const MommyDetailSchema = new mongoose.Schema(
     urines: [
       {
         urine: String,
-        status: String,
         date: {
           type: Date,
           default: new Date(),

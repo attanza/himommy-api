@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BloodPressureController } from './controllers/blood-pressure.controller';
 import { HemoglobinController } from './controllers/hemoglobin.controller';
+import { UrineController } from './controllers/urine.controller';
 import { WeightController } from './controllers/weight.controller';
 import { MommyDetailSchema } from './mommy-detail.schema';
 import { MommyDetailService } from './mommy-detail.service';
@@ -21,6 +22,7 @@ import { MommyDetailService } from './mommy-detail.service';
     WeightController,
     BloodPressureController,
     HemoglobinController,
+    UrineController,
   ],
   exports: [MommyDetailService],
 })
