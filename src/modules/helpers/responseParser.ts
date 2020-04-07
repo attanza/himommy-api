@@ -1,5 +1,6 @@
 import {
   IApiItem,
+  IMommyGraphics,
   Meta2,
 } from '@modules/shared/interfaces/response-parser.interface';
 
@@ -46,4 +47,17 @@ export const apiSucceed = (message: string, data?: any): IApiItem => {
   };
 
   return { meta, data };
+};
+
+export const mommyDetail = (
+  message: string,
+  data?: any,
+  other?: any
+): IMommyGraphics => {
+  const meta: Meta2 = {
+    status: 200,
+    message,
+  };
+
+  return { meta, data, other };
 };

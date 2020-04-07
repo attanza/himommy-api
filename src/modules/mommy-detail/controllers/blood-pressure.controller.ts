@@ -6,9 +6,13 @@ import {
   apiDeleted,
   apiItem,
   apiUpdated,
+  mommyDetail,
 } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import {
+  IApiItem,
+  IMommyGraphics,
+} from '@modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { IUser } from '@modules/user/user.interface';
 import {
@@ -26,6 +30,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateBloodPressureDto } from '../dto/blood-pressure.dto';
+import { EMommyBloodPressureStatus } from '../mommy-detail.enums';
 import { IMommyBloodPressure, IMommyDetail } from '../mommy-detail.interface';
 import { MommyDetailService } from '../mommy-detail.service';
 
@@ -36,8 +41,14 @@ export class BloodPressureController {
 
   @Get()
   @Role('mommy')
-  async getWeights(@GetUser() user: IUser): Promise<IApiItem> {
-    return apiItem('Blood Pressures', user.detail.bloodPressures);
+  async getBloodPressures(@GetUser() user: IUser): Promise<IMommyGraphics> {
+    const status = [
+      EMommyBloodPressureStatus.LOW,
+      EMommyBloodPressureStatus.NORMAL,
+      EMommyBloodPressureStatus.HYPERTENSION,
+    ];
+    const other = { status };
+    return mommyDetail('Blood Pressures', user.detail.bloodPressures, other);
   }
 
   @Post()

@@ -6,9 +6,13 @@ import {
   apiDeleted,
   apiItem,
   apiUpdated,
+  mommyDetail,
 } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import {
+  IApiItem,
+  IMommyGraphics,
+} from '@modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { IUser } from '@modules/user/user.interface';
 import {
@@ -26,6 +30,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateHemoglobinDto } from '../dto/hemoglobin.dto';
+import {
+  EMommyHemoglobinStatus,
+  EMommyHemoglobinTrimester,
+} from '../mommy-detail.enums';
 import { IMommyDetail, IMommyHemoglobin } from '../mommy-detail.interface';
 import { MommyDetailService } from '../mommy-detail.service';
 
@@ -36,8 +44,20 @@ export class HemoglobinController {
 
   @Get()
   @Role('mommy')
-  async getHemoglobins(@GetUser() user: IUser): Promise<IApiItem> {
-    return apiItem('Hemoglobin', user.detail.hemoglobins);
+  async getHemoglobins(@GetUser() user: IUser): Promise<IMommyGraphics> {
+    const status = [
+      EMommyHemoglobinStatus.LOW,
+      EMommyHemoglobinStatus.NORMAL,
+      EMommyHemoglobinStatus.MEDIUM,
+      EMommyHemoglobinStatus.HEAVY,
+    ];
+    const trimesters = [
+      EMommyHemoglobinTrimester.TRIMESTER_1,
+      EMommyHemoglobinTrimester.TRIMESTER_2,
+      EMommyHemoglobinTrimester.TRIMESTER_3,
+    ];
+    const other = { status, trimesters };
+    return mommyDetail('Hemoglobin', user.detail.hemoglobins, other);
   }
 
   @Post()

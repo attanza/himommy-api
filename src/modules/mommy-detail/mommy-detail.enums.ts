@@ -28,7 +28,7 @@ export enum EMommyHemoglobinTrimester {
   TRIMESTER_3 = 'Trimester 3',
 }
 
-export enum EMommyUrine {
+export enum EMommyUrineStatus {
   NEGATIVE = 'Negatif',
   POSITIVE_1 = 'Positif 1 (+1)',
   POSITIVE_2 = 'Positif 2 (+2)',

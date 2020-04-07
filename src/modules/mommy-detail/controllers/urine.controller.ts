@@ -6,9 +6,13 @@ import {
   apiDeleted,
   apiItem,
   apiUpdated,
+  mommyDetail,
 } from '@modules/helpers/responseParser';
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import {
+  IApiItem,
+  IMommyGraphics,
+} from '@modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
 import { IUser } from '@modules/user/user.interface';
 import {
@@ -26,6 +30,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUrineDto } from '../dto/urine.dto';
+import { EMommyUrineStatus } from '../mommy-detail.enums';
 import { IMommyDetail, IMommyUrine } from '../mommy-detail.interface';
 import { MommyDetailService } from '../mommy-detail.service';
 
@@ -36,8 +41,17 @@ export class UrineController {
 
   @Get()
   @Role('mommy')
-  async getWeights(@GetUser() user: IUser): Promise<IApiItem> {
-    return apiItem('Urine', user.detail.urines);
+  async getUrines(@GetUser() user: IUser): Promise<IMommyGraphics> {
+    const status = [
+      EMommyUrineStatus.NEGATIVE,
+      EMommyUrineStatus.POSITIVE_1,
+      EMommyUrineStatus.POSITIVE_2,
+      EMommyUrineStatus.POSITIVE_3,
+      EMommyUrineStatus.POSITIVE_4,
+    ];
+    const other = { status };
+
+    return mommyDetail('Urine', user.detail.urines, other);
   }
 
   @Post()

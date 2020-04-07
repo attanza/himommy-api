@@ -23,3 +23,7 @@ export interface Meta2 {
   status: number;
   message: string;
 }
+
+export interface IMommyGraphics extends IApiItem {
+  other: any;
+}
