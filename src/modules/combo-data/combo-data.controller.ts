@@ -14,10 +14,14 @@ export class ComboDataController {
   @Role(['super-administrator', 'administrator'])
   async index(@Query() query: IComboDataQuery): Promise<IApiItem> {
     const { resource } = query;
-    if (resource === 'role') {
-      const roles = await this.service.getRole();
-      return apiItem('Roles', roles);
+    switch (resource) {
+      case 'role':
+        return apiItem('Roles', await this.service.getRole());
+      case 'permission':
+        return apiItem('Permission', await this.service.getPermission());
+    
+      default:
+        return apiItem('Resource unknown', null);
     }
-    return apiItem('Resource unknown', null);
   }
 }

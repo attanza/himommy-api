@@ -34,7 +34,7 @@ export class UserController {
   @Get()
   @Permission('read-user')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['name', 'phone', 'email'];
+    const regexSearchable = ['firstName', 'phone', 'email'];
     const keyValueSearchable = ['role'];
     const { fieldKey, fieldValue } = query;
     let customOptions = {};
