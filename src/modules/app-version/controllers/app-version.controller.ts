@@ -32,7 +32,7 @@ export class AppVersionController {
   @Get()
   @Permission('read-app-version')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['platform'];
+    const regexSearchable = ['platform', 'version'];
     const keyValueSearchable = [];
     return this.dbService.getPaginated({
       modelName: this.modelName,
@@ -53,7 +53,7 @@ export class AppVersionController {
   @Post()
   @Permission('create-app-version')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateAppVersionDto,
+    @Body(new ValidationPipe()) createDto: CreateAppVersionDto
   ): Promise<IApiItem> {
     return await this.dbService.store({ modelName: this.modelName, createDto });
   }
@@ -63,7 +63,7 @@ export class AppVersionController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateAppVersionDto,
+    @Body() updateDto: UpdateAppVersionDto
   ): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.update({

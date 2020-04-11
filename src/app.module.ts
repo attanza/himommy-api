@@ -4,6 +4,7 @@ import { AuthModule } from '@modules/auth/auth.module';
 import { BabyModule } from '@modules/baby/baby.module';
 import { CheckListModule } from '@modules/check-list/check-list.module';
 import { ComboDataModule } from '@modules/combo-data/combo-data.module';
+import { FrontEndUtilModule } from '@modules/front-end-util/front-end-util.module';
 import { GeoReverseModule } from '@modules/geo-reverse/geo-reverse.module';
 import { ImmunizationModule } from '@modules/immunization/immunization.module';
 import { MythFactModule } from '@modules/myth-fact/myth-fact.module';
@@ -55,6 +56,7 @@ const MONGO_DB_OPTIONS = {
     PregnancyAgesModule,
     BabyModule,
     ImmunizationModule,
+    FrontEndUtilModule,
   ],
   controllers: [AppController],
   providers: [AppService],
