@@ -1,23 +1,25 @@
 import { EArticleCategory } from '@modules/article/article.interface';
+import { ECheckListCategory } from '@modules/check-list/check-list.interface';
+import { Redis } from '@modules/helpers/redis';
 import { apiItem } from '@modules/helpers/responseParser';
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { EPlatform } from '../app-version/app-version.interface';
-@Controller('front-end-utils')
+@Controller('/admin/front-end-utils')
 export class FrontEndUtilController {
   @Get('enums')
   async getEnums() {
-    const platforms: EPlatform[] = [
-      EPlatform.ANDROID_MOMMY,
-      EPlatform.ANDROID_TOCOLOGIST,
-      EPlatform.DASHBOARD,
-      EPlatform.IOS_MOMMY,
-      EPlatform.IOS_TOCOLOGIST,
-    ];
-    const articleCategories: EArticleCategory[] = [
-      EArticleCategory.ARTICLES,
-      EArticleCategory.MYTHS,
-      EArticleCategory.TIPS,
-    ];
-    return apiItem('Enum List', { platforms, articleCategories });
+    const redisKey = 'FrontEndUtils_ENUMS';
+    const cache = await Redis.get(redisKey);
+    if (cache != null) {
+      Logger.log('Enum from cache');
+      return apiItem('Enum List', JSON.parse(cache));
+    }
+    const enums = {
+      platforms: Object.values(EPlatform),
+      articleCategories: Object.values(EArticleCategory),
+      checkListCategories: Object.values(ECheckListCategory),
+    };
+    await Redis.set(redisKey, JSON.stringify(enums));
+    return apiItem('Enum List', enums);
   }
 }
