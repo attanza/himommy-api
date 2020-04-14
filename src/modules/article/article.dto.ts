@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Max,
   MaxLength,
 } from 'class-validator';
 import { EArticleCategory } from './article.interface';
@@ -27,15 +26,10 @@ export class CreateArticleDto {
 
   @IsNotEmpty()
   @IsInt()
-  @Max(40)
   age: number;
 
   @IsNotEmpty()
-  @IsIn([
-    EArticleCategory.ARTICLES,
-    EArticleCategory.MYTHS,
-    EArticleCategory.TIPS,
-  ])
+  @IsIn(Object.values(EArticleCategory))
   category: string;
 }
 
@@ -56,15 +50,10 @@ export class UpdateArticleDto {
 
   @IsOptional()
   @IsInt()
-  @Max(40)
   age: number;
 
   @IsOptional()
-  @IsIn([
-    EArticleCategory.ARTICLES,
-    EArticleCategory.MYTHS,
-    EArticleCategory.TIPS,
-  ])
+  @IsIn(Object.values(EArticleCategory))
   category: string;
 
   @IsOptional()

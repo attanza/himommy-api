@@ -17,6 +17,5 @@ export interface IArticle extends Document {
 
 export enum EArticleCategory {
   ARTICLES = 'ARTICLES',
-  MYTHS = 'MYTHS',
   TIPS = 'TIPS',
 }
