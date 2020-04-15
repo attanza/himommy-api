@@ -42,7 +42,7 @@ export class PregnancyAgesController {
   @Get()
   @Permission('read-pregnancy-age')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['week, title'];
+    const regexSearchable = ['title'];
     const keyValueSearchable = ['isPublish', 'week'];
     return this.dbService.getPaginated({
       modelName: this.modelName,
