@@ -36,7 +36,7 @@ export class ImmunizationController {
   @Get()
   @Permission('read-immunization')
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
-    const regexSearchable = ['name', 'age'];
+    const regexSearchable = ['name'];
     const keyValueSearchable = ['age'];
     return this.dbService.getPaginated({
       modelName: this.modelName,
