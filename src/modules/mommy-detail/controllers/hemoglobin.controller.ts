@@ -57,7 +57,9 @@ export class HemoglobinController {
       EMommyHemoglobinTrimester.TRIMESTER_3,
     ];
     const other = { status, trimesters };
-    return mommyDetail('Hemoglobin', user.detail.hemoglobins, other);
+    const hemoglobins =
+      user.detail && user.detail.hemoglobins ? user.detail.hemoglobins : null;
+    return mommyDetail('Hemoglobin', hemoglobins, other);
   }
 
   @Post()
@@ -97,14 +99,17 @@ export class HemoglobinController {
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
+    const hemoglobins =
+      user.detail && user.detail.hemoglobins ? user.detail.hemoglobins : null;
+    if (!hemoglobins) {
+      throw new BadRequestException('Hemoglobin not found');
+    }
     const { id } = param;
-    const index = user.detail.hemoglobins.findIndex(
-      w => w._id.toString() === id
-    );
+    const index = hemoglobins.findIndex(w => w._id.toString() === id);
     if (index === -1) {
       throw new BadRequestException('Hemoglobin not found');
     }
-    return apiItem('Hemoglobin', user.detail.hemoglobins[index]);
+    return apiItem('Hemoglobin', hemoglobins[index]);
   }
 
   @Put(':id')

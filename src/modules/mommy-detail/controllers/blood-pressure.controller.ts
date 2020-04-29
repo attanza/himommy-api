@@ -48,7 +48,11 @@ export class BloodPressureController {
       EMommyBloodPressureStatus.HYPERTENSION,
     ];
     const other = { status };
-    return mommyDetail('Blood Pressures', user.detail.bloodPressures, other);
+    const bloodPressures =
+      user.detail && user.detail.bloodPressures
+        ? user.detail.bloodPressures
+        : null;
+    return mommyDetail('Blood Pressures', bloodPressures, other);
   }
 
   @Post()
@@ -93,14 +97,19 @@ export class BloodPressureController {
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
+    const bloodPressures =
+      user.detail && user.detail.bloodPressures
+        ? user.detail.bloodPressures
+        : null;
+    if (!bloodPressures) {
+      throw new BadRequestException('Blood Pressure not found');
+    }
     const { id } = param;
-    const index = user.detail.bloodPressures.findIndex(
-      w => w._id.toString() === id
-    );
+    const index = bloodPressures.findIndex(w => w._id.toString() === id);
     if (index === -1) {
       throw new BadRequestException('Blood pressure reading not found');
     }
-    return apiItem('Blood Pressure', user.detail.bloodPressures[index]);
+    return apiItem('Blood Pressure', bloodPressures[index]);
   }
 
   @Put(':id')

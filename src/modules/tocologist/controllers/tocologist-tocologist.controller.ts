@@ -6,6 +6,7 @@ import tocologistImageInterceptor from '@modules/helpers/tocologistImageIntercep
 import { GetUser } from '@modules/shared/decorators/get-user.decorator';
 import { IUser } from '@modules/user/user.interface';
 import {
+  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
@@ -98,6 +99,11 @@ export class TocologistTocologistController {
     @Param() param: MongoIdPipe,
     @UploadedFile() image
   ) {
+    if (!image) {
+      throw new BadRequestException(
+        'image should be in type of jpg, jpeg, png and size cannot bigger than 5MB'
+      );
+    }
     const { id } = param;
 
     if (!user.tocologist || user.tocologist._id.toString() !== id) {

@@ -37,7 +37,9 @@ export class WeightController {
   @Get()
   @Role('mommy')
   async getWeights(@GetUser() user: IUser): Promise<IApiItem> {
-    return apiItem('Weight', user.detail.weights);
+    const weights =
+      user.detail && user.detail.weights ? user.detail.weights : null;
+    return apiItem('Weight', weights);
   }
 
   @Post()
@@ -84,12 +86,18 @@ export class WeightController {
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
+    const weights =
+      user.detail && user.detail.weights ? user.detail.weights : null;
+    if (!weights) {
+      throw new BadRequestException('Weight not found');
+    }
     const { id } = param;
-    const index = user.detail.weights.findIndex(w => w._id.toString() === id);
+    const index = weights.findIndex(w => w._id.toString() === id);
+    console.log('index', index);
     if (index === -1) {
       throw new BadRequestException('Weight not found');
     }
-    return apiItem('Weight', user.detail.weights[index]);
+    return apiItem('Weight', weights[index]);
   }
 
   @Put(':id')

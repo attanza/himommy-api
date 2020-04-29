@@ -50,8 +50,9 @@ export class UrineController {
       EMommyUrineStatus.POSITIVE_4,
     ];
     const other = { status };
-
-    return mommyDetail('Urine', user.detail.urines, other);
+    const urines =
+      user.detail && user.detail.urines ? user.detail.urines : null;
+    return mommyDetail('Urine', urines, other);
   }
 
   @Post()
@@ -86,12 +87,17 @@ export class UrineController {
     @GetUser() user: IUser,
     @Param() param: MongoIdPipe
   ): Promise<IApiItem> {
+    const urines =
+      user.detail && user.detail.urines ? user.detail.urines : null;
+    if (!urines) {
+      throw new BadRequestException('Urine not found');
+    }
     const { id } = param;
-    const index = user.detail.urines.findIndex(w => w._id.toString() === id);
+    const index = urines.findIndex(w => w._id.toString() === id);
     if (index === -1) {
       throw new BadRequestException('Urine not found');
     }
-    return apiItem('Urine', user.detail.urines[index]);
+    return apiItem('Urine', urines[index]);
   }
 
   @Put(':id')
