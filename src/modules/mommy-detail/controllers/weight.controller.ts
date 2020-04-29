@@ -38,7 +38,7 @@ export class WeightController {
   @Role('mommy')
   async getWeights(@GetUser() user: IUser): Promise<IApiItem> {
     const weights =
-      user.detail && user.detail.weights ? user.detail.weights : null;
+      user.detail && user.detail.weights ? user.detail.weights : [];
     return apiItem('Weight', weights);
   }
 

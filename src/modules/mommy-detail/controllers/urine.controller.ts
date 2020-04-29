@@ -50,8 +50,7 @@ export class UrineController {
       EMommyUrineStatus.POSITIVE_4,
     ];
     const other = { status };
-    const urines =
-      user.detail && user.detail.urines ? user.detail.urines : null;
+    const urines = user.detail && user.detail.urines ? user.detail.urines : [];
     return mommyDetail('Urine', urines, other);
   }
 

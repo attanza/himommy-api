@@ -51,7 +51,7 @@ export class BloodPressureController {
     const bloodPressures =
       user.detail && user.detail.bloodPressures
         ? user.detail.bloodPressures
-        : null;
+        : [];
     return mommyDetail('Blood Pressures', bloodPressures, other);
   }
 

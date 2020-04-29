@@ -58,7 +58,7 @@ export class HemoglobinController {
     ];
     const other = { status, trimesters };
     const hemoglobins =
-      user.detail && user.detail.hemoglobins ? user.detail.hemoglobins : null;
+      user.detail && user.detail.hemoglobins ? user.detail.hemoglobins : [];
     return mommyDetail('Hemoglobin', hemoglobins, other);
   }
 
