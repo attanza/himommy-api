@@ -4,7 +4,7 @@ class RedisInstance {
   redis;
   defaultExpiry = 60 * 60 * 4; // 4 hours
   constructor() {
-    this.redis = new ioredis(process.env.REDIS_URL, {
+    this.redis = new ioredis(6379, process.env.REDIS_URL, {
       keyPrefix: process.env.REDIS_PREFIX,
     });
   }
@@ -12,7 +12,7 @@ class RedisInstance {
   async set(
     key: string,
     value: string,
-    exp: number = this.defaultExpiry,
+    exp: number = this.defaultExpiry
   ): Promise<void> {
     await this.redis.set(key, value, 'EX', exp);
   }
