@@ -85,11 +85,12 @@ export class SeederService {
     ];
 
     for (const role of roles) {
-      const newRole = await this.roleModel.create({
+      const createRoleData = {
         name: role,
         slug: paramCase(role),
-      });
-      await this.userModel.create({
+      };
+      const newRole = await this.roleModel.create(createRoleData);
+      const createUserData = {
         firstName: role,
         email: `${snakeCase(role)}@himommy.org`,
         password: 'password',
@@ -97,7 +98,8 @@ export class SeederService {
         role: newRole._id,
         isActive: true,
         authProvider: 'local',
-      });
+      };
+      await this.userModel.create(createUserData);
     }
 
     Logger.log('Seeding Role and Users Finish');
