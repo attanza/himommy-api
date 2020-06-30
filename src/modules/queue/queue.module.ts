@@ -5,7 +5,7 @@ import { QueueService } from './queue.service';
 import { ResizeImageProcessor } from './resize-image.processor';
 
 const REDIS_CONN = {
-  host: 'localhost',
+  host: process.env.REDIS_URL,
   port: 6379,
 };
 
