@@ -85,12 +85,12 @@ export class SeederService {
     ];
 
     for (const role of roles) {
-      const createRoleData = {
+      const createRoleData: Partial<IRole> = {
         name: role,
         slug: paramCase(role),
       };
       const newRole = await this.roleModel.create(createRoleData);
-      const createUserData = {
+      const createUserData: Partial<IUser> = {
         firstName: role,
         email: `${snakeCase(role)}@himommy.org`,
         password: 'password',
