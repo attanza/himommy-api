@@ -93,7 +93,6 @@ export class WeightController {
     }
     const { id } = param;
     const index = weights.findIndex(w => w._id.toString() === id);
-    console.log('index', index);
     if (index === -1) {
       throw new BadRequestException('Weight not found');
     }
