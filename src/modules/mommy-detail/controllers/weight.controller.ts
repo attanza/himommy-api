@@ -50,8 +50,8 @@ export class WeightController {
     @Body() createData: CreateWeightDto
   ): Promise<IApiItem> {
     // check if height is exists
-    if (!user.detail.height) {
-      throw new BadRequestException('Please set your height');
+    if (!user.detail || !user.detail.height || !user.detail.height) {
+      throw new BadRequestException('Please set your weight');
     }
 
     const { bmi, status } = this.dbService.getBmiAndStatus(

@@ -89,6 +89,7 @@ export class SeederService {
         name: role,
         slug: paramCase(role),
       };
+      // @ts-ignore
       const newRole = await this.roleModel.create(createRoleData);
       const createUserData: Partial<IUser> = {
         firstName: role,
@@ -99,6 +100,7 @@ export class SeederService {
         isActive: true,
         authProvider: 'local',
       };
+      // @ts-ignore
       await this.userModel.create(createUserData);
     }
 

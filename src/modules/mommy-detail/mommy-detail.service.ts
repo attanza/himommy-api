@@ -22,6 +22,7 @@ export class MommyDetailService extends DbService {
     let data;
     data = await this.model.findOne({ user });
     if (!data) {
+      // @ts-ignore
       data = await this.model.create(updateDto);
     } else {
       Object.keys(updateDto).map(key => (data[key] = updateDto[key]));
