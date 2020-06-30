@@ -25,6 +25,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+const DB_URL = process.env.DB_URL;
 const DB_NAME = process.env.DB_NAME;
 const MONGO_DB_OPTIONS = {
   useNewUrlParser: true,
@@ -33,7 +34,7 @@ const MONGO_DB_OPTIONS = {
 };
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://localhost/${DB_NAME}`, MONGO_DB_OPTIONS),
+    MongooseModule.forRoot(`${DB_URL}/${DB_NAME}`, MONGO_DB_OPTIONS),
     QueueModule,
     SeederModule,
     ComboDataModule,
