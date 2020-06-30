@@ -1,16 +1,13 @@
 import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
 import { apiItem } from '@modules/helpers/responseParser';
 import {
   Controller,
   Get,
   Param,
   Query,
-  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
   IApiCollection,
   IApiItem,
@@ -21,7 +18,7 @@ import { ITocologist } from '../tocologist.interface';
 import { TocologistService } from '../tocologist.service';
 
 @Controller('mobile/tocologists')
-@UseGuards(AuthGuard('jwt'), RoleGuard)
+// @UseGuards(AuthGuard('jwt'), RoleGuard)
 export class MobileTocologistController {
   modelName = 'Tocologist';
   uniques = ['name', 'email', 'phone'];
