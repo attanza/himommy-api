@@ -36,3 +36,27 @@ export const MONGO_DB_OPTIONS = {
   useUnifiedTopology: true,
   useCreateIndex: true,
 };
+
+export const validationFaildExpects = (expect, body, field) => {
+  expect(body.meta).toBeDefined();
+  expect(body.meta.status).toEqual(400);
+  expect(body.meta.message).toBeDefined();
+  expect(Array.isArray(body.meta.message)).toBeTruthy();
+  expect(body.meta.message[0].property).toEqual(field);
+};
+export const unauthorizedExpects = (expect, body) => {
+  expect(body.meta).toBeDefined();
+  expect(body.meta.status).toEqual(401);
+  expect(body.meta.message).toEqual('Unauthorized');
+};
+
+export const resourceListExpects = (expect, body) => {
+  expect(body.meta).toBeDefined();
+  expect(body.meta.status).toEqual(200);
+  expect(body.meta.message).toBeDefined();
+  expect(body.meta.total).toBeDefined();
+  expect(body.meta.limit).toBeDefined();
+  expect(body.meta.page).toBeDefined();
+  expect(body.meta.totalPages).toBeDefined();
+  expect(body.data).toBeDefined();
+};
