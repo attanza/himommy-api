@@ -489,6 +489,7 @@ export class SeederService {
       data.push({
         name: im,
         age: this.faker.integer({ min: 0, max: 24 }),
+        description: this.faker.paragraph(),
       })
     );
 

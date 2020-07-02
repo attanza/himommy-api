@@ -128,6 +128,37 @@ describe(`${title} Detail`, () => {
   });
 });
 
+describe(`${title} Update`, () => {
+  it('cannot update if not authenticated', async () => {
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+    const updateData = {};
+    return request(url)
+      .put(`/app-versions/${appVersion._id}`)
+      .expect(401)
+      .expect(({ body }) => {
+        unauthorizedExpects(expect, body);
+      });
+  });
+  // it('can get detail', async () => {
+  //   const appVersion = await AppVersion.findOne({
+  //     version: createData.version,
+  //   });
+  //   return request(url)
+  //     .get(`/app-versions/${appVersion._id}`)
+  //     .set({ Authorization: `Bearer ${token}` })
+  //     .expect(200)
+  //     .expect(({ body }) => {
+  //       expect(body.meta).toBeDefined();
+  //       expect(body.meta.status).toEqual(200);
+  //       expect(body.data).toBeDefined();
+  //       expect(body.data.platform).toEqual(appVersion.toJSON().platform);
+  //       expect(body.data.version).toEqual(appVersion.toJSON().version);
+  //     });
+  // });
+});
+
 // it('title', () => {
 //   return request(url)
 //     .post('/ ')
