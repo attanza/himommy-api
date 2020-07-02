@@ -12,13 +12,13 @@ import { EArticleCategory } from './article.interface';
 export class CreateArticleDto {
   @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
+  @MaxLength(200)
   title: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(100)
-  subtile: string;
+  @MaxLength(200)
+  subtitle: string;
 
   @IsNotEmpty()
   @IsString()
@@ -36,13 +36,13 @@ export class CreateArticleDto {
 export class UpdateArticleDto {
   @IsOptional()
   @IsString()
-  @MaxLength(100)
+  @MaxLength(200)
   title: string;
 
   @IsOptional()
   @IsString()
-  @MaxLength(100)
-  subtile: string;
+  @MaxLength(200)
+  subtitle: string;
 
   @IsOptional()
   @IsString()

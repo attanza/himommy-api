@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 export interface IArticle extends Document {
   title: string;
   slug: string;
-  subtile: string;
+  subtitle: string;
   content: string;
   age: number;
   image: string;

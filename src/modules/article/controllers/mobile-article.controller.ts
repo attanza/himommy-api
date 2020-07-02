@@ -1,4 +1,3 @@
-import { apiItem } from '@/modules/helpers/responseParser';
 import {
   IApiCollection,
   IApiItem,
@@ -40,7 +39,6 @@ export class MobileArticleController {
   @UsePipes(ValidationPipe)
   async show(@Param() param: MongoIdPipe): Promise<IApiItem> {
     const { id } = param;
-    const data = await this.dbService.show({ modelName: this.modelName, id });
-    return apiItem(this.modelName, data);
+    return this.dbService.show({ modelName: this.modelName, id });
   }
 }

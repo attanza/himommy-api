@@ -7,7 +7,7 @@ export const ArticleSchema = new mongoose.Schema(
   {
     title: String,
     slug: String,
-    subtile: String,
+    subtitle: String,
     content: String,
     age: Number,
     image: String,
