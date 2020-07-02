@@ -37,13 +37,21 @@ export const MONGO_DB_OPTIONS = {
   useCreateIndex: true,
 };
 
-export const validationFaildExpects = (expect, body, field) => {
+export const validationFailExpects = (expect, body, field) => {
   expect(body.meta).toBeDefined();
   expect(body.meta.status).toEqual(400);
   expect(body.meta.message).toBeDefined();
   expect(Array.isArray(body.meta.message)).toBeTruthy();
   expect(body.meta.message[0].property).toEqual(field);
 };
+
+export const forbiddenExpects = (expect, body) => {
+  expect(body.meta).toBeDefined();
+  expect(body.meta.status).toEqual(403);
+  expect(body.meta.message).toBeDefined();
+  expect(body.meta.message).toEqual('Forbidden resource');
+};
+
 export const unauthorizedExpects = (expect, body) => {
   expect(body.meta).toBeDefined();
   expect(body.meta.status).toEqual(401);

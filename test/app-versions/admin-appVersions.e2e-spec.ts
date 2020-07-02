@@ -1,15 +1,20 @@
-import { CreateAppVersionDto } from '@/modules/app-version/app-version.dto';
+import {
+  CreateAppVersionDto,
+  UpdateAppVersionDto,
+} from '@/modules/app-version/app-version.dto';
 import { EPlatform } from '@/modules/app-version/app-version.interface';
 import { AppVersionSchema } from '@/modules/app-version/app-version.schema';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {
+  forbiddenExpects,
   MONGO_DB_OPTIONS,
   resourceListExpects,
   superAdminLogin,
+  tocologistLogin,
   unauthorizedExpects,
-  validationFaildExpects,
+  validationFailExpects,
 } from '../helpers';
 
 const title = 'Admin App Versions';
@@ -46,6 +51,17 @@ describe(`${title} List`, () => {
         unauthorizedExpects(expect, body);
       });
   });
+  it('cannot get list if forbidden', async () => {
+    const tokenData = await tocologistLogin();
+    return request(url)
+      .get('/app-versions')
+      .set('Content-Type', 'application/json')
+      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .expect(403)
+      .expect(({ body }) => {
+        forbiddenExpects(expect, body);
+      });
+  });
   it('can get list', async () => {
     return request(url)
       .get('/app-versions')
@@ -68,6 +84,17 @@ describe(`${title} Create`, () => {
         unauthorizedExpects(expect, body);
       });
   });
+  it('cannot create if forbidden', async () => {
+    const tokenData = await tocologistLogin();
+    return request(url)
+      .post('/app-versions')
+      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .send(createData)
+      .expect(403)
+      .expect(({ body }) => {
+        forbiddenExpects(expect, body);
+      });
+  });
   it('cannot create if incomplete data', () => {
     const postData = { ...createData };
     delete postData.platform;
@@ -77,7 +104,7 @@ describe(`${title} Create`, () => {
       .send(postData)
       .expect(400)
       .expect(({ body }) => {
-        validationFaildExpects(expect, body, 'platform');
+        validationFailExpects(expect, body, 'platform');
       });
   });
   it('can create', () => {
@@ -110,6 +137,20 @@ describe(`${title} Detail`, () => {
         unauthorizedExpects(expect, body);
       });
   });
+  it('cannot get detail if forbidden', async () => {
+    const tokenData = await tocologistLogin();
+
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+    return request(url)
+      .get(`/app-versions/${appVersion._id}`)
+      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .expect(403)
+      .expect(({ body }) => {
+        forbiddenExpects(expect, body);
+      });
+  });
   it('can get detail', async () => {
     const appVersion = await AppVersion.findOne({
       version: createData.version,
@@ -133,30 +174,102 @@ describe(`${title} Update`, () => {
     const appVersion = await AppVersion.findOne({
       version: createData.version,
     });
-    const updateData = {};
+    const updateData: UpdateAppVersionDto = {
+      platform: EPlatform.IOS_MOMMY,
+      version: '3.0.0',
+    };
     return request(url)
       .put(`/app-versions/${appVersion._id}`)
+      .send(updateData)
       .expect(401)
       .expect(({ body }) => {
         unauthorizedExpects(expect, body);
       });
   });
-  // it('can get detail', async () => {
-  //   const appVersion = await AppVersion.findOne({
-  //     version: createData.version,
-  //   });
-  //   return request(url)
-  //     .get(`/app-versions/${appVersion._id}`)
-  //     .set({ Authorization: `Bearer ${token}` })
-  //     .expect(200)
-  //     .expect(({ body }) => {
-  //       expect(body.meta).toBeDefined();
-  //       expect(body.meta.status).toEqual(200);
-  //       expect(body.data).toBeDefined();
-  //       expect(body.data.platform).toEqual(appVersion.toJSON().platform);
-  //       expect(body.data.version).toEqual(appVersion.toJSON().version);
-  //     });
-  // });
+  it('cannot update if forbidden', async () => {
+    const tokenData = await tocologistLogin();
+
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+    const updateData: UpdateAppVersionDto = {
+      platform: EPlatform.IOS_MOMMY,
+      version: '3.0.0',
+    };
+    return request(url)
+      .put(`/app-versions/${appVersion._id}`)
+      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .send(updateData)
+      .expect(403)
+      .expect(({ body }) => {
+        forbiddenExpects(expect, body);
+      });
+  });
+  it('can update', async () => {
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+    const updateData: UpdateAppVersionDto = {
+      platform: EPlatform.IOS_MOMMY,
+      version: '3.0.0',
+    };
+    return request(url)
+      .put(`/app-versions/${appVersion._id}`)
+      .set({ Authorization: `Bearer ${token}` })
+      .send(updateData)
+      .expect(200)
+      .expect(async ({ body }) => {
+        expect(body.meta).toBeDefined();
+        expect(body.meta.status).toEqual(200);
+        expect(body.data.platform).toEqual(updateData.platform);
+        expect(body.data.version).toEqual(updateData.version);
+      });
+  });
+});
+
+describe(`${title} Delete`, () => {
+  it('cannot delete if not authenticated', async () => {
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+
+    return request(url)
+      .delete(`/app-versions/${appVersion._id}`)
+      .expect(401)
+      .expect(({ body }) => {
+        unauthorizedExpects(expect, body);
+      });
+  });
+  it('cannot delete if forbidden', async () => {
+    const tokenData = await tocologistLogin();
+
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+
+    return request(url)
+      .delete(`/app-versions/${appVersion._id}`)
+      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .expect(403)
+      .expect(({ body }) => {
+        forbiddenExpects(expect, body);
+      });
+  });
+  it('can delete', async () => {
+    const appVersion = await AppVersion.findOne({
+      version: createData.version,
+    });
+
+    return request(url)
+      .delete(`/app-versions/${appVersion._id}`)
+      .set({ Authorization: `Bearer ${token}` })
+      .expect(200)
+      .expect(async ({ body }) => {
+        expect(body.meta).toBeDefined();
+        expect(body.meta.status).toEqual(200);
+        expect(body.meta.message).toEqual('AppVersion deleted');
+      });
+  });
 });
 
 // it('title', () => {
