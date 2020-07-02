@@ -1,30 +1,30 @@
-import { EProvider, LoginDto } from '@/modules/auth/auth.interface';
-import { HttpStatus } from '@nestjs/common';
 import 'dotenv/config';
-import 'module-alias/register';
+import mongoose from 'mongoose';
 import request from 'supertest';
-import { superAdminLogin } from '../helpers';
+import { faker, MONGO_DB_OPTIONS, tocologistLogin } from '../helpers';
 
-const app = 'http://localhost:2500';
-const credentials: LoginDto = {
-  uid: 'super_administrator@himommy.org',
-  password: 'password',
-  provider: EProvider.LOCAL,
-};
+const url = 'http://localhost:2500/tocologist';
 
-let token: string;
+beforeAll(async () => {
+  const MONGOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
+  await mongoose.connect(MONGOSE_URI, MONGO_DB_OPTIONS);
+});
 
-describe('Auth Admin', () => {
-  it('cannot login with wrong credentials', () => {
-    const credential2 = {
-      uid: 'super_administrator@himommy.org',
-      password: 'passwor',
+afterAll(async done => {
+  await mongoose.disconnect(done);
+});
+
+describe('Tocologist Login', () => {
+  it('cannot login with wrong credential', () => {
+    const credential = {
+      uid: faker.email(),
+      password: 'password',
       provider: 'local',
     };
-    return request(app)
-      .post('/admin/login')
-      .send(credential2)
-      .expect(HttpStatus.UNAUTHORIZED)
+    return request(url)
+      .post('/login')
+      .send(credential)
+      .expect(401)
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(401);
@@ -32,11 +32,16 @@ describe('Auth Admin', () => {
       });
   });
 
-  it('admin login', () => {
-    return request(app)
-      .post('/admin/login')
-      .send(credentials)
-      .expect(HttpStatus.OK)
+  it('can login', () => {
+    const credential = {
+      uid: 'tocologist@himommy.org',
+      password: 'password',
+      provider: 'local',
+    };
+    return request(url)
+      .post('/login')
+      .send(credential)
+      .expect(200)
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.data).toBeDefined();
@@ -44,10 +49,12 @@ describe('Auth Admin', () => {
         expect(body.data.refreshToken).toBeDefined();
       });
   });
+});
 
+describe('Tocologist Refresh Token', () => {
   it('cannot refresh token if no refresh token', () => {
-    return request(app)
-      .post('/admin/refreshToken')
+    return request(url)
+      .post('/refreshToken')
       .expect(400)
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
@@ -59,9 +66,10 @@ describe('Auth Admin', () => {
   });
 
   it('refresh token', async () => {
-    const tokenData = await superAdminLogin();
-    return request(app)
-      .post('/admin/refreshToken')
+    const tokenData = await tocologistLogin();
+
+    return request(url)
+      .post('/refreshToken')
       .send({ refreshToken: tokenData.refreshToken })
       .expect(200)
       .expect(({ body }) => {
@@ -70,15 +78,14 @@ describe('Auth Admin', () => {
         expect(body.data).toBeDefined();
         expect(body.data.token).toBeDefined();
         expect(body.data.refreshToken).toBeDefined();
-        token = body.data.token;
       });
   });
 });
 
-describe('Admin Me', () => {
+describe('Tocologist Me', () => {
   it('cannot get me if not authenticated', () => {
-    return request(app)
-      .get('/admin/me')
+    return request(url)
+      .get('/me')
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(401);
@@ -86,16 +93,29 @@ describe('Admin Me', () => {
       });
   });
 
-  it('get me', () => {
-    return request(app)
-      .get('/admin/me')
+  it('get me', async () => {
+    const tokenData = await tocologistLogin();
+
+    return request(url)
+      .get('/me')
       .set('Content-Type', 'application/json')
-      .set({ Authorization: `Bearer ${token}` })
+      .set({ Authorization: `Bearer ${tokenData.token}` })
       .expect(200)
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(200);
         expect(body.data).toBeDefined();
+        expect(body.data.role).toBeDefined();
+        expect(body.data.role.slug).toEqual('tocologist');
+        expect(body.data.tocologist).toBeDefined();
       });
   });
 });
+
+// it('title', () => {
+//   return request(url)
+//     .post('/ ')
+//     .expect(({ body }) => {
+//         console.log('body', JSON.stringify(body, null, 2));
+//     });
+// });

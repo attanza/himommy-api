@@ -35,10 +35,9 @@ export class AuthController {
   @UsePipes(ValidationPipe)
   async refreshToken(
     @Res() res,
-    @GetUser() user: IUser,
     @Body() refreshTokenDto: RefreshTokenDto
   ): Promise<LoginOutput> {
-    const data = await this.authService.refreshToken(user, refreshTokenDto);
+    const data = await this.authService.refreshToken(refreshTokenDto);
     return res.status(200).send(data);
   }
 

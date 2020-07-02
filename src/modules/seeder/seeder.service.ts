@@ -187,6 +187,7 @@ export class SeederService {
     mainServices.map(s => tocologistServices.push({ name: s }));
 
     await this.tocologistServiceModel.insertMany(tocologistServices);
+
     Logger.log('Seeding Tocologist Service Finish');
   }
 
@@ -216,7 +217,7 @@ export class SeederService {
     };
 
     const tocologistData = [];
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 5; i++) {
       const services = generateService();
       tocologistData.push({
         name: this.faker.company(),
@@ -253,14 +254,17 @@ export class SeederService {
   }
 
   async seedTocologistUser() {
+    Logger.log('Seeding Tocologist User');
+
     Redis.flushall();
 
     const tocologist = await this.tocologistModel.findOne();
-    const user: IUser = await this.userModel
-      .findOne({ email: 'tocologist@himommy.org' })
-      .lean();
-    tocologist.user = user;
+    const user: IUser = await this.userModel.findOne({
+      email: 'tocologist@himommy.org',
+    });
+    tocologist.user.push(user);
     await tocologist.save();
+    Logger.log('Seeding Tocologist User Finished');
   }
 
   /**

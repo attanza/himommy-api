@@ -4,7 +4,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import compression from 'compression';
 import 'dotenv/config';
 import exphbs from 'express-handlebars';
-import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import 'module-alias/register';
 import { join } from 'path';
@@ -21,12 +20,12 @@ async function bootstrap() {
   // app.use(csurf());
   app.use(compression());
   app.enableCors();
-  app.use(
-    rateLimit({
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
-    })
-  );
+  // app.use(
+  //   rateLimit({
+  //     windowMs: 15 * 60 * 1000, // 15 minutes
+  //     max: 100, // limit each IP to 100 requests per windowMs
+  //   })
+  // );
   app.useGlobalFilters(new AllExceptionsFilter());
 
   app.useStaticAssets(join(__dirname, '..', 'public'));

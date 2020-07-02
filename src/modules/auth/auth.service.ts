@@ -15,7 +15,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { v4 } from 'uuid';
-import mail from '../helpers/mail';
 import { Redis } from '../helpers/redis';
 import { IUser } from '../user/user.interface';
 import { RegisterDto } from './auth.dto';
@@ -52,7 +51,7 @@ export class AuthService {
     await this.userService.isUnique('phone', phone);
     const userData = { ...registerDto, role: roleData._id };
     const user = await this.userService.dbStore('User', userData);
-
+    await this.userService.createDetail(user._id);
     // Generate confirmation link
     const confirmationToken = v4();
 
@@ -60,9 +59,9 @@ export class AuthService {
     // send verification mail
     const confirmationLink = `${process.env.APP_URL}/mobile/confirm/${confirmationToken}`;
 
-    mail.sendMail(user.email, 'Account Activation', 'confirmEmail', {
-      confirmationLink,
-    });
+    // mail.sendMail(user.email, 'Account Activation', 'confirmEmail', {
+    //   confirmationLink,
+    // });
     return confirmationToken;
   }
 
@@ -138,10 +137,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(
-    user: IUser,
-    refreshTokenDto: RefreshTokenDto
-  ): Promise<LoginOutput> {
+  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<LoginOutput> {
     const { refreshToken } = refreshTokenDto;
     const { uid, tokenCount } = await this.jwtService.verify<JwtPayload>(
       refreshToken

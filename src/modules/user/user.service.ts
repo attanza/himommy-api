@@ -10,12 +10,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcrypt';
 import { Validator } from 'class-validator';
 import { Model } from 'mongoose';
+import { MommyDetailService } from '../mommy-detail/mommy-detail.service';
 import { IUser } from './user.interface';
 @Injectable()
 export class UserService extends DbService {
   constructor(
     @InjectModel('User') private model: Model<IUser>,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private detailService: MommyDetailService
   ) {
     super(model);
   }
@@ -89,5 +91,9 @@ export class UserService extends DbService {
     } else {
       return this.roleService.getByKey('slug', idOrSlug);
     }
+  }
+
+  async createDetail(userId: string): Promise<void> {
+    await this.detailService.dbStore('MommyDetail', { user: userId });
   }
 }

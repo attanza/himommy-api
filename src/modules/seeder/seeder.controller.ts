@@ -8,7 +8,7 @@ export class SeederController {
   @Get()
   async seed(@Res() res) {
     this.checkEnv();
-    Promise.all([
+    await Promise.all([
       this.seederService.seedUserRolePermission(),
       this.seederService.seedAppVersion(),
       this.seederService.seedTocologistService(),
@@ -21,6 +21,7 @@ export class SeederController {
       this.seederService.seedPregnancyAges(),
       this.seederService.seedImmunization(),
     ]);
+    await this.seederService.seedTocologistUser();
     res.status(200).send({ message: 'Seed Succeed' });
   }
 

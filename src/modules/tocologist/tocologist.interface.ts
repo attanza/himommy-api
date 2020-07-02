@@ -13,7 +13,7 @@ export interface ITocologist extends Document {
   holiday: IHoliday[];
   services: ITServices[];
   ratting: number;
-  user: IUser;
+  user: IUser[];
   createdAt: Date;
   updatedAt: Date;
 }
