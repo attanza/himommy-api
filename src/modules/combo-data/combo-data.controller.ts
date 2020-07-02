@@ -1,7 +1,7 @@
-import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
-import { apiItem } from '@modules/helpers/responseParser';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import { Role } from '@/guards/role.decorator';
+import { RoleGuard } from '@/guards/role.guard';
+import { apiItem } from '@/modules/helpers/responseParser';
+import { IApiItem } from '@/modules/shared/interfaces/response-parser.interface';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { IComboDataQuery } from './combo-data.interface';

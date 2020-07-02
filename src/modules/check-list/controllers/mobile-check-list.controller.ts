@@ -1,9 +1,9 @@
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
 import {
   Controller,
   Get,

@@ -1,7 +1,7 @@
-import { Redis } from '@modules/helpers/redis';
-import { DbService } from '@modules/shared/services/db.service';
-import { IUser } from '@modules/user/user.interface';
-import { UserService } from '@modules/user/user.service';
+import { Redis } from '@/modules/helpers/redis';
+import { DbService } from '@/modules/shared/services/db.service';
+import { IUser } from '@/modules/user/user.interface';
+import { UserService } from '@/modules/user/user.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

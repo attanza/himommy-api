@@ -1,4 +1,4 @@
-import { Meta2 } from '@modules/shared/interfaces/response-parser.interface';
+import { Meta2 } from '@/modules/shared/interfaces/response-parser.interface';
 import { IsIn, IsJWT, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginDto {
@@ -33,6 +33,7 @@ export interface LoginData {
 
 export interface JwtPayload {
   uid: string;
+  tokenCount: number;
 }
 
 export class RefreshTokenDto {

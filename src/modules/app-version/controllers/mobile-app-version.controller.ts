@@ -1,5 +1,5 @@
-import { apiItem } from '@modules/helpers/responseParser';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
+import { apiItem } from '@/modules/helpers/responseParser';
+import { IApiItem } from '@/modules/shared/interfaces/response-parser.interface';
 import { Controller, Get, Query } from '@nestjs/common';
 import { EPlatform } from '../app-version.interface';
 import { AppVersionService } from '../app-version.service';

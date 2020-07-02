@@ -1,11 +1,11 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
+import { Permission } from '@/guards/permission.decorator';
+import { PermissionGuard } from '@/guards/permission.guard';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
 import {
   Body,
   Controller,
@@ -53,7 +53,7 @@ export class ReasonController {
   @Post()
   @Permission('create-reason')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateReasonDto,
+    @Body(new ValidationPipe()) createDto: CreateReasonDto
   ): Promise<IApiItem> {
     return await this.dbService.store({
       modelName: this.modelName,
@@ -67,7 +67,7 @@ export class ReasonController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateReasonDto,
+    @Body() updateDto: UpdateReasonDto
   ): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.update({

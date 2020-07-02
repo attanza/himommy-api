@@ -1,7 +1,7 @@
-import { MommyDetailModule } from '@modules/mommy-detail/mommy-detail.module';
-import { RoleModule } from '@modules/role/role.module';
-import { TocologistModule } from '@modules/tocologist/tocologist.module';
-import { UserModule } from '@modules/user/user.module';
+import { MommyDetailModule } from '@/modules/mommy-detail/mommy-detail.module';
+import { RoleModule } from '@/modules/role/role.module';
+import { TocologistModule } from '@/modules/tocologist/tocologist.module';
+import { UserModule } from '@/modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';

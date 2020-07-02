@@ -1,6 +1,6 @@
-import { ICheckList } from '@modules/check-list/check-list.interface';
-import { IQuestion } from '@modules/question/question.interface';
-import { IUser } from '@modules/user/user.interface';
+import { ICheckList } from '@/modules/check-list/check-list.interface';
+import { IQuestion } from '@/modules/question/question.interface';
+import { IUser } from '@/modules/user/user.interface';
 import { Document } from 'mongoose';
 import {
   EMommyBloodPressureStatus,

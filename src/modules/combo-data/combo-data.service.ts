@@ -1,13 +1,16 @@
-import { Redis } from '@modules/helpers/redis';
-import { IPermission } from '@modules/permission/permission.interface';
-import { PermissionService } from '@modules/permission/permission.service';
-import { IRole } from '@modules/role/role.interface';
-import { RoleService } from '@modules/role/role.service';
+import { Redis } from '@/modules/helpers/redis';
+import { IPermission } from '@/modules/permission/permission.interface';
+import { PermissionService } from '@/modules/permission/permission.service';
+import { IRole } from '@/modules/role/role.interface';
+import { RoleService } from '@/modules/role/role.service';
 import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class ComboDataService {
-  constructor(private readonly roleService: RoleService, private readonly permissionService: PermissionService) {}
+  constructor(
+    private readonly roleService: RoleService,
+    private readonly permissionService: PermissionService
+  ) {}
 
   async getRole(): Promise<IRole[]> {
     const redisKey = 'Role_ComboData';

@@ -1,4 +1,4 @@
-import { EBabyDetailData } from '@modules/baby/baby.interface';
+import { EBabyDetailData } from '@/modules/baby/baby.interface';
 import { IsIn, IsMongoId, IsNotEmpty } from 'class-validator';
 
 export class BabyDetailDataPipe {

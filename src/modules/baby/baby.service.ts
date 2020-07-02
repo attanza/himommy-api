@@ -1,10 +1,10 @@
-import { CheckListService } from '@modules/check-list/check-list.service';
-import { Redis } from '@modules/helpers/redis';
-import { ImmunizationService } from '@modules/immunization/immunization.service';
-import { QueueService } from '@modules/queue/queue.service';
-import { DbService } from '@modules/shared/services/db.service';
-import { IUser } from '@modules/user/user.interface';
-import { UserService } from '@modules/user/user.service';
+import { CheckListService } from '@/modules/check-list/check-list.service';
+import { Redis } from '@/modules/helpers/redis';
+import { ImmunizationService } from '@/modules/immunization/immunization.service';
+import { QueueService } from '@/modules/queue/queue.service';
+import { DbService } from '@/modules/shared/services/db.service';
+import { IUser } from '@/modules/user/user.interface';
+import { UserService } from '@/modules/user/user.service';
 import {
   BadRequestException,
   ForbiddenException,
@@ -13,8 +13,8 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
-import * as fs from 'fs';
-import * as moment from 'moment';
+import fs from 'fs';
+import moment from 'moment';
 import { Model } from 'mongoose';
 import {
   EBabyDetailData,

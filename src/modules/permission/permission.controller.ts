@@ -1,18 +1,18 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
-import { Redis } from '@modules/helpers/redis';
+import { Permission } from '@/guards/permission.decorator';
+import { PermissionGuard } from '@/guards/permission.guard';
+import { Redis } from '@/modules/helpers/redis';
 import {
   apiCreated,
   apiDeleted,
   apiItem,
   apiUpdated,
-} from '@modules/helpers/responseParser';
-import { IResourcePagination } from '@modules/shared/interfaces/resource-pagination.interface';
+} from '@/modules/helpers/responseParser';
+import { IResourcePagination } from '@/modules/shared/interfaces/resource-pagination.interface';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
 import {
   Body,
   Controller,
@@ -90,7 +90,7 @@ export class PermissionController {
   @Post()
   @Permission('create-permission')
   async store(
-    @Body(new ValidationPipe()) createDto: CreatePermissionDto,
+    @Body(new ValidationPipe()) createDto: CreatePermissionDto
   ): Promise<IApiItem> {
     const result: IPermission = await this.dbService.store({
       createDto,
@@ -105,7 +105,7 @@ export class PermissionController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdatePermissionDto,
+    @Body() updateDto: UpdatePermissionDto
   ): Promise<IApiItem> {
     const { id } = param;
     const result: IPermission = await this.dbService.update({

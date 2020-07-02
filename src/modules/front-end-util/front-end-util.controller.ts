@@ -1,8 +1,8 @@
-import { EArticleCategory } from '@modules/article/article.interface';
-import { ECheckListCategory } from '@modules/check-list/check-list.interface';
-import { Redis } from '@modules/helpers/redis';
-import { apiItem } from '@modules/helpers/responseParser';
-import { EReasonCategory } from '@modules/reason/reason.interface';
+import { EArticleCategory } from '@/modules/article/article.interface';
+import { ECheckListCategory } from '@/modules/check-list/check-list.interface';
+import { Redis } from '@/modules/helpers/redis';
+import { apiItem } from '@/modules/helpers/responseParser';
+import { EReasonCategory } from '@/modules/reason/reason.interface';
 import { Controller, Get, Logger } from '@nestjs/common';
 import { EPlatform } from '../app-version/app-version.interface';
 @Controller('/admin/front-end-utils')

@@ -1,5 +1,5 @@
-import { QueueModule } from '@modules/queue/queue.module';
-import { TocologistServicesModule } from '@modules/tocologist-services/tocologist-services.module';
+import { QueueModule } from '@/modules/queue/queue.module';
+import { TocologistServicesModule } from '@/modules/tocologist-services/tocologist-services.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MobileTocologistController } from './controllers/mobile-tocologist.controller';

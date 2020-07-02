@@ -1,9 +1,9 @@
-import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
-import { MommyDetailService } from '@modules/mommy-detail/mommy-detail.service';
-import { ITocologist } from '@modules/tocologist/tocologist.interface';
-import { TocologistService } from '@modules/tocologist/tocologist.service';
-import { IUser } from '@modules/user/user.interface';
-import { UserService } from '@modules/user/user.service';
+import { IMommyDetail } from '@/modules/mommy-detail/mommy-detail.interface';
+import { MommyDetailService } from '@/modules/mommy-detail/mommy-detail.service';
+import { ITocologist } from '@/modules/tocologist/tocologist.interface';
+import { TocologistService } from '@/modules/tocologist/tocologist.service';
+import { IUser } from '@/modules/user/user.interface';
+import { UserService } from '@/modules/user/user.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -24,10 +24,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<IUser> {
-    const { uid } = payload;
+    const { uid, tokenCount } = payload;
     this.uid = uid;
     const user = await this.userService.findByIdWithRolePermissions(uid);
     if (!user) {
+      throw new UnauthorizedException();
+    }
+    if (user.tokenCount !== tokenCount) {
       throw new UnauthorizedException();
     }
     const jsonUser = user.toJSON();

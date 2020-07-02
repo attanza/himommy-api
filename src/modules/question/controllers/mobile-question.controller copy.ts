@@ -1,11 +1,11 @@
-import { GetUser } from '@modules/shared/decorators/get-user.decorator';
+import { GetUser } from '@/modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
-import { IUser } from '@modules/user/user.interface';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
+import { IUser } from '@/modules/user/user.interface';
 import {
   Controller,
   Get,
@@ -27,7 +27,7 @@ export class MobileQuestionController {
   @Get()
   async all(
     @GetUser() user: IUser,
-    @Query() query: ResourcePaginationPipe,
+    @Query() query: ResourcePaginationPipe
   ): Promise<IApiCollection> {
     const regexSearchable = ['question'];
     const keyValueSearchable = ['level'];

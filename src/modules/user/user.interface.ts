@@ -1,5 +1,5 @@
-import { IMommyDetail } from '@modules/mommy-detail/mommy-detail.interface';
-import { ITocologist } from '@modules/tocologist/tocologist.interface';
+import { IMommyDetail } from '@/modules/mommy-detail/mommy-detail.interface';
+import { ITocologist } from '@/modules/tocologist/tocologist.interface';
 import { Document } from 'mongoose';
 import { IRole } from '../role/role.interface';
 
@@ -10,7 +10,7 @@ export interface IUser extends Document {
   phone: string;
   role: IRole;
   password: string;
-  refreshToken: string;
+  tokenCount: number;
   isActive: boolean;
   authProvider: string;
   avatar: string;

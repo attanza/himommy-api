@@ -1,5 +1,5 @@
-import { IPaginated } from '@modules/shared/interfaces/paginated.inteface';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+import { IPaginated } from '@/modules/shared/interfaces/paginated.inteface';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
 import { Logger } from '@nestjs/common';
 import {
   IApiCollection,

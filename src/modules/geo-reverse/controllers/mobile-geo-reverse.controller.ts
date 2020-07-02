@@ -1,8 +1,8 @@
-import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
-import { apiItem } from '@modules/helpers/responseParser';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
-import { GeoReverseQueryPipe } from '@modules/shared/pipes/geo-reverse-query.pipe';
+import { Role } from '@/guards/role.decorator';
+import { RoleGuard } from '@/guards/role.guard';
+import { apiItem } from '@/modules/helpers/responseParser';
+import { IApiItem } from '@/modules/shared/interfaces/response-parser.interface';
+import { GeoReverseQueryPipe } from '@/modules/shared/pipes/geo-reverse-query.pipe';
 import {
   Controller,
   Get,

@@ -10,13 +10,11 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
-      "@modules/*": ["modules/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@guards/*": ["guards/*"],
-      "@public/*": ["public/*"]
+      "@/*": ["*"] // resolve all modules prefixed with `@/` from `src` directory
     },
     "incremental": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "dist"]
 }

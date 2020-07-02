@@ -1,10 +1,10 @@
-import mqttHandler from '@modules/helpers/mqttHandler';
-import { Redis } from '@modules/helpers/redis';
-import resizeImage from '@modules/helpers/resizeImage';
-import { ChangePasswordDto } from '@modules/profile/profile.dto';
-import { IRole } from '@modules/role/role.interface';
-import { RoleService } from '@modules/role/role.service';
-import { DbService } from '@modules/shared/services/db.service';
+import mqttHandler from '@/modules/helpers/mqttHandler';
+import { Redis } from '@/modules/helpers/redis';
+import resizeImage from '@/modules/helpers/resizeImage';
+import { ChangePasswordDto } from '@/modules/profile/profile.dto';
+import { IRole } from '@/modules/role/role.interface';
+import { RoleService } from '@/modules/role/role.service';
+import { DbService } from '@/modules/shared/services/db.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { compare } from 'bcrypt';

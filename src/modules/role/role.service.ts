@@ -1,5 +1,5 @@
-import { PermissionService } from '@modules/permission/permission.service';
-import { DbService } from '@modules/shared/services/db.service';
+import { PermissionService } from '@/modules/permission/permission.service';
+import { DbService } from '@/modules/shared/services/db.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

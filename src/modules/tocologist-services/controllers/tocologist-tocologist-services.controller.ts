@@ -1,5 +1,5 @@
-import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
+import { Role } from '@/guards/role.decorator';
+import { RoleGuard } from '@/guards/role.guard';
 import {
   Controller,
   Get,

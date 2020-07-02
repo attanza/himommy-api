@@ -1,5 +1,5 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
+import { Permission } from '@/guards/permission.decorator';
+import { PermissionGuard } from '@/guards/permission.guard';
 import {
   Body,
   Controller,
@@ -59,7 +59,7 @@ export class RoleController {
   @Post()
   @Permission('create-role')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateRoleDto,
+    @Body(new ValidationPipe()) createDto: CreateRoleDto
   ): Promise<IApiItem> {
     await this.dbService.checkPermissions(createDto.permissions);
     return await this.dbService.store({
@@ -75,7 +75,7 @@ export class RoleController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateRoleDto,
+    @Body() updateDto: UpdateRoleDto
   ): Promise<IApiItem> {
     await this.dbService.checkPermissions(updateDto.permissions);
 

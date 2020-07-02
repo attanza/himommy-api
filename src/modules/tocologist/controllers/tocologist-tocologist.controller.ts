@@ -1,10 +1,10 @@
-import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
-import { Redis } from '@modules/helpers/redis';
-import { apiUpdated } from '@modules/helpers/responseParser';
-import tocologistImageInterceptor from '@modules/helpers/tocologistImageInterceptor';
-import { GetUser } from '@modules/shared/decorators/get-user.decorator';
-import { IUser } from '@modules/user/user.interface';
+import { Role } from '@/guards/role.decorator';
+import { RoleGuard } from '@/guards/role.guard';
+import { Redis } from '@/modules/helpers/redis';
+import { apiUpdated } from '@/modules/helpers/responseParser';
+import tocologistImageInterceptor from '@/modules/helpers/tocologistImageInterceptor';
+import { GetUser } from '@/modules/shared/decorators/get-user.decorator';
+import { IUser } from '@/modules/user/user.interface';
 import {
   BadRequestException,
   Body,

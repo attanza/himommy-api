@@ -1,11 +1,11 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
+import { Permission } from '@/guards/permission.decorator';
+import { PermissionGuard } from '@/guards/permission.guard';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
 import {
   Body,
   Controller,
@@ -53,7 +53,7 @@ export class QuestionController {
   @Post()
   @Permission('create-question')
   async store(
-    @Body(new ValidationPipe()) createDto: CreateQuestionDto,
+    @Body(new ValidationPipe()) createDto: CreateQuestionDto
   ): Promise<IApiItem> {
     return await this.dbService.store({
       modelName: this.modelName,
@@ -66,7 +66,7 @@ export class QuestionController {
   @UsePipes(ValidationPipe)
   async update(
     @Param() param: MongoIdPipe,
-    @Body() updateDto: UpdateQuestionDto,
+    @Body() updateDto: UpdateQuestionDto
   ): Promise<IApiItem> {
     const { id } = param;
     return await this.dbService.update({

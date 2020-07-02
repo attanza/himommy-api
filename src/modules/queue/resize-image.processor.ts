@@ -1,4 +1,4 @@
-import resizeImage from '@modules/helpers/resizeImage';
+import resizeImage from '@/modules/helpers/resizeImage';
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';

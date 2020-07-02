@@ -1,5 +1,5 @@
-import * as moment from 'moment';
-import * as mongoose from 'mongoose';
+import moment from 'moment';
+import mongoose from 'mongoose';
 export const MommyDetailSchema = new mongoose.Schema(
   {
     user: {

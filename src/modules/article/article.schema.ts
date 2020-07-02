@@ -1,4 +1,4 @@
-import { generateImageLink } from '@modules/helpers/generateImageLink';
+import { generateImageLink } from '@/modules/helpers/generateImageLink';
 import { paramCase } from 'change-case';
 import * as mongoose from 'mongoose';
 import { IArticle } from './article.interface';

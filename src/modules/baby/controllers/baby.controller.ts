@@ -1,14 +1,14 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
-import { imageDownloadInterceptor } from '@modules/helpers/imageDownloadInterceptor';
-import { QueueService } from '@modules/queue/queue.service';
+import { Permission } from '@/guards/permission.decorator';
+import { PermissionGuard } from '@/guards/permission.guard';
+import { imageDownloadInterceptor } from '@/modules/helpers/imageDownloadInterceptor';
+import { QueueService } from '@/modules/queue/queue.service';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { BabyDetailDataPipe } from '@modules/shared/pipes/mongo-babyDetail.pipe';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { BabyDetailDataPipe } from '@/modules/shared/pipes/mongo-babyDetail.pipe';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
 import {
   Body,
   Controller,

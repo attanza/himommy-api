@@ -1,7 +1,7 @@
-import { CheckListModule } from '@modules/check-list/check-list.module';
-import { ImmunizationModule } from '@modules/immunization/immunization.module';
-import { QueueModule } from '@modules/queue/queue.module';
-import { UserModule } from '@modules/user/user.module';
+import { CheckListModule } from '@/modules/check-list/check-list.module';
+import { ImmunizationModule } from '@/modules/immunization/immunization.module';
+import { QueueModule } from '@/modules/queue/queue.module';
+import { UserModule } from '@/modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BabySchema } from './baby.schema';

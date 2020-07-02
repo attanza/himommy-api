@@ -1,17 +1,17 @@
-import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
-import { fcm } from '@modules/helpers/fcmHelper';
-import { apiItem } from '@modules/helpers/responseParser';
-import { GetUser } from '@modules/shared/decorators/get-user.decorator';
+import { Role } from '@/guards/role.decorator';
+import { RoleGuard } from '@/guards/role.guard';
+import { fcm } from '@/modules/helpers/fcmHelper';
+import { apiItem } from '@/modules/helpers/responseParser';
+import { GetUser } from '@/modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
-import { ITocologist } from '@modules/tocologist/tocologist.interface';
-import { TocologistService } from '@modules/tocologist/tocologist.service';
-import { IUser } from '@modules/user/user.interface';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
+import { ITocologist } from '@/modules/tocologist/tocologist.interface';
+import { TocologistService } from '@/modules/tocologist/tocologist.service';
+import { IUser } from '@/modules/user/user.interface';
 import {
   BadRequestException,
   Body,

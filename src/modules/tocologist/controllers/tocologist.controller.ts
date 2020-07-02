@@ -1,7 +1,7 @@
-import { Permission } from '@guards/permission.decorator';
-import { PermissionGuard } from '@guards/permission.guard';
-import { Redis } from '@modules/helpers/redis';
-import tocologistImageInterceptor from '@modules/helpers/tocologistImageInterceptor';
+import { Permission } from '@/guards/permission.decorator';
+import { PermissionGuard } from '@/guards/permission.guard';
+import { Redis } from '@/modules/helpers/redis';
+import tocologistImageInterceptor from '@/modules/helpers/tocologistImageInterceptor';
 import {
   BadRequestException,
   Body,

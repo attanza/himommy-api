@@ -1,9 +1,9 @@
-import { IRole } from '@modules/role/role.interface';
-import { RoleService } from '@modules/role/role.service';
-import { IUserFromSocialLogin } from '@modules/shared/interfaces/userFromSocialAuth.interface';
-import { ITocologist } from '@modules/tocologist/tocologist.interface';
-import { TocologistService } from '@modules/tocologist/tocologist.service';
-import { UserService } from '@modules/user/user.service';
+import { IRole } from '@/modules/role/role.interface';
+import { RoleService } from '@/modules/role/role.service';
+import { IUserFromSocialLogin } from '@/modules/shared/interfaces/userFromSocialAuth.interface';
+import { ITocologist } from '@/modules/tocologist/tocologist.interface';
+import { TocologistService } from '@/modules/tocologist/tocologist.service';
+import { UserService } from '@/modules/user/user.service';
 import {
   BadRequestException,
   HttpException,
@@ -113,7 +113,6 @@ export class AuthService {
     await this.checkUser(user, loginDto);
     if (!allowedRoles.includes(user.role.slug)) {
       Logger.log('Role not allowed', 'Auth');
-
       this.throwError();
     }
     return await this.generateToken(user);
@@ -130,13 +129,11 @@ export class AuthService {
     const isValidPassword = await compare(password, user.password);
     if (!isValidPassword) {
       Logger.log('Invalid Password', 'Auth');
-
       this.throwError();
     }
 
     if (!user.isActive) {
       Logger.log('User not active', 'Auth');
-
       this.throwError();
     }
   }
@@ -146,9 +143,11 @@ export class AuthService {
     refreshTokenDto: RefreshTokenDto
   ): Promise<LoginOutput> {
     const { refreshToken } = refreshTokenDto;
-    const { uid } = this.jwtService.verify(refreshToken);
-    const userData: IUser = await this.userService.getById({ id: user._id });
-    if (uid !== userData.refreshToken) {
+    const { uid, tokenCount } = await this.jwtService.verify<JwtPayload>(
+      refreshToken
+    );
+    const userData: IUser = await this.userService.getById({ id: uid });
+    if (tokenCount !== userData.tokenCount) {
       throw new BadRequestException('Refresh token failed');
     }
     const tokenData = await this.generateToken(userData);
@@ -163,9 +162,17 @@ export class AuthService {
   }
 
   async generateToken(user: IUser) {
-    const tokenPayload: JwtPayload = { uid: user._id };
+    user.tokenCount += 1;
+    await user.save();
+    const tokenPayload: JwtPayload = {
+      uid: user._id,
+      tokenCount: user.tokenCount,
+    };
     const token = await this.jwtService.sign(tokenPayload);
-    const refreshTokenPayload: JwtPayload = { uid: user.refreshToken };
+    const refreshTokenPayload: JwtPayload = {
+      uid: user._id,
+      tokenCount: user.tokenCount,
+    };
     const refreshToken = await this.jwtService.sign(refreshTokenPayload, {
       expiresIn: '7d',
     });

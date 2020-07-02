@@ -1,4 +1,4 @@
-import { DbService } from '@modules/shared/services/db.service';
+import { DbService } from '@/modules/shared/services/db.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -33,7 +33,7 @@ export class QuestionService extends DbService {
     const distinct = [...new Set(levels)];
     if (distinct.length > 1) {
       throw new BadRequestException(
-        'One or more question is not at the same level',
+        'One or more question is not at the same level'
       );
     }
     return distinct[0];

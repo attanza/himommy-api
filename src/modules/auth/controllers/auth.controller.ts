@@ -1,5 +1,5 @@
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
-import { IUser } from '@modules/user/user.interface';
+import { IApiItem } from '@/modules/shared/interfaces/response-parser.interface';
+import { IUser } from '@/modules/user/user.interface';
 import {
   Body,
   Controller,
@@ -32,7 +32,6 @@ export class AuthController {
   }
 
   @Post('refreshToken')
-  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   async refreshToken(
     @Res() res,

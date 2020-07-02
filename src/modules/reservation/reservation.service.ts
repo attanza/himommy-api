@@ -1,6 +1,6 @@
-import { DbService } from '@modules/shared/services/db.service';
-import { ITocologist } from '@modules/tocologist/tocologist.interface';
-import { TocologistService } from '@modules/tocologist/tocologist.service';
+import { DbService } from '@/modules/shared/services/db.service';
+import { ITocologist } from '@/modules/tocologist/tocologist.interface';
+import { TocologistService } from '@/modules/tocologist/tocologist.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

@@ -1,4 +1,4 @@
-import { IBaby } from '@modules/baby/baby.interface';
+import { IBaby } from '@/modules/baby/baby.interface';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';

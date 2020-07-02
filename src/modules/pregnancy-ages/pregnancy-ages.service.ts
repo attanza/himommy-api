@@ -1,6 +1,6 @@
-import { Redis } from '@modules/helpers/redis';
-import { QueueService } from '@modules/queue/queue.service';
-import { DbService } from '@modules/shared/services/db.service';
+import { Redis } from '@/modules/helpers/redis';
+import { QueueService } from '@/modules/queue/queue.service';
+import { DbService } from '@/modules/shared/services/db.service';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as fs from 'fs';

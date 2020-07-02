@@ -1,8 +1,8 @@
-import { generateImageLink } from '@modules/helpers/generateImageLink';
+import { generateImageLink } from '@/modules/helpers/generateImageLink';
 import { hash } from 'bcrypt';
 import * as mongoose from 'mongoose';
-import { v4 as uuid } from 'uuid';
 import { IUser } from './user.interface';
+
 export const UserSchema = new mongoose.Schema(
   {
     firstName: String,
@@ -13,7 +13,10 @@ export const UserSchema = new mongoose.Schema(
     },
     phone: String,
     password: String,
-    refreshToken: String,
+    tokenCount: {
+      type: Number,
+      default: 0,
+    },
     isActive: {
       type: Boolean,
       default: false,
@@ -37,15 +40,6 @@ UserSchema.pre<IUser>('save', async function(next: mongoose.HookNextFunction) {
     }
     const hashed = await hash(this.password, 12);
     this.password = hashed;
-    return next();
-  } catch (e) {
-    return next(e);
-  }
-});
-
-UserSchema.pre<IUser>('save', async function(next: mongoose.HookNextFunction) {
-  try {
-    this.refreshToken = uuid();
     return next();
   } catch (e) {
     return next(e);

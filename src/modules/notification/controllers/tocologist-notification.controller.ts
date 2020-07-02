@@ -1,13 +1,13 @@
-import { Role } from '@guards/role.decorator';
-import { RoleGuard } from '@guards/role.guard';
-import { GetUser } from '@modules/shared/decorators/get-user.decorator';
+import { Role } from '@/guards/role.decorator';
+import { RoleGuard } from '@/guards/role.guard';
+import { GetUser } from '@/modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
   IApiItem,
-} from '@modules/shared/interfaces/response-parser.interface';
-import { MongoIdPipe } from '@modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
-import { IUser } from '@modules/user/user.interface';
+} from '@/modules/shared/interfaces/response-parser.interface';
+import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
+import { IUser } from '@/modules/user/user.interface';
 import {
   Controller,
   Get,
@@ -30,7 +30,7 @@ export class TocologistNotificationController {
   @Role('tocologist')
   async all(
     @Query() query: ResourcePaginationPipe,
-    @GetUser() user: IUser,
+    @GetUser() user: IUser
   ): Promise<IApiCollection> {
     const regexSearchable = ['title'];
     const keyValueSearchable = ['isRead'];
@@ -49,7 +49,7 @@ export class TocologistNotificationController {
   @UsePipes(ValidationPipe)
   async show(
     @Param() param: MongoIdPipe,
-    @GetUser() user: IUser,
+    @GetUser() user: IUser
   ): Promise<IApiItem> {
     const { id } = param;
     let result: IApiItem;

@@ -1,4 +1,4 @@
-import { IUser } from '@modules/user/user.interface';
+import { IUser } from '@/modules/user/user.interface';
 import { Document } from 'mongoose';
 import { ITocologist, ITServices } from '../tocologist/tocologist.interface';
 

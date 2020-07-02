@@ -1,5 +1,5 @@
-import { IApiCollection } from '@modules/shared/interfaces/response-parser.interface';
-import { ResourcePaginationPipe } from '@modules/shared/pipes/resource-pagination.pipe';
+import { IApiCollection } from '@/modules/shared/interfaces/response-parser.interface';
+import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ReasonService } from '../reason.service';

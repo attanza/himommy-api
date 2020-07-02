@@ -1,5 +1,5 @@
-import { IAuditTrail } from '@modules/audit-trail/audit-trail.interface';
-import { AuditTrailService } from '@modules/audit-trail/audit-trail.service';
+import { IAuditTrail } from '@/modules/audit-trail/audit-trail.interface';
+import { AuditTrailService } from '@/modules/audit-trail/audit-trail.service';
 
 export class AuditTrailHelper {
   constructor(private auditTrailService: AuditTrailService) {}

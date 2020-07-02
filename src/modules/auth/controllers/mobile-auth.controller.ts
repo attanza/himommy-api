@@ -1,7 +1,7 @@
-import { apiItem, apiSucceed } from '@modules/helpers/responseParser';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
-import { IUserFromSocialLogin } from '@modules/shared/interfaces/userFromSocialAuth.interface';
-import { IUser } from '@modules/user/user.interface';
+import { apiItem, apiSucceed } from '@/modules/helpers/responseParser';
+import { IApiItem } from '@/modules/shared/interfaces/response-parser.interface';
+import { IUserFromSocialLogin } from '@/modules/shared/interfaces/userFromSocialAuth.interface';
+import { IUser } from '@/modules/user/user.interface';
 import {
   Body,
   Controller,

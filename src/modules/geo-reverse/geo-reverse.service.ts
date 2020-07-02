@@ -1,5 +1,5 @@
-import { Redis } from '@modules/helpers/redis';
-import { DbService } from '@modules/shared/services/db.service';
+import { Redis } from '@/modules/helpers/redis';
+import { DbService } from '@/modules/shared/services/db.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';

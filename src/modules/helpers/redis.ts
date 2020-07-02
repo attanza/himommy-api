@@ -1,4 +1,4 @@
-import * as ioredis from 'ioredis';
+import ioredis from 'ioredis';
 
 class RedisInstance {
   redis;

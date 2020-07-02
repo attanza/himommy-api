@@ -2,7 +2,7 @@ import {
   IApiItem,
   IMommyGraphics,
   Meta2,
-} from '@modules/shared/interfaces/response-parser.interface';
+} from '@/modules/shared/interfaces/response-parser.interface';
 
 export const apiItem = (modelName: string, data: any): IApiItem => {
   const meta: Meta2 = {

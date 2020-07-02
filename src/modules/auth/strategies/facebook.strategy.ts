@@ -1,10 +1,10 @@
-import { IRole } from '@modules/role/role.interface';
-import { RoleService } from '@modules/role/role.service';
-import { IUser } from '@modules/user/user.interface';
-import { UserService } from '@modules/user/user.service';
+import { IRole } from '@/modules/role/role.interface';
+import { RoleService } from '@/modules/role/role.service';
+import { IUser } from '@/modules/user/user.interface';
+import { UserService } from '@/modules/user/user.service';
 import { Injectable } from '@nestjs/common';
 import { use } from 'passport';
-import * as FacebookTokenStrategy from 'passport-facebook-token';
+import FacebookTokenStrategy from 'passport-facebook-token';
 
 @Injectable()
 export class FacebookStrategy {

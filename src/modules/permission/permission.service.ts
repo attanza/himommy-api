@@ -1,4 +1,4 @@
-import { BaseDbService } from '@modules/shared/services/baseDb.service';
+import { BaseDbService } from '@/modules/shared/services/baseDb.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -17,7 +17,7 @@ export class PermissionService extends BaseDbService {
       });
       if (count !== permissions.length) {
         throw new BadRequestException(
-          'One or more permission is not exists in database',
+          'One or more permission is not exists in database'
         );
       }
     }

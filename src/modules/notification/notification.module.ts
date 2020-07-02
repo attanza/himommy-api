@@ -1,4 +1,4 @@
-import { UserModule } from '@modules/user/user.module';
+import { UserModule } from '@/modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MobileNotificationController } from './controllers/mobile-notification.controller';

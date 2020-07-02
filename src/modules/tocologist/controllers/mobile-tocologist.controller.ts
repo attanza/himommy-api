@@ -1,5 +1,5 @@
-import { Role } from '@guards/role.decorator';
-import { apiItem } from '@modules/helpers/responseParser';
+import { Role } from '@/guards/role.decorator';
+import { apiItem } from '@/modules/helpers/responseParser';
 import {
   Controller,
   Get,

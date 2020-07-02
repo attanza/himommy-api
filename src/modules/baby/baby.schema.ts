@@ -1,6 +1,6 @@
-import { generateImageLink } from '@modules/helpers/generateImageLink';
-import * as moment from 'moment';
-import * as mongoose from 'mongoose';
+import { generateImageLink } from '@/modules/helpers/generateImageLink';
+import moment from 'moment';
+import mongoose from 'mongoose';
 
 export const BabySchema = new mongoose.Schema(
   {

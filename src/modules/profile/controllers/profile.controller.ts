@@ -1,8 +1,8 @@
-import avatarInterceptor from '@modules/helpers/avatarInterceptor';
-import { GetUser } from '@modules/shared/decorators/get-user.decorator';
-import { IApiItem } from '@modules/shared/interfaces/response-parser.interface';
-import { UpdateUserDto } from '@modules/user/user.dto';
-import { IUser } from '@modules/user/user.interface';
+import avatarInterceptor from '@/modules/helpers/avatarInterceptor';
+import { GetUser } from '@/modules/shared/decorators/get-user.decorator';
+import { IApiItem } from '@/modules/shared/interfaces/response-parser.interface';
+import { UpdateUserDto } from '@/modules/user/user.dto';
+import { IUser } from '@/modules/user/user.interface';
 import {
   BadRequestException,
   Body,

@@ -1,4 +1,4 @@
-import { generateImageLink } from '@modules/helpers/generateImageLink';
+import { generateImageLink } from '@/modules/helpers/generateImageLink';
 import * as mongoose from 'mongoose';
 export const MythFactSchema = new mongoose.Schema(
   {

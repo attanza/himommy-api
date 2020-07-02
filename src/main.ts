@@ -1,8 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import compression from 'compression';
 import 'dotenv/config';
-import * as exphbs from 'express-handlebars';
+import exphbs from 'express-handlebars';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import 'module-alias/register';
 import { join } from 'path';
 import { AppModule } from './app.module';
@@ -14,7 +17,16 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   MqttHandler.connect();
+  app.use(helmet());
+  // app.use(csurf());
+  app.use(compression());
   app.enableCors();
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 requests per windowMs
+    })
+  );
   app.useGlobalFilters(new AllExceptionsFilter());
 
   app.useStaticAssets(join(__dirname, '..', 'public'));

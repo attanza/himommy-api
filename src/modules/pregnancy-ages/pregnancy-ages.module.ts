@@ -1,4 +1,4 @@
-import { QueueModule } from '@modules/queue/queue.module';
+import { QueueModule } from '@/modules/queue/queue.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MobilePregnancyAgesController } from './controllers/mobile-pregnancy-ages.controller';

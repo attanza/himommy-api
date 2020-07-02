@@ -1,8 +1,8 @@
-import { Redis } from '@modules/helpers/redis';
-import { DbService } from '@modules/shared/services/db.service';
+import { Redis } from '@/modules/helpers/redis';
+import { DbService } from '@/modules/shared/services/db.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Model } from 'mongoose';
 import { UpdateMommyDto } from './dto/mommy-detail.dto';
 import {
