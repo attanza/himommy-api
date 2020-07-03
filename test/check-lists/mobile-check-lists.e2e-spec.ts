@@ -1,4 +1,4 @@
-import { ArticleSchema } from '@/modules/article/article.schema';
+import { CheckListSchema } from '@/modules/check-list/check-list.schema';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -8,11 +8,12 @@ import {
   superAdminLogin,
 } from '../helpers';
 
-const title = 'Mobile Articles';
+const title = 'Admin Articles';
 const baseUrl = 'http://localhost:2500/mobile';
-const url = '/articles';
+const url = '/check-lists';
+
 let token: string;
-let Article: mongoose.Model<mongoose.Document, {}>;
+let CheckList: mongoose.Model<mongoose.Document, {}>;
 
 beforeAll(async () => {
   const tokenData = await superAdminLogin();
@@ -20,7 +21,7 @@ beforeAll(async () => {
 
   const MONGOOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
   await mongoose.connect(MONGOOSE_URI, MONGO_DB_OPTIONS);
-  Article = mongoose.model('Article', ArticleSchema);
+  CheckList = mongoose.model('CheckList', CheckListSchema, 'check_lists');
 });
 
 afterAll(async done => {
@@ -39,7 +40,7 @@ describe(`${title} List`, () => {
   });
 
   it('can get by id', async () => {
-    const data = await Article.findOne();
+    const data = await CheckList.findOne();
     return request(baseUrl)
       .get(`${url}/${data._id}`)
       .set('Content-Type', 'application/json')

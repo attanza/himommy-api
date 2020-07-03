@@ -29,6 +29,20 @@ export const tocologistLogin = async () => {
     .then(res => res.body.data);
 };
 
+export const otherLogin = async (uid: string) => {
+  const url = 'http://localhost:2500';
+
+  const credentials: LoginDto = {
+    uid,
+    password: 'password',
+    provider: EProvider.LOCAL,
+  };
+  return superagent
+    .post(`${url}/admin/login`)
+    .send(credentials)
+    .then(res => res.body.data);
+};
+
 export const faker = new Chance();
 
 export const MONGO_DB_OPTIONS = {
