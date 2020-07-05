@@ -91,6 +91,7 @@ export class SeederService {
       };
       // @ts-ignore
       const newRole = await this.roleModel.create(createRoleData);
+
       const createUserData: Partial<IUser> = {
         firstName: role,
         email: `${snakeCase(role)}@himommy.org`,
@@ -102,6 +103,23 @@ export class SeederService {
       };
       // @ts-ignore
       await this.userModel.create(createUserData);
+
+      for (let i = 0; i < 3; i++) {
+        const createUserData2: Partial<IUser> = {
+          firstName: `${role} ${i}`,
+          email: `${snakeCase(role)}_${i}@himommy.org`,
+          password: 'password',
+          phone: `+6281${this.faker.integer({
+            min: 22000000,
+            max: 710000000,
+          })}`,
+          role: newRole._id,
+          isActive: true,
+          authProvider: 'local',
+        };
+        // @ts-ignore
+        await this.userModel.create(createUserData2);
+      }
     }
 
     Logger.log('Seeding Role and Users Finish');

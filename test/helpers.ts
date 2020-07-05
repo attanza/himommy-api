@@ -1,11 +1,54 @@
 import { EProvider, LoginDto } from '@/modules/auth/auth.interface';
 import Chance from 'chance';
 import superagent from 'superagent';
+
 export const superAdminLogin = async () => {
   const url = 'http://localhost:2500';
 
   const credentials: LoginDto = {
     uid: 'super_administrator@himommy.org',
+    password: 'password',
+    provider: EProvider.LOCAL,
+  };
+  return superagent
+    .post(`${url}/admin/login`)
+    .send(credentials)
+    .then(res => res.body.data);
+};
+
+export const superAdmin0Login = async () => {
+  const url = 'http://localhost:2500';
+
+  const credentials: LoginDto = {
+    uid: 'super_administrator_0@himommy.org',
+    password: 'password',
+    provider: EProvider.LOCAL,
+  };
+  return superagent
+    .post(`${url}/admin/login`)
+    .send(credentials)
+    .then(res => res.body.data);
+};
+
+export const superAdmin1Login = async () => {
+  const url = 'http://localhost:2500';
+
+  const credentials: LoginDto = {
+    uid: 'super_administrator_1@himommy.org',
+    password: 'password',
+    provider: EProvider.LOCAL,
+  };
+  return superagent
+    .post(`${url}/admin/login`)
+    .send(credentials)
+    .then(res => res.body.data);
+};
+
+export const superAdmin2Login = async () => {
+  const url = 'http://localhost:2500';
+
+  const credentials: LoginDto = {
+    uid: 'super_administrator_2@himommy.org',
     password: 'password',
     provider: EProvider.LOCAL,
   };
@@ -25,6 +68,20 @@ export const tocologistLogin = async () => {
   };
   return superagent
     .post(`${url}/tocologist/login`)
+    .send(credentials)
+    .then(res => res.body.data);
+};
+
+export const mommyLogin = async () => {
+  const url = 'http://localhost:2500';
+
+  const credentials: LoginDto = {
+    uid: 'mommy@himommy.org',
+    password: 'password',
+    provider: EProvider.LOCAL,
+  };
+  return superagent
+    .post(`${url}/mobile/login`)
     .send(credentials)
     .then(res => res.body.data);
 };

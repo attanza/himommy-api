@@ -7,22 +7,26 @@ export class SeederController {
 
   @Get()
   async seed(@Res() res) {
-    this.checkEnv();
-    await Promise.all([
-      this.seederService.seedUserRolePermission(),
-      this.seederService.seedAppVersion(),
-      this.seederService.seedTocologistService(),
-      this.seederService.seedTocologist(),
-      this.seederService.seedArticle(),
-      this.seederService.seedCheckList(),
-      this.seederService.seedQuestions(),
-      this.seederService.seedReasons(),
-      this.seederService.seedMythFact(),
-      this.seederService.seedPregnancyAges(),
-      this.seederService.seedImmunization(),
-    ]);
-    await this.seederService.seedTocologistUser();
-    res.status(200).send({ message: 'Seed Succeed' });
+    try {
+      this.checkEnv();
+      await Promise.all([
+        this.seederService.seedUserRolePermission(),
+        this.seederService.seedAppVersion(),
+        this.seederService.seedTocologistService(),
+        this.seederService.seedTocologist(),
+        this.seederService.seedArticle(),
+        this.seederService.seedCheckList(),
+        this.seederService.seedQuestions(),
+        this.seederService.seedReasons(),
+        this.seederService.seedMythFact(),
+        this.seederService.seedPregnancyAges(),
+        this.seederService.seedImmunization(),
+      ]);
+      await this.seederService.seedTocologistUser();
+      res.status(200).send({ message: 'Seed Succeed' });
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   @Get('/generate-tocologist-user')
