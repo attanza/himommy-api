@@ -18,7 +18,6 @@ export class CreateImmunizationDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(250)
   description: string;
 }
 
@@ -34,6 +33,5 @@ export class UpdateImmunizationDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(250)
   description: string;
 }
