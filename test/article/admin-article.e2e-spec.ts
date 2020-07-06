@@ -12,7 +12,7 @@ import {
   forbiddenExpects,
   MONGO_DB_OPTIONS,
   resourceListExpects,
-  superAdmin0Login,
+  superAdmin1Login,
   tocologistLogin,
   unauthorizedExpects,
   validationFailExpects,
@@ -33,7 +33,7 @@ let token: string;
 let Article: mongoose.Model<mongoose.Document, {}>;
 
 beforeAll(async () => {
-  const tokenData = await superAdmin0Login();
+  const tokenData = await superAdmin1Login();
   token = tokenData.token;
 
   const MONGOOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
