@@ -40,7 +40,7 @@ export class MommyDetailService extends DbService {
     }
     const data = await this.model.findOne({ user: userId }).lean();
     if (data) {
-      Redis.set(redisKey, JSON.stringify(data));
+      await Redis.set(redisKey, JSON.stringify(data));
       return data;
     }
     const newDetail = await this.model.create({
@@ -52,6 +52,8 @@ export class MommyDetailService extends DbService {
       hemoglobins: [],
       urines: [],
     });
+    await Redis.set(redisKey, JSON.stringify(newDetail));
+
     return newDetail;
   }
 

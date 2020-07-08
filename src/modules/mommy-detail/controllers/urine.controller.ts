@@ -66,10 +66,7 @@ export class UrineController {
       date: new Date(),
     };
 
-    const detail: IMommyDetail = await this.dbService.getByKey(
-      'user',
-      user._id
-    );
+    const detail: IMommyDetail = await this.dbService.getByUser(user._id);
 
     detail.urines = this.dbService.checkDuplicate(detail.urines, urineData);
     detail.urines.push(urineData);
