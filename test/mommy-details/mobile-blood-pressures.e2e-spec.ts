@@ -68,6 +68,8 @@ beforeAll(async () => {
 });
 
 afterAll(async done => {
+  await MommyDetail.deleteOne({ user: user._id });
+
   await user.remove();
   await mongoose.disconnect(done);
 });

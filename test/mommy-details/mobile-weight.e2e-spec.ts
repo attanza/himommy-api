@@ -14,18 +14,16 @@ import {
   validationFailExpects,
 } from '../helpers';
 
-const title = 'Mobile Hemoglobins';
+const title = 'Mobile Weights';
 const baseUrl = 'http://localhost:2500/mobile';
-const url = '/hemoglobins';
+const url = '/weights';
 
 const createData = {
-  hemoglobin: 11,
-  trimester: 'Trimester 1',
-  status: 'Normal',
+  weight: 70,
 };
 
 const updateData = {
-  trimester: 'Trimester 2',
+  weight: 50,
 };
 
 let token: string;
@@ -69,7 +67,6 @@ beforeAll(async () => {
 
 afterAll(async done => {
   await MommyDetail.deleteOne({ user: user._id });
-
   await user.remove();
   await mongoose.disconnect(done);
 });
@@ -102,23 +99,9 @@ describe(`${title} List`, () => {
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(200);
-        expect(body.meta.message).toEqual('Hemoglobin');
+        expect(body.meta.message).toEqual('Weight item retrieved');
         expect(body.data).toBeDefined();
         expect(Array.isArray(body.data)).toBeTruthy();
-        expect(body.other).toBeDefined();
-        expect(Array.isArray(body.other.status)).toBeTruthy();
-        expect(Array.isArray(body.other.trimesters)).toBeTruthy();
-        expect(body.other.status).toEqual(
-          expect.arrayContaining([
-            'Anemia Ringan',
-            'Normal',
-            'Anemia Ringan',
-            'Anemia Berat',
-          ])
-        );
-        expect(body.other.trimesters).toEqual(
-          expect.arrayContaining(['Trimester 1', 'Trimester 2', 'Trimester 3'])
-        );
       });
   });
 });
@@ -145,17 +128,33 @@ describe(`${title} Create`, () => {
   });
   it('cannot create if incomplete data', () => {
     const postData = { ...createData };
-    delete postData.hemoglobin;
+    delete postData.weight;
     return request(baseUrl)
       .post(url)
       .set({ Authorization: `Bearer ${token}` })
       .send(postData)
       .expect(400)
       .expect(({ body }) => {
-        validationFailExpects(expect, body, 'hemoglobin');
+        validationFailExpects(expect, body, 'weight');
       });
   });
-  it('can create', () => {
+  it('cannot create if height is not set', () => {
+    return request(baseUrl)
+      .post(url)
+      .set({ Authorization: `Bearer ${token}` })
+      .send(createData)
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body.meta).toBeDefined();
+        expect(body.meta.status).toEqual(400);
+        expect(body.meta.message).toEqual('Please set your height first');
+      });
+  });
+
+  it('can create', async () => {
+    await MommyDetail.create({ user: user._id, height: 160 });
+    foundData = await MommyDetail.findOne({ user: user._id });
+
     return request(baseUrl)
       .post(url)
       .set({ Authorization: `Bearer ${token}` })
@@ -166,11 +165,9 @@ describe(`${title} Create`, () => {
         expect(body.meta.status).toEqual(201);
         foundData = await MommyDetail.findOne({ user: user._id });
         expect(foundData).toBeDefined();
-        expect(foundData.bloodPressures).toBeDefined();
-        expect(Array.isArray(foundData.bloodPressures)).toBeTruthy();
-        expect(foundData.hemoglobins[0].hemoglobin).toEqual(
-          createData.hemoglobin
-        );
+        expect(foundData.weights).toBeDefined();
+        expect(Array.isArray(foundData.weights)).toBeTruthy();
+        expect(foundData.weights[0].weight).toEqual(createData.weight);
       });
   });
 });
@@ -179,7 +176,7 @@ describe(`${title} Detail`, () => {
   it('cannot get detail if not authenticated', async () => {
     foundData = await MommyDetail.findOne({ user: user._id });
 
-    foundId = foundData.hemoglobins[0]._id;
+    foundId = foundData.weights[0]._id;
     return request(baseUrl)
       .get(`${url}/${foundId}`)
       .expect(401)
@@ -204,9 +201,9 @@ describe(`${title} Detail`, () => {
       .expect(({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(200);
-        expect(body.meta.message).toEqual('Hemoglobin item retrieved');
+        expect(body.meta.message).toEqual('Weight item retrieved');
         expect(body.data).toBeDefined();
-        expect(body.data.hemoglobin).toEqual(createData.hemoglobin);
+        expect(body.data.weight).toEqual(createData.weight);
       });
   });
 });
@@ -241,7 +238,7 @@ describe(`${title} Update`, () => {
       .expect(async ({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(200);
-        expect(body.data.trimester).toEqual(updateData.trimester);
+        expect(body.data.weight).toEqual(updateData.weight);
       });
   });
 });
@@ -272,7 +269,7 @@ describe(`${title} Delete`, () => {
       .expect(async ({ body }) => {
         expect(body.meta).toBeDefined();
         expect(body.meta.status).toEqual(200);
-        expect(body.meta.message).toEqual('Hemoglobin deleted');
+        expect(body.meta.message).toEqual('Weight deleted');
       });
   });
 });

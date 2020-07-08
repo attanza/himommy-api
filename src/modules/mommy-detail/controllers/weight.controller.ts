@@ -51,7 +51,7 @@ export class WeightController {
   ): Promise<IApiItem> {
     // check if height is exists
     if (!user.detail || !user.detail.height || !user.detail.height) {
-      throw new BadRequestException('Please set your weight');
+      throw new BadRequestException('Please set your height first');
     }
 
     const { bmi, status } = this.dbService.getBmiAndStatus(
