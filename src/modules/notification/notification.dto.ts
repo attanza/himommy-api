@@ -15,7 +15,6 @@ export class CreateNotificationDto {
 
   @IsNotEmpty()
   @IsString()
-  @MaxLength(250)
   content: string;
 
   @IsNotEmpty()
@@ -31,7 +30,6 @@ export class UpdateNotificationDto {
 
   @IsOptional()
   @IsString()
-  @MaxLength(250)
   content: string;
 
   @IsOptional()
