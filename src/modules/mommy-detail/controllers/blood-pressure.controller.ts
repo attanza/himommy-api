@@ -62,11 +62,6 @@ export class BloodPressureController {
     @GetUser() user: IUser,
     @Body() createData: CreateBloodPressureDto
   ): Promise<IApiItem> {
-    // const status = this.dbService.getBloodPressureStatus(
-    //   createData.systolic,
-    //   createData.diastolic
-    // );
-
     const bloodPressureData: IMommyBloodPressure = {
       systolic: createData.systolic,
       diastolic: createData.diastolic,

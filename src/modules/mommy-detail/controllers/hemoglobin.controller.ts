@@ -76,10 +76,7 @@ export class HemoglobinController {
       date: new Date(),
     };
 
-    const detail: IMommyDetail = await this.dbService.getByKey(
-      'user',
-      user._id
-    );
+    const detail: IMommyDetail = await this.dbService.getByUser(user._id);
 
     detail.hemoglobins = this.dbService.checkDuplicate(
       detail.hemoglobins,
@@ -89,7 +86,7 @@ export class HemoglobinController {
 
     await detail.save();
     await Redis.deletePattern('MommyDetail_user_*');
-    return apiCreated('Weight', detail.hemoglobins);
+    return apiCreated('Hemoglobin', detail.hemoglobins);
   }
 
   @Get(':id')
