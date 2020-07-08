@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -53,4 +54,8 @@ export class UpdatePregnancyAgesDto {
   @IsOptional()
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isPublish: boolean;
 }
