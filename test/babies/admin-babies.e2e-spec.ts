@@ -8,10 +8,9 @@ import request from 'supertest';
 import {
   faker,
   forbiddenExpects,
+  generateToken,
   MONGO_DB_OPTIONS,
   resourceListExpects,
-  superAdmin0Login,
-  tocologistLogin,
   unauthorizedExpects,
   validationFailExpects,
 } from '../helpers';
@@ -28,20 +27,30 @@ const createData: CreateBabyDto = {
 };
 
 let token: string;
+let unauthorizedToken: string;
+
 let Baby: mongoose.Model<mongoose.Document, {}>;
 let User: mongoose.Model<mongoose.Document, {}>;
 let foundData: any;
 
 beforeAll(async () => {
-  const tokenData = await superAdmin0Login();
-  token = tokenData.token;
-
   const MONGOOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
   await mongoose.connect(MONGOOSE_URI, MONGO_DB_OPTIONS);
   Baby = mongoose.model('BabySchema', BabySchema, 'babies');
   User = mongoose.model('User', UserSchema);
   const parent = await User.findOne({ email: 'tocologist_2@himommy.org' });
   createData.parent = parent._id;
+
+  const authorizedTokenData = await generateToken(
+    User,
+    'super_administrator_0@himommy.org'
+  );
+  token = authorizedTokenData.token;
+  const unauthorizedTokenData = await generateToken(
+    User,
+    'tocologist_0@himommy.org'
+  );
+  unauthorizedToken = unauthorizedTokenData.token;
 });
 
 afterAll(async done => {
@@ -59,11 +68,10 @@ describe(`${title} List`, () => {
       });
   });
   it('cannot get list if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(baseUrl)
       .get(url)
       .set('Content-Type', 'application/json')
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -92,10 +100,9 @@ describe(`${title} Create`, () => {
       });
   });
   it('cannot create if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(baseUrl)
       .post(url)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .send(createData)
       .expect(403)
       .expect(({ body }) => {
@@ -145,10 +152,9 @@ describe(`${title} Detail`, () => {
       });
   });
   it('cannot get detail if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(baseUrl)
       .get(`${url}/${foundData._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -183,13 +189,12 @@ describe(`${title} Update`, () => {
       });
   });
   it('cannot update if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     const updateData: Partial<UpdateBabyDto> = {
       sex: ESex.FEMALE,
     };
     return request(baseUrl)
       .put(`${url}/${foundData._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .send(updateData)
       .expect(403)
       .expect(({ body }) => {
@@ -224,10 +229,9 @@ describe(`${title} Delete`, () => {
       });
   });
   it('cannot delete if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(baseUrl)
       .delete(`${url}/${foundData._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);

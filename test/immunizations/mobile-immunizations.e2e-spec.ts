@@ -1,20 +1,24 @@
 import { ImmunizationSchema } from '@/modules/immunization/immunization.schema';
+import { UserSchema } from '@/modules/user/user.schema';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {
+  generateToken,
   mommyLogin,
   MONGO_DB_OPTIONS,
   resourceListExpects,
   unauthorizedExpects,
 } from '../helpers';
 
-const title = 'Admin Articles';
+const title = 'Mobile Articles';
 const baseUrl = 'http://localhost:2500/mobile';
 const url = '/immunizations';
 
 let token: string;
+
 let Immunization: mongoose.Model<mongoose.Document, {}>;
+let User: mongoose.Model<mongoose.Document, {}>;
 
 beforeAll(async () => {
   const tokenData = await mommyLogin();
@@ -23,6 +27,10 @@ beforeAll(async () => {
   const MONGOOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
   await mongoose.connect(MONGOOSE_URI, MONGO_DB_OPTIONS);
   Immunization = mongoose.model('Immunization', ImmunizationSchema);
+  User = mongoose.model('User', UserSchema);
+
+  const authorizedTokenData = await generateToken(User, 'mommy_2@himommy.org');
+  token = authorizedTokenData.token;
 });
 
 afterAll(async done => {

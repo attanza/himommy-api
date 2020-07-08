@@ -8,7 +8,7 @@ import {
   superAdminLogin,
 } from '../helpers';
 
-const title = 'Admin Articles';
+const title = 'Mobile Articles';
 const baseUrl = 'http://localhost:2500/mobile';
 const url = '/check-lists';
 

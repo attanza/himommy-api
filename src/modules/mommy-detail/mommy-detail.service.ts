@@ -39,8 +39,20 @@ export class MommyDetailService extends DbService {
       return JSON.parse(cache);
     }
     const data = await this.model.findOne({ user: userId }).lean();
-    Redis.set(redisKey, JSON.stringify(data));
-    return data;
+    if (data) {
+      Redis.set(redisKey, JSON.stringify(data));
+      return data;
+    }
+    const newDetail = await this.model.create({
+      user: userId,
+      checkLists: [],
+      questions: [],
+      weights: [],
+      bloodPressures: [],
+      hemoglobins: [],
+      urines: [],
+    });
+    return newDetail;
   }
 
   checkDuplicate(arrayToCheck: any[], dataToCheck: any) {

@@ -4,15 +4,15 @@ import {
 } from '@/modules/app-version/app-version.dto';
 import { EPlatform } from '@/modules/app-version/app-version.interface';
 import { AppVersionSchema } from '@/modules/app-version/app-version.schema';
+import { UserSchema } from '@/modules/user/user.schema';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {
   forbiddenExpects,
+  generateToken,
   MONGO_DB_OPTIONS,
   resourceListExpects,
-  superAdminLogin,
-  tocologistLogin,
   unauthorizedExpects,
   validationFailExpects,
 } from '../helpers';
@@ -26,15 +26,25 @@ const createData: CreateAppVersionDto = {
 };
 
 let token: string;
+let unauthorizedToken: string;
 let AppVersion: mongoose.Model<mongoose.Document, {}>;
+let User: mongoose.Model<mongoose.Document, {}>;
 
 beforeAll(async () => {
-  const tokenData = await superAdminLogin();
-  token = tokenData.token;
-
   const MONGOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
   await mongoose.connect(MONGOSE_URI, MONGO_DB_OPTIONS);
   AppVersion = mongoose.model('AppVersion', AppVersionSchema, 'app_versions');
+  User = mongoose.model('User', UserSchema);
+  const authorizedTokenData = await generateToken(
+    User,
+    'super_administrator_0@himommy.org'
+  );
+  token = authorizedTokenData.token;
+  const unauthorizedTokenData = await generateToken(
+    User,
+    'tocologist_0@himommy.org'
+  );
+  unauthorizedToken = unauthorizedTokenData.token;
 });
 
 afterAll(async done => {
@@ -52,11 +62,10 @@ describe(`${title} List`, () => {
       });
   });
   it('cannot get list if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(url)
       .get('/app-versions')
       .set('Content-Type', 'application/json')
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -85,10 +94,9 @@ describe(`${title} Create`, () => {
       });
   });
   it('cannot create if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(url)
       .post('/app-versions')
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .send(createData)
       .expect(403)
       .expect(({ body }) => {
@@ -138,14 +146,12 @@ describe(`${title} Detail`, () => {
       });
   });
   it('cannot get detail if forbidden', async () => {
-    const tokenData = await tocologistLogin();
-
     const appVersion = await AppVersion.findOne({
       version: createData.version,
     });
     return request(url)
       .get(`/app-versions/${appVersion._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -187,8 +193,6 @@ describe(`${title} Update`, () => {
       });
   });
   it('cannot update if forbidden', async () => {
-    const tokenData = await tocologistLogin();
-
     const appVersion = await AppVersion.findOne({
       version: createData.version,
     });
@@ -198,7 +202,7 @@ describe(`${title} Update`, () => {
     };
     return request(url)
       .put(`/app-versions/${appVersion._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .send(updateData)
       .expect(403)
       .expect(({ body }) => {
@@ -241,15 +245,13 @@ describe(`${title} Delete`, () => {
       });
   });
   it('cannot delete if forbidden', async () => {
-    const tokenData = await tocologistLogin();
-
     const appVersion = await AppVersion.findOne({
       version: createData.version,
     });
 
     return request(url)
       .delete(`/app-versions/${appVersion._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -271,11 +273,3 @@ describe(`${title} Delete`, () => {
       });
   });
 });
-
-// it('title', () => {
-//   return request(url)
-//     .post('/ ')
-//     .expect(({ body }) => {
-//         console.log('body', JSON.stringify(body, null, 2));
-//     });
-// });

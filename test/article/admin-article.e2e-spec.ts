@@ -4,16 +4,16 @@ import {
 } from '@/modules/article/article.dto';
 import { EArticleCategory } from '@/modules/article/article.interface';
 import { ArticleSchema } from '@/modules/article/article.schema';
+import { UserSchema } from '@/modules/user/user.schema';
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import {
   faker,
   forbiddenExpects,
+  generateToken,
   MONGO_DB_OPTIONS,
   resourceListExpects,
-  superAdmin1Login,
-  tocologistLogin,
   unauthorizedExpects,
   validationFailExpects,
 } from '../helpers';
@@ -30,15 +30,25 @@ const createData: CreateArticleDto = {
 };
 
 let token: string;
+let unauthorizedToken: string;
 let Article: mongoose.Model<mongoose.Document, {}>;
+let User: mongoose.Model<mongoose.Document, {}>;
 
 beforeAll(async () => {
-  const tokenData = await superAdmin1Login();
-  token = tokenData.token;
-
   const MONGOOSE_URI = `${process.env.DB_URL}/${process.env.DB_NAME}`;
   await mongoose.connect(MONGOOSE_URI, MONGO_DB_OPTIONS);
   Article = mongoose.model('Article', ArticleSchema);
+  User = mongoose.model('User', UserSchema);
+  const authorizedTokenData = await generateToken(
+    User,
+    'super_administrator_0@himommy.org'
+  );
+  token = authorizedTokenData.token;
+  const unauthorizedTokenData = await generateToken(
+    User,
+    'tocologist_0@himommy.org'
+  );
+  unauthorizedToken = unauthorizedTokenData.token;
 });
 
 afterAll(async done => {
@@ -56,11 +66,10 @@ describe(`${title} List`, () => {
       });
   });
   it('cannot get list if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(baseUrl)
       .get(url)
       .set('Content-Type', 'application/json')
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -89,10 +98,9 @@ describe(`${title} Create`, () => {
       });
   });
   it('cannot create if forbidden', async () => {
-    const tokenData = await tocologistLogin();
     return request(baseUrl)
       .post(url)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .send(createData)
       .expect(403)
       .expect(({ body }) => {
@@ -142,14 +150,12 @@ describe(`${title} Detail`, () => {
       });
   });
   it('cannot get detail if forbidden', async () => {
-    const tokenData = await tocologistLogin();
-
     const data = await Article.findOne({
       title: createData.title,
     });
     return request(baseUrl)
       .get(`${url}/${data._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);
@@ -190,8 +196,6 @@ describe(`${title} Update`, () => {
       });
   });
   it('cannot update if forbidden', async () => {
-    const tokenData = await tocologistLogin();
-
     const data = await Article.findOne({
       title: createData.title,
     });
@@ -200,7 +204,7 @@ describe(`${title} Update`, () => {
     };
     return request(baseUrl)
       .put(`${url}/${data._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .send(updateData)
       .expect(403)
       .expect(({ body }) => {
@@ -242,15 +246,13 @@ describe(`${title} Delete`, () => {
       });
   });
   it('cannot delete if forbidden', async () => {
-    const tokenData = await tocologistLogin();
-
     const data = await Article.findOne({
       title: createData.title,
     });
 
     return request(baseUrl)
       .delete(`${url}/${data._id}`)
-      .set({ Authorization: `Bearer ${tokenData.token}` })
+      .set({ Authorization: `Bearer ${unauthorizedToken}` })
       .expect(403)
       .expect(({ body }) => {
         forbiddenExpects(expect, body);

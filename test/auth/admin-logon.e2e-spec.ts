@@ -96,7 +96,7 @@ describe('Auth Admin', () => {
   });
 
   it('refresh token', async () => {
-    const tokenData = await otherLogin(user.email);
+    const tokenData = await otherLogin(user.email, 'admin');
     return request(app)
       .post('/admin/refreshToken')
       .send({ refreshToken: tokenData.refreshToken })
