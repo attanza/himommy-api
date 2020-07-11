@@ -19,11 +19,11 @@ const baseUrl = 'http://localhost:2500/mobile';
 const url = '/weights';
 
 const createData = {
-  weight: 70,
+  weight: 70.6,
 };
 
 const updateData = {
-  weight: 50,
+  weight: 50.5,
 };
 
 let token: string;

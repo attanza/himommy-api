@@ -25,7 +25,7 @@ const babyData: CreateBabyDto = {
 };
 
 const createData = {
-  weight: 35,
+  weight: 35.5,
 };
 
 let token: string;
