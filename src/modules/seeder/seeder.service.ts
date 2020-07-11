@@ -18,6 +18,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import Chance from 'chance';
 import { paramCase, snakeCase } from 'change-case';
 import { Model } from 'mongoose';
+import { IBaby } from '../baby/baby.interface';
 import { Redis } from '../helpers/redis';
 import { immunizationData } from './data/immunizationData';
 
@@ -63,7 +64,9 @@ export class SeederService {
     @InjectModel('PregnancyAges')
     private pregnancyAgesModel: Model<IPregnancyAges>,
     @InjectModel('Immunization')
-    private immunizationModel: Model<IImmunization>
+    private immunizationModel: Model<IImmunization>,
+    @InjectModel('Baby')
+    private babyModel: Model<IBaby>
   ) {}
 
   /**
@@ -74,6 +77,7 @@ export class SeederService {
     await this.roleModel.deleteMany({});
     await this.userModel.deleteMany({});
     await this.mommyDetailModel.deleteMany({});
+    await this.babyModel.deleteMany({});
 
     Redis.flushall();
 

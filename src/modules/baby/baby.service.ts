@@ -59,6 +59,31 @@ export class BabyService extends DbService {
     }
   }
 
+  checkImmunizationDuplicate(
+    arrImmunization: IBabyImmunization[],
+    immunization: IBabyImmunization
+  ): IBabyImmunization[] {
+    const monthToCheck = moment(immunization.date)
+      .format('YYYY-M')
+      .toString();
+    const indexes: number[] = [];
+    arrImmunization.map((a, idx) => {
+      const month = moment(a.date)
+        .format('YYYY-M')
+        .toString();
+      if (
+        month === monthToCheck &&
+        immunization.immunization === a.immunization.toString()
+      ) {
+        indexes.push(idx);
+      }
+    });
+    for (let i = indexes.length - 1; i >= 0; --i) {
+      arrImmunization.splice(i, 1);
+    }
+    return arrImmunization;
+  }
+
   async checkDuplicate(arrayToCheck: any[], dataToCheck: any) {
     const monthToCheck = moment(dataToCheck.date)
       .format('YYYY-M')
@@ -151,7 +176,7 @@ export class BabyService extends DbService {
         immunization: request.body.immunization,
         date: new Date(),
       };
-      data.immunizations = await this.checkDuplicate(
+      data.immunizations = await this.checkImmunizationDuplicate(
         data.immunizations,
         immunizationData
       );

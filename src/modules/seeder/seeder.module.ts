@@ -12,6 +12,7 @@ import { TocologistServiceSchema } from '@/modules/tocologist-services/tocologis
 import { TocologistSchema } from '@/modules/tocologist/tocologist.schema';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { BabySchema } from '../baby/baby.schema';
 import { PermissionSchema } from '../permission/permission.schema';
 import { RoleSchema } from '../role/role.schema';
 import { UserSchema } from '../user/user.schema';
@@ -55,6 +56,10 @@ import { SeederService } from './seeder.service';
         name: 'Immunization',
         schema: ImmunizationSchema,
         collection: 'immunizations',
+      },
+      {
+        name: 'Baby',
+        schema: BabySchema,
       },
     ]),
   ],

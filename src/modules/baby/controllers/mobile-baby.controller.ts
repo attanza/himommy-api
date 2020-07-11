@@ -1,6 +1,8 @@
 import { Role } from '@/guards/role.decorator';
 import { RoleGuard } from '@/guards/role.guard';
 import { imageDownloadInterceptor } from '@/modules/helpers/imageDownloadInterceptor';
+import { Redis } from '@/modules/helpers/redis';
+import { apiCreated } from '@/modules/helpers/responseParser';
 import { GetUser } from '@/modules/shared/decorators/get-user.decorator';
 import {
   IApiCollection,
@@ -78,7 +80,8 @@ export class MobileBabyController {
     @Body(new ValidationPipe()) createDto: MobileCreateBabyDto
   ): Promise<IApiItem> {
     createDto.parent = user._id;
-    return await this.dbService.store({ modelName: this.modelName, createDto });
+    const data = await this.dbService.dbStore(this.modelName, createDto);
+    return apiCreated('Baby', data);
   }
 
   @Put(':id')
@@ -138,6 +141,7 @@ export class MobileBabyController {
     const { babyDetailData, id } = param;
     await this.dbService.checkIsMyBaby(id, user._id);
     await ValidateBabyDetail(babyDetailData, request);
+    await Redis.deletePattern(`Baby_${user._id}`);
     return this.dbService.saveBabyDetail(request, photo);
   }
 
@@ -159,6 +163,7 @@ export class MobileBabyController {
     const { babyDetailData, id } = param;
     await this.dbService.checkIsMyBaby(id, user._id);
     await ValidateUpdateBabyDetail(babyDetailData, request);
+    await Redis.deletePattern(`Baby_${user._id}`);
     return this.dbService.updateBabyDetail(request, photo);
   }
 
@@ -176,6 +181,7 @@ export class MobileBabyController {
     const { babyDetailData, id } = param;
     await this.dbService.checkIsMyBaby(id, user._id);
     await ValidateUpdateBabyDetail(babyDetailData, request);
+    await Redis.deletePattern(`Baby_${user._id}`);
     return this.dbService.deleteBabyDetail(request);
   }
 }

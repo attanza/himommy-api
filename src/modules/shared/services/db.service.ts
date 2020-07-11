@@ -81,7 +81,7 @@ export class DbService {
       throw new HttpException(`${modelName} not found`, HttpStatus.NOT_FOUND);
     }
     const output = apiItem(modelName, data);
-    Redis.set(redisKey, JSON.stringify(output));
+    await Redis.set(redisKey, JSON.stringify(output));
     return output;
   }
 
@@ -136,7 +136,7 @@ export class DbService {
   }
 
   async dbStore(modelName: string, createDto: any) {
-    Redis.deletePattern(modelName);
+    await Redis.deletePattern(modelName);
     return await this.Model.create(createDto);
   }
 
@@ -174,7 +174,7 @@ export class DbService {
   }
 
   async dbUpdate(modelName: string, id: string, updateDto: any) {
-    Redis.deletePattern(modelName);
+    await Redis.deletePattern(modelName);
 
     return this.Model.updateOne({ _id: id }, updateDto);
   }

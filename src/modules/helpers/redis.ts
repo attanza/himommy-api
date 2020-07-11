@@ -25,6 +25,22 @@ class RedisInstance {
     return await this.redis.del(key);
   }
 
+  async getStream(pattern: string): Promise<string[]> {
+    const prefix: string = process.env.REDIS_PREFIX;
+    return new Promise((resolve, reject) => {
+      const stream = this.redis.scanStream({
+        match: `${prefix}${pattern}*`,
+        count: 10,
+      });
+      stream.on('data', resultKeys => {
+        resolve(resultKeys);
+      });
+      stream.on('end', () => {
+        return resolve();
+      });
+    });
+  }
+
   async deletePattern(pattern: string): Promise<void> {
     const prefix: string = process.env.REDIS_PREFIX;
     return new Promise((resolve, reject) => {

@@ -17,6 +17,7 @@ import {
   validationFailExpects,
 } from '../helpers';
 
+const resource = 'AppVersion';
 const title = 'Admin App Versions';
 const url = 'http://localhost:2500/admin';
 
@@ -71,13 +72,13 @@ describe(`${title} List`, () => {
         forbiddenExpects(expect, body);
       });
   });
-  it('can get list', async () => {
+  it.only('can get list', () => {
     return request(url)
       .get('/app-versions')
       .set('Content-Type', 'application/json')
       .set({ Authorization: `Bearer ${token}` })
       .expect(200)
-      .expect(({ body }) => {
+      .expect(async ({ body }) => {
         resourceListExpects(expect, body);
       });
   });
