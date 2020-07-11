@@ -69,7 +69,7 @@ export class BloodPressureController {
       date: new Date(),
     };
 
-    const detail: IMommyDetail = await this.dbService.getByUser(user._id);
+    const detail = await this.dbService.getByUser(user._id);
 
     detail.bloodPressures = this.dbService.checkDuplicate(
       detail.bloodPressures,

@@ -33,14 +33,8 @@ export class MommyDetailService extends DbService {
   }
 
   async getByUser(userId: string) {
-    const redisKey = `MommyDetail_user_${userId}`;
-    const cache = await Redis.get(redisKey);
-    if (cache && cache != null) {
-      return JSON.parse(cache);
-    }
-    const data = await this.model.findOne({ user: userId }).lean();
+    const data = await this.model.findOne({ user: userId });
     if (data) {
-      await Redis.set(redisKey, JSON.stringify(data));
       return data;
     }
     const newDetail = await this.model.create({
@@ -52,8 +46,6 @@ export class MommyDetailService extends DbService {
       hemoglobins: [],
       urines: [],
     });
-    await Redis.set(redisKey, JSON.stringify(newDetail));
-
     return newDetail;
   }
 
