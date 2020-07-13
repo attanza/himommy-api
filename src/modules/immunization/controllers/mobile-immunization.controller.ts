@@ -5,7 +5,10 @@ import {
   IApiItem,
 } from '@/modules/shared/interfaces/response-parser.interface';
 import { MongoIdPipe } from '@/modules/shared/pipes/mongoId.pipe';
-import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
+import {
+  ESortMode,
+  ResourcePaginationPipe,
+} from '@/modules/shared/pipes/resource-pagination.pipe';
 import {
   Controller,
   Get,
@@ -30,6 +33,10 @@ export class MobileImmunizationController {
   async all(@Query() query: ResourcePaginationPipe): Promise<IApiCollection> {
     const regexSearchable = ['name', 'age'];
     const keyValueSearchable = ['age'];
+    if (!query.sortBy) {
+      query.sortBy = 'age';
+      query.sortMode = ESortMode.asc;
+    }
     return this.dbService.getPaginated({
       modelName: this.modelName,
       query,
