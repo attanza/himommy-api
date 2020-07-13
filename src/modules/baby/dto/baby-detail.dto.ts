@@ -37,7 +37,7 @@ const validateHeight = body => {
   }
   const validNumber = validator.isNumber(height);
   if (!validNumber) {
-    throw new BadRequestException('height should be an integer');
+    throw new BadRequestException('height should be a number');
   }
 };
 
@@ -48,7 +48,7 @@ const validateWeight = body => {
   }
   const validNumber = validator.isNumber(weight);
   if (!validNumber) {
-    throw new BadRequestException('weight should be an integer');
+    throw new BadRequestException('weight should a number');
   }
 };
 

@@ -57,10 +57,6 @@ export class ProfileUpdateDto {
   height: number;
 
   @IsOptional()
-  @IsInt()
-  weight: number;
-
-  @IsOptional()
   @IsString()
   @Length(3, 50)
   occupation: string;
