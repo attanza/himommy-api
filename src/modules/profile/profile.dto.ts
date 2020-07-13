@@ -58,17 +58,17 @@ export class ProfileUpdateDto {
 
   @IsOptional()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(100)
   occupation: string;
 
   @IsOptional()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(100)
   education: string;
 
   @IsOptional()
   @IsString()
-  @Length(3, 50)
+  @MaxLength(100)
   husbandName: string;
 
   @IsOptional()
