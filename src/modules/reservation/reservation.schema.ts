@@ -1,3 +1,4 @@
+import moment from 'moment';
 import * as mongoose from 'mongoose';
 export const ReservationSchema = new mongoose.Schema(
   {
@@ -31,5 +32,15 @@ export const ReservationSchema = new mongoose.Schema(
     comment: String,
     completedAt: Date,
   },
-  { timestamps: true },
+  { timestamps: true }
 );
+
+ReservationSchema.methods.toJSON = function() {
+  const obj = this.toObject();
+  if (obj.date) {
+    obj.date = moment(obj.date)
+      .local()
+      .format();
+  }
+  return obj;
+};

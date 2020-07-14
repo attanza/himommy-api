@@ -47,7 +47,6 @@ export class MobileReservationController {
     @Body() createReservationDto: CreateReservationDto
   ): Promise<IApiItem> {
     const { tocologist, services } = createReservationDto;
-
     await this.reservationService.checkServices(tocologist, services);
 
     const code = Math.floor(Date.now() / 1000).toString();

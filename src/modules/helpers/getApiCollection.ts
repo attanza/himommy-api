@@ -140,7 +140,8 @@ export default async ({
       .populate(relations)
       .sort({ [sortBy]: sortMode })
       .skip(Number(limit * page - limit))
-      .limit(Number(limit));
+      .limit(Number(limit))
+      .lean();
   }
 
   const nextPage = totalPages > page ? page + 1 : null;
