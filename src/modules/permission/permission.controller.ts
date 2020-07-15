@@ -83,7 +83,7 @@ export class PermissionController {
       modelName: this.modelName,
     });
     const output = apiItem(this.modelName, result);
-    Redis.set(redisKey, JSON.stringify(output));
+    await Redis.set(redisKey, JSON.stringify(output));
     return output;
   }
 
@@ -96,7 +96,7 @@ export class PermissionController {
       createDto,
       uniques: this.uniques,
     });
-    Redis.deletePattern(`${this.modelName}_`);
+    await Redis.deletePattern(`${this.modelName}_`);
     return apiCreated(this.modelName, result);
   }
 
@@ -114,7 +114,7 @@ export class PermissionController {
       uniques: this.uniques,
       modelName: this.modelName,
     });
-    Redis.deletePattern(`${this.modelName}_`);
+    await Redis.deletePattern(`${this.modelName}_`);
     return apiUpdated(this.modelName, result);
   }
 
@@ -127,7 +127,7 @@ export class PermissionController {
       id,
       modelName: this.modelName,
     });
-    Redis.deletePattern(`${this.modelName}_`);
+    await Redis.deletePattern(`${this.modelName}_`);
     return apiDeleted(this.modelName);
   }
 }

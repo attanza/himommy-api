@@ -63,9 +63,11 @@ export class ProfileController {
     @Body() updateDto: ProfileUpdateDto
   ): Promise<IApiItem> {
     const userKeys = ['firstName', 'lastName', 'email', 'phone'];
-    let userData: UpdateUserDto = {};
+    const userData: UpdateUserDto = {};
     userKeys.map(key => {
-      userData = { ...userData, [key]: updateDto[key] };
+      if (updateDto[key]) {
+        userData[key] = updateDto[key];
+      }
     });
     const updated = await this.profileService.updateUser(user._id, userData);
     return apiUpdated('Profile', updated);

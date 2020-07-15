@@ -83,14 +83,10 @@ export class MobileProfileController {
     const mommyDetailKeys = [
       'dob',
       'height',
-      'weight',
       'occupation',
       'education',
       'husbandName',
       'hpht',
-      'checkLists',
-      'questions',
-      'healthTrack',
     ];
 
     let detailData: Partial<UpdateMommyDto> = {};
