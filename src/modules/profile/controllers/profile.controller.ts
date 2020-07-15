@@ -23,6 +23,7 @@ import { ChangePasswordDto, ProfileUpdateDto } from '../profile.dto';
 import { ProfileService } from '../profile.service';
 
 @Controller('admin/profile')
+@UseGuards(AuthGuard('jwt'))
 export class ProfileController {
   modelName = 'Profile';
 
@@ -30,7 +31,6 @@ export class ProfileController {
 
   @Post('change-password')
   @HttpCode(200)
-  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   async changePassword(
     @GetUser() user: IUser,
@@ -41,7 +41,6 @@ export class ProfileController {
   }
 
   @Post('avatar-upload')
-  @UseGuards(AuthGuard('jwt'))
   @HttpCode(200)
   @UseInterceptors(FileInterceptor('avatar', avatarInterceptor))
   async uploadFile(@GetUser() user: IUser, @UploadedFile() avatar) {
@@ -56,7 +55,6 @@ export class ProfileController {
   }
 
   @Put('')
-  @UseGuards(AuthGuard('jwt'))
   @UsePipes(ValidationPipe)
   async update(
     @GetUser() user: IUser,
