@@ -72,7 +72,6 @@ export class DbService {
     const redisKey = Object.values(resourceShow).join('_');
     const cache = await Redis.get(redisKey);
     if (cache && cache != null) {
-      Logger.log(`${modelName} detail from cache`, 'DB SERVICE');
       return JSON.parse(cache);
     }
     const data = await this.getById(resourceShow);

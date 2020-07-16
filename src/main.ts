@@ -6,6 +6,7 @@ import 'dotenv/config';
 import exphbs from 'express-handlebars';
 import helmet from 'helmet';
 import 'module-alias/register';
+import morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import MqttHandler from './modules/helpers/mqttHandler';
@@ -14,7 +15,7 @@ import { AllExceptionsFilter } from './modules/shared/http-exception.filter';
 async function bootstrap() {
   const port = process.env.PORT || 2500;
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
+  app.use(morgan('tiny'));
   MqttHandler.connect();
   app.use(helmet());
   // app.use(csurf());

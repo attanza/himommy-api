@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import ioredis from 'ioredis';
 
 class RedisInstance {
@@ -18,6 +19,7 @@ class RedisInstance {
   }
 
   async get(key: string): Promise<string> {
+    Logger.log(key, 'REDIS');
     return await this.redis.get(key);
   }
 

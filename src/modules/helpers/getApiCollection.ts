@@ -1,6 +1,5 @@
 import { IPaginated } from '@/modules/shared/interfaces/paginated.inteface';
 import { ResourcePaginationPipe } from '@/modules/shared/pipes/resource-pagination.pipe';
-import { Logger } from '@nestjs/common';
 import {
   IApiCollection,
   IMeta,
@@ -25,7 +24,6 @@ export default async ({
   // Cache
   const cache = await Redis.get(redisKey);
   if (cache && cache != null) {
-    Logger.log(`${modelName} from cache`, 'DB SERVICE');
     return JSON.parse(cache);
   }
 
@@ -157,7 +155,7 @@ export default async ({
   };
   output = { meta, data };
   if (search === '') {
-    Redis.set(redisKey, JSON.stringify(output));
+    await Redis.set(redisKey, JSON.stringify(output));
   }
   return output;
 };
