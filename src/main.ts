@@ -15,7 +15,7 @@ import { AllExceptionsFilter } from './modules/shared/http-exception.filter';
 async function bootstrap() {
   const port = process.env.PORT || 2500;
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(morgan('combined'));
+  app.use(morgan('dev'));
   MqttHandler.connect();
   app.use(helmet());
   // app.use(csurf());
