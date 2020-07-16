@@ -87,6 +87,8 @@ export class MobileProfileController {
       'education',
       'husbandName',
       'hpht',
+      'checkLists',
+      'questions',
     ];
 
     let detailData: Partial<UpdateMommyDto> = {};
