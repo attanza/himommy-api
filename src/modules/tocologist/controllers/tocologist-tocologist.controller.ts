@@ -80,7 +80,7 @@ export class TocologistTocologistController {
     const { id } = param;
     console.log('id', id);
     console.log('user.tocologist._id', user.tocologist._id);
-    if (!user.tocologist || user.tocologist._id.toString() !== id) {
+    if (!user.tocologist || user.tocologist._id.toString() !== id.toString()) {
       console.log('Action is forbidden');
       throw new ForbiddenException('Action is forbidden');
     }
