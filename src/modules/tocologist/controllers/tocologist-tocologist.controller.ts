@@ -78,8 +78,10 @@ export class TocologistTocologistController {
     @Body() serviceDto: AttachTocologistServicesDto
   ): Promise<IApiItem> {
     const { id } = param;
-    console.log('user', user);
+    console.log('id', id);
+    console.log('user.tocologist._id', user.tocologist._id);
     if (!user.tocologist || user.tocologist._id.toString() !== id) {
+      console.log('Action is forbidden');
       throw new ForbiddenException('Action is forbidden');
     }
     await this.dbService.checkServices(serviceDto);
