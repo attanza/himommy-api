@@ -50,7 +50,6 @@ export class TocologistTocologistController {
     if (!user.tocologist || user.tocologist._id.toString() !== id) {
       throw new ForbiddenException('Action is forbidden');
     }
-    console.log('updateDto', updateDto);
     const tocologistData = this.dbService.prepareTocologistData(updateDto);
 
     const output = await this.dbService.update({
@@ -79,7 +78,7 @@ export class TocologistTocologistController {
     @Body() serviceDto: AttachTocologistServicesDto
   ): Promise<IApiItem> {
     const { id } = param;
-
+    console.log('user', user);
     if (!user.tocologist || user.tocologist._id.toString() !== id) {
       throw new ForbiddenException('Action is forbidden');
     }
