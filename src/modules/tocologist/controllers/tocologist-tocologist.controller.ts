@@ -77,15 +77,22 @@ export class TocologistTocologistController {
     @Param() param: MongoIdPipe,
     @Body() serviceDto: AttachTocologistServicesDto
   ): Promise<IApiItem> {
-    const { id } = param;
-    console.log('id', id);
-    console.log('user.tocologist._id', user.tocologist._id);
-    if (!user.tocologist || user.tocologist._id.toString() !== id.toString()) {
-      console.log('Action is forbidden');
-      throw new ForbiddenException('Action is forbidden');
+    try {
+      const { id } = param;
+      console.log('id', id);
+      console.log('user.tocologist._id', user.tocologist._id);
+      if (
+        !user.tocologist ||
+        user.tocologist._id.toString() !== id.toString()
+      ) {
+        console.log('Action is forbidden');
+        throw new ForbiddenException('Action is forbidden');
+      }
+      await this.dbService.checkServices(serviceDto);
+      return this.dbService.attachServices(id, serviceDto);
+    } catch (error) {
+      console.log('error', error);
     }
-    await this.dbService.checkServices(serviceDto);
-    return this.dbService.attachServices(id, serviceDto);
   }
 
   /**
